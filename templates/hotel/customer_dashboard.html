@@ -1,4 +1,5 @@
 {% extends "base.html" %}
+{% load static %}
 {% block title %}Customer Dashboard - Star Hotel{% endblock %}
 {% block content %}
 
@@ -10,7 +11,7 @@
                 <div class="avatar"></div>
                 <div class="profile-info">
                     <div class="name">Name</div>
-                    <div class="memeber">Gold member</div>
+                    <div class="member">Gold member</div>
                 </div>
             </div>
         
@@ -34,6 +35,6 @@
         
     </div>
 
-
+    <script src="{% static 'js/script.js' %}"></script>
 
 {% endblock %}
