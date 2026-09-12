@@ -35,3 +35,121 @@ main{
     padding:40px;
 
 }
+
+/*customer-dashboard formatting*/
+
+:root{
+    --navy: #14213d;
+    --navy-light: #1d2f52;
+    --accent-red: #d62828;
+    --text-light: #f4f4f4;
+    --text-muted: #9fb0cc;
+    --divider: rgba(255,255,255,0.15);
+
+}
+
+.layout {
+    display: flex;
+    min-height: 100vh;
+}
+
+.sidebar {
+    width: 240px;
+    background: var(--navy);
+    padding: 32px 20px;
+    display: flex;
+    flex-direction: coloumn;
+    flex-shrink: 0;
+}
+
+.profile { display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 36px;
+}
+
+.avatar {
+    width: 52px;
+    height: 52px;
+    border-radius: 50%;
+    background: var(--accent-red);
+    flex-shrink: 0;
+}
+
+.profile-info .name{
+    color: var(--text-light);
+    font-size: 17px;
+    font-weight:700;
+    line-height 1.2;
+}
+
+.profile-info .member {
+    color:  var(--text-muted);
+    font-size: 11px;
+    font-weight: 600;
+    letter-spaceing: 0.3px;
+}
+
+.sidebar nav { 
+    position: relative;
+    display: flex;
+    flex-direction: coloumn;
+    gap: 6px;
+}
+
+.nav-highlight {
+    position: absolute;
+    left: 0;
+    width: 100%;
+    height: 44px;
+    border-radius: 6px;
+    border: 1px solid var(--text-light);
+    background: var(--navy-light);
+    transition: top 0.28s cubic-bezier(0.4, 0.2,1);
+    pointer-events: none;
+}
+
+.nav-item {
+    position: relative;
+    display: block;
+    padding: 12px 14px;
+    border-radius: 6px;
+    color: var(--text-light);
+    text-decoration: none;
+    font-size: 15px;
+    font-weight: 700;
+    transition: background 0.15s ease;
+}
+
+.nav-item:hover {
+    background: var(--navy-light);
+}
+
+.divider {
+    border: none;
+    border-top: 1px solid var(--divider);
+    margin: 20px 0;
+}
+
+.logout {
+    main-top: auto;
+    padding: 12px 14px;
+    color: var(--text-light);
+    text-decoration: none;
+    font-size: 15px;
+    font-weight: 700;
+}
+
+.logout:hover {
+    background: var(--navy-light);
+    border-radius: 6px;
+}
+.layout{
+    min-height: unset;
+    flex: 1;
+
+
+
+
+
+ 
