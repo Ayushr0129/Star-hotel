@@ -211,7 +211,10 @@ header:has(~ main .layout) {
     flex-wrap: nowrap;
     white-space: nowrap;
 }
-/*changed*///
+
+
+/*for header animation*/
+
 .btn-register {
     background: #2952e3 !important;
     color: white !important;
@@ -225,7 +228,7 @@ header:has(~ main .layout) {
     background: #1f3fc4 !important;
 }
  
-/* Replaces old .site-nav a / .btn-register rules with a sliding pill nav */
+
 .site-nav {
     position: relative;
     display: flex;
@@ -236,12 +239,12 @@ header:has(~ main .layout) {
  
 .nav-pill {
     position: absolute;
-    top: 4px;
-    bottom: 4px;
+    top: 2px;
+    bottom: 2px;
     left: 0;
     width: 0;
     background: #2952e3;
-    border-radius: 9999px;
+    border-radius: 0px;
     box-shadow: 0 2px 6px rgba(41, 82, 227, 0.35);
     transition: left 0.25s ease, width 0.25s ease;
     z-index: 0;
