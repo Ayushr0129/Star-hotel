@@ -105,7 +105,7 @@ main{
     border-radius: 6px;
     border: 1px solid var(--text-light);
     background: var(--navy-light);
-    transition: top 0.28s cubic-bezier(0.4, 0.2,1);
+    transition: top 0.28s cubic-bezier(0.4,0, 0.2,1);
     pointer-events: none;
 }
 
@@ -162,5 +162,74 @@ main:has(.layout) {
 header:has(~ main .layout) {
     display: none;
 }
+
+/*Header for all pages*/
+
+.site-header{ 
+    display:flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 16px 40px;
+    background: white;
+    border-bottom: 1px solid #e5e7eb;
+}
+
+.brand {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.brand-icon{
+    width: 18px;
+    height: 18px;
+    flex-shrink: 0;
+}
+
+.brand-text {
+    display: flex;
+    flex-direction: column;
+    line-height: 1.2;
+}
+
+.brand-name{
+    font-size: 17px;
+    font-weight: 800;
+    color: #111827;
+}
+
+.brand-tagline {
+    font-size: 11px;
+    color: #6b7280;
+
+}
+
+.site-nav {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    flex-wrap: nowrap;
+    white-space: nowrap;
+}
+
+.site-nav a {
+    font-size: 14px;
+    font-weight: 600;
+    color: #1f2937;
+    text-decoration: none;
+}
+
+.site-nav a:hover{
+    color: var(--navy);
+}
+
+.btn-register {
+    background: var(--navy) !important;
+    color: white !important;
+    paddings: 8px 18px;
+    border-radius: 6px;
+    font-weight: 700 !important;
+}
+
 
  
