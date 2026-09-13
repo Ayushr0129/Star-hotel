@@ -212,24 +212,56 @@ header:has(~ main .layout) {
     white-space: nowrap;
 }
 
-.site-nav a {
+
+/*for header animation*/
+
+.btn-register {
+    background: #2952e3 !important;
+    color: white !important;
+    padding: 10px 22px;
+    border-radius: 9999px;
+    font-weight: 700 !important;
+    box-shadow: 0 2px 6px rgba(41, 82, 227, 0.35);
+}
+ 
+.btn-register:hover {
+    background: #1f3fc4 !important;
+}
+ 
+
+.site-nav {
+    position: relative;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    flex-wrap: nowrap;
+}
+ 
+.nav-pill {
+    position: absolute;
+    top: 2px;
+    bottom: 2px;
+    left: 0;
+    width: 0;
+    background: #2952e3;
+    border-radius: 0px;
+    box-shadow: 0 2px 6px rgba(41, 82, 227, 0.35);
+    transition: left 0.25s ease, width 0.25s ease;
+    z-index: 0;
+}
+ 
+.site-nav-item {
+    position: relative;
+    z-index: 1;
+    padding: 8px 18px;
     font-size: 14px;
     font-weight: 600;
     color: #1f2937;
     text-decoration: none;
+    white-space: nowrap;
+    transition: color 0.2s ease;
 }
-
-.site-nav a:hover{
-    color: var(--navy);
-}
-
-.btn-register {
-    background: var(--navy) !important;
-    color: white !important;
-    paddings: 8px 18px;
-    border-radius: 6px;
-    font-weight: 700 !important;
-}
-
-
  
+.site-nav-item.on-pill {
+    color: white;
+}
