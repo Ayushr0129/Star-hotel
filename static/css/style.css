@@ -105,7 +105,7 @@ main{
     border-radius: 6px;
     border: 1px solid var(--text-light);
     background: var(--navy-light);
-    transition: top 0.28s cubic-bezier(0.4, 0.2,1);
+    transition: top 0.28s cubic-bezier(0.4,0, 0.2,1);
     pointer-events: none;
 }
 
@@ -163,4 +163,105 @@ header:has(~ main .layout) {
     display: none;
 }
 
+/*Header for all pages*/
+
+.site-header{ 
+    display:flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 16px 40px;
+    background: white;
+    border-bottom: 1px solid #e5e7eb;
+}
+
+.brand {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.brand-icon{
+    width: 18px;
+    height: 18px;
+    flex-shrink: 0;
+}
+
+.brand-text {
+    display: flex;
+    flex-direction: column;
+    line-height: 1.2;
+}
+
+.brand-name{
+    font-size: 17px;
+    font-weight: 800;
+    color: #111827;
+}
+
+.brand-tagline {
+    font-size: 11px;
+    color: #6b7280;
+
+}
+
+.site-nav {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    flex-wrap: nowrap;
+    white-space: nowrap;
+}
+
+
+/*for header animation*/
+
+.btn-register {
+    background: #2952e3 !important;
+    color: white !important;
+    padding: 10px 22px;
+    border-radius: 9999px;
+    font-weight: 700 !important;
+    box-shadow: 0 2px 6px rgba(41, 82, 227, 0.35);
+}
  
+.btn-register:hover {
+    background: #1f3fc4 !important;
+}
+ 
+
+.site-nav {
+    position: relative;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    flex-wrap: nowrap;
+}
+ 
+.nav-pill {
+    position: absolute;
+    top: 2px;
+    bottom: 2px;
+    left: 0;
+    width: 0;
+    background: #2952e3;
+    border-radius: 0px;
+    box-shadow: 0 2px 6px rgba(41, 82, 227, 0.35);
+    transition: left 0.25s ease, width 0.25s ease;
+    z-index: 0;
+}
+ 
+.site-nav-item {
+    position: relative;
+    z-index: 1;
+    padding: 8px 18px;
+    font-size: 14px;
+    font-weight: 600;
+    color: #1f2937;
+    text-decoration: none;
+    white-space: nowrap;
+    transition: color 0.2s ease;
+}
+ 
+.site-nav-item.on-pill {
+    color: white;
+}

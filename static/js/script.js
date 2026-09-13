@@ -35,7 +35,40 @@ class SidebarNav {
     }
 }
 
+/*this is for general header */
+
 new SidebarNav('nav', 'navHighlight');
 
 
+class SiteNavPill {
+  constructor(navId, pillId, defaultId) {
+    this.nav = document.getElementById(navId);
+    this.pill = document.getElementById(pillId);
+ 
+    if (!this.nav || !this.pill) return;
+ 
+    this.items = this.nav.querySelectorAll('.site-nav-item');
+    this.defaultItem = document.getElementById(defaultId) || this.items[this.items.length - 1];
+    this.init();
+  }
+ 
+  movePill(item) {
+    this.items.forEach(i => i.classList.remove('on-pill'));
+    item.classList.add('on-pill');
+    this.pill.style.left = item.offsetLeft + 'px';
+    this.pill.style.width = item.offsetWidth + 'px';
+  }
+ 
+  init() {
+    window.addEventListener('DOMContentLoaded', () => this.movePill(this.defaultItem));
+ 
+    this.items.forEach(item => {
+      item.addEventListener('mouseenter', () => this.movePill(item));
+    });
+ 
+    this.nav.addEventListener('mouseleave', () => this.movePill(this.defaultItem));
+  }
+}
+ 
+new SiteNavPill('siteNav', 'navPill', 'registerLink');
                 
