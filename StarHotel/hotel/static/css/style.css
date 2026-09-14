@@ -468,6 +468,7 @@ header:has(~ main .layout) {
     color: #111827;
 }
 
+
 .room-actions {
     display: flex;
     gap: 10px;
@@ -557,9 +558,6 @@ header:has(~ main .layout) {
 .btn-checkout:hover {
     background: #17532c;
 }
-
-
-
 
 @media (max-width: 900px) {
     .booking-layout {
