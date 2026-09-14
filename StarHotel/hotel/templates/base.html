@@ -8,11 +8,14 @@
     <title>{% block title %}Star Hotel{% endblock %}</title>
 
     {% load static %}
-
+    <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="{% static 'css/style.css' %}">
 </head>
 
-<body>
+<body class="bg-gray-100 text-gray-800">
+
+{% block header %}
+ 
 
 <header class = "site-header">
     <div class="brand">
@@ -36,14 +39,13 @@
     </nav>
 
 </header>
-
-<main>
-
+{% endblock %} 
+<main class="min-h-screen">
 {% block content %}
 
 {% endblock %}
-
 </main>
+
 
 <footer>
 
