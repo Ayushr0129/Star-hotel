@@ -30,31 +30,125 @@ Booking
         </div>
         <div class = "search-field">
             <label>Check-In</label>
-            <inputtype="date">
+            <input type="date">
         </div>
         <div>
         <div class = "search-field">
-            <label>Check-In</label>
+            <label>Check-Out</label>
+            <input type="date">
         </div>
-        
-        </inputtype>
+     </div>
+
+    <div class="booking-tabs">
+        <button class="tab-item active" data-tab="rooms">Room</button>
+        <button class="tabitem" data-tab="packages">PackaAges</button>
+        <button class="tab-item" data-tab="events">Events</button>
+    </div>
+
+    <div class="toolbar">
+        <buutton class="toolbar-btn">View</button>
+        <button class="toolbar-btn">Sort By</button>
+        <button class="toolbar-btn">Filters</button>
+    </div>
+
+      <div class="booking-layout">
+
+        <div class="room-list">
+
+            <div class="room-card" data-name="Deluxe king room" data-price="15000">
+                <img src="" alt="Deluxe king room" class="room-img">
+                <div class="room-info">
+                    <div class="room-title-row">
+                        <h3>Deluxe king room</h3>
+                        <span class="selected-tag">Selected</span>
+                    </div>
+                    <h4>Description</h4>
+                    <p>Experience comfort and luxury in our Deluxe Room, featuring a king-size bed, complimentary breakfast, air conditioning, free Wi-Fi and panoramic garden views.</p>
+                    <div class="room-specs">
+                        <span>2 Guests</span>
+                        <span>King Bed</span>
+                        <span>35 m²</span>
+                    </div>
+                    <hr>
+                    <div class="room-footer">
+                        <span class="room-price">Price : Rs 15 000</span>
+                        <div class="room-actions">
+                            <button class="btn-outline-navy">View</button>
+                            <button class="btn-navy btn-book">Book</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="room-card" data-name="Executive Room" data-price="17000">
+                <img src="" alt="Executive Room" class="room-img">
+                <div class="room-info">
+                    <div class="room-title-row">
+                        <h3>Executive Room</h3>
+                    </div>
+                    <h4>Description</h4>
+                    <p>Experience comfort and elegance in our Deluxe Room, featuring a king-size bed, a spacious seating area, complimentary high-speed Wi-Fi, air conditioning, and a private balcony with breathtaking ocean views. Designed for both relaxation and convenience, this room is perfect for couples or business travellers seeking a luxurious stay.</p>
+                    <div class="room-specs">
+                        <span>2 Guests</span>
+                        <span>Queen Bed</span>
+                        <span>40 m²</span>
+                    </div>
+                    <hr>
+                    <div class="room-footer">
+                        <span class="room-price">Price : Rs 17 000</span>
+                        <div class="room-actions">
+                            <button class="btn-outline-navy">View</button>
+                            <button class="btn-navy btn-book">Book</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="room-card" data-name="Family Suit" data-price="21000">
+                <img src="" alt="Family Suit" class="room-img">
+                <div class="room-info">
+                    <div class="room-title-row">
+                        <h3>Family Suit</h3>
+                    </div>
+                    <h4>Description</h4>
+                    <p>Enjoy a spacious and welcoming Family Suite designed for comfort and convenience. Featuring two double beds, a comfortable seating area, complimentary high-speed Wi-Fi, air conditioning, a private balcony, and modern amenities, this room is perfect for families or small groups looking for a relaxing getaway.</p>
+                    <div class="room-specs">
+                        <span>4 Guests</span>
+                        <span>2 Double Beds</span>
+                        <span>50 m²</span>
+                    </div>
+                    <hr>
+                    <div class="room-footer">
+                        <span class="room-price">Price : Rs 21 000</span>
+                        <div class="room-actions">
+                            <button class="btn-outline-navy">View</button>
+                            <button class="-navy btn-book">Book</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
 
         </div>
 
+        <aside class="cart-box" id="cartBox">
+            <h3>YOUR CART</h3>
+            <div class="cart-items" id="cartItems">
+                <div class="cart-item">
+                    <p class="cart-item-name">Deluxe king room</p>
+                    <p class="cart-item-nights">3 nights</p>
+                </div>
+            </div>
+            <div class="cart-total">
+                <span>Total :</span>
+                <span id="cartTotal">Rs 15 000</span>
+            </div>
+            <button class="btn-checkout">Checkout</button>
+        </aside>
 
-        </div>
+    </div>
 
-
-
-
-
-
-
-
-
-
-<section class
-
-<h1>Booking Page</h1>
+</div>
 
 {% endblock %}
+
+
