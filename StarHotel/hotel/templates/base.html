@@ -13,7 +13,7 @@
 </head>
 
 <body>
-
+{% block header %}
 <header class = "site-header">
     <div class="brand">
         <svg class="brand-icon" viewBox="0 0 24 24" fill="#f5b400">
@@ -36,8 +36,9 @@
     </nav>
 
 </header>
+{% endblock %}
 
-<main>
+<main class="min-h-screen">
 
 {% block content %}
 
