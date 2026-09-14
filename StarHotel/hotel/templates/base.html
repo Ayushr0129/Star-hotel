@@ -12,10 +12,10 @@
     <link rel="stylesheet" href="{% static 'css/style.css' %}">
 </head>
 
-<body class="bg-gray-100 text-gray-800">
-
+<body>
 {% block header %}
- 
+=======
+<body class="bg-gray-100 text-gray-800">
 
 <header class = "site-header">
     <div class="brand">
@@ -39,10 +39,11 @@
     </nav>
 
 </header>
+
 {% endblock %} 
 <main class="min-h-screen">
-{% block content %}
 
+{% block content %}
 {% endblock %}
 </main>
 

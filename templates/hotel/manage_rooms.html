@@ -1,4 +1,4 @@
-{% extends "base-admin.html" %}
+{% extends "base.html" %}
 
 {% block title %}
 Manage Rooms - STAR HOTEL
@@ -16,7 +16,7 @@ Manage Rooms - STAR HOTEL
   <!-- Metrics Cards Grid -->
   <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-10">
     
-    <!-- Available Card -->
+        <!-- Available Card -->
     <div class="border border-gray-300 rounded-xl p-5 flex items-center justify-between shadow-sm">
       <div class="w-12 h-12 rounded-full bg-[#34d399]"></div>
       <div class="text-center pr-6">
@@ -25,8 +25,6 @@ Manage Rooms - STAR HOTEL
       </div>
       <div></div>
     </div>
-
-
     <!-- Occupied Card -->
     <div class="border border-gray-300 rounded-xl p-5 flex items-center justify-between shadow-sm">
       <div class="w-12 h-12 rounded-full bg-[#ef4444]"></div>
@@ -76,8 +74,5 @@ Manage Rooms - STAR HOTEL
       </form>
     </div>
   </div>
-</div>
 
 {% endblock %}
-
-    
