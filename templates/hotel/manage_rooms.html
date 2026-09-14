@@ -25,4 +25,59 @@ Manage Rooms - STAR HOTEL
       </div>
       <div></div>
     </div>
+
+
+    <!-- Occupied Card -->
+    <div class="border border-gray-300 rounded-xl p-5 flex items-center justify-between shadow-sm">
+      <div class="w-12 h-12 rounded-full bg-[#ef4444]"></div>
+      <div class="text-center pr-6">
+        <p class="text-sm font-semibold text-gray-500 mb-1">Occupied</p>
+        <p class="text-2xl font-bold text-black">{{ occupied_count|default:"32" }}</p>
+      </div>
+      <div></div>
+    </div>
+
+    <!-- Maintenance Card -->
+    <div class="border border-gray-300 rounded-xl p-5 flex items-center justify-between shadow-sm">
+      <div class="w-12 h-12 rounded-full bg-[#eab308]"></div>
+      <div class="text-center pr-6">
+        <p class="text-sm font-semibold text-gray-500 mb-1">Maintenance</p>
+        <p class="text-2xl font-bold text-black">{{ maintenance_count|default:"5" }}</p>
+      </div>
+      <div></div>
+    </div>
+
+  </div>
+
+  <!-- Table Header Controls -->
+  <div class="flex items-center justify-between mb-6">
+    <h2 class="text-xl font-bold text-black">All Rooms</h2>
+    
+    <div class="flex items-center space-x-4">
+      <!-- Add New Button Trigger -->
+      <button type="button" onclick="toggleModal('add-modal', true)" class="border border-gray-400 text-gray-700 px-4 py-1.5 rounded text-sm font-medium hover:bg-gray-50 transition">
+        + Add new
+      </button>
+
+      <!-- Search Bar -->
+      <form method="GET" action="." class="flex items-center">
+        <input 
+          type="text" 
+          name="search" 
+          value="{{ search_query|default:'' }}" 
+          placeholder="Search" 
+          class="border border-gray-400 rounded-l px-3 py-1.5 text-sm focus:outline-none w-48"
+        />
+        <button type="submit" class="bg-[#0b2bba] text-white px-4 py-2 rounded-r hover:bg-blue-800 transition flex items-center justify-center">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+          </svg>
+        </button>
+      </form>
+    </div>
+  </div>
+</div>
+
+{% endblock %}
+
     
