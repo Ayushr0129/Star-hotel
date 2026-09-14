@@ -25,7 +25,6 @@ Manage Rooms - STAR HOTEL
       </div>
       <div></div>
     </div>
-
     <!-- Occupied Card -->
     <div class="border border-gray-300 rounded-xl p-5 flex items-center justify-between shadow-sm">
       <div class="w-12 h-12 rounded-full bg-[#ef4444]"></div>
@@ -46,7 +45,9 @@ Manage Rooms - STAR HOTEL
       <div></div>
     </div>
 
-    <!-- Table Header Controls -->
+  </div>
+
+  <!-- Table Header Controls -->
   <div class="flex items-center justify-between mb-6">
     <h2 class="text-xl font-bold text-black">All Rooms</h2>
     
@@ -73,68 +74,5 @@ Manage Rooms - STAR HOTEL
       </form>
     </div>
   </div>
-
-   <!-- Rooms Table -->
-  <div class="overflow-x-auto">
-    <table class="w-full border-collapse border border-gray-300 text-left">
-      <thead>
-        <tr class="bg-[#0b2bba] text-white text-base">
-          <th class="py-3 px-6 font-semibold border-r border-blue-800 w-1/5">Room no</th>
-          <th class="py-3 px-6 font-semibold border-r border-blue-800 w-1/4">Type</th>
-          <th class="py-3 px-6 font-semibold border-r border-blue-800 text-center w-1/4">Status</th>
-          <th class="py-3 px-6 font-semibold text-center w-1/4">Action</th>
-        </tr>
-      </thead>
-      <tbody class="divide-y divide-gray-300">
-        {% for room in rooms %}
-        <tr class="hover:bg-gray-50">
-          <td class="py-4 px-6 text-sm font-bold text-black border-r border-gray-300">
-            {{ room.room_number }}
-          </td>
-          <td class="py-4 px-6 text-sm font-medium text-gray-800 border-r border-gray-300">
-            {{ room.room_type }}
-          </td>
-          <td class="py-4 px-6 text-center border-r border-gray-300">
-            {% if room.is_enabled %}
-              <span class="inline-block bg-[#0b2bba] text-white text-xs font-medium px-8 py-1.5 rounded-full">
-                Enabled
-              </span>
-            {% else %}
-              <span class="inline-block bg-gray-400 text-white text-xs font-medium px-8 py-1.5 rounded-full">
-                Disabled
-              </span>
-            {% endif %}
-          </td>
-          <td class="py-4 px-6 text-center space-x-2">
-            <!-- Edit Button Trigger -->
-            <button type="button" onclick="openEditModal('{{ room.id }}', '{{ room.room_number }}', '{{ room.room_type }}', '{{ room.status }}')" class="bg-[#0b2bba] text-white text-xs font-semibold px-4 py-1.5 rounded hover:bg-blue-800 transition">
-              Edit
-            </button>
-            <a href="{% url 'room_toggle' room.id %}" class="inline-block bg-[#0b2bba] text-white text-xs font-semibold px-4 py-1.5 rounded hover:bg-blue-800 transition">
-              {% if room.is_enabled %}Disable{% else %}Enable{% endif %}
-            </a>
-          </td>
-        </tr>
-        {% empty %}
-        <!-- UI Fallback Mockup Row -->
-        <tr class="hover:bg-gray-50">
-          <td class="py-4 px-6 text-sm font-bold text-black border-r border-gray-300">101</td>
-          <td class="py-4 px-6 text-sm font-medium text-gray-800 border-r border-gray-300">Deluxe</td>
-          <td class="py-4 px-6 text-center border-r border-gray-300">
-            <span class="inline-block bg-[#0b2bba] text-white text-xs font-medium px-8 py-1.5 rounded-full">Enabled</span>
-          </td>
-          <td class="py-4 px-6 text-center space-x-2">
-            <button type="button" onclick="openEditModal('1', '101', 'Deluxe', 'available')" class="bg-[#0b2bba] text-white text-xs font-semibold px-4 py-1.5 rounded hover:bg-blue-800 transition">Edit</button>
-            <button class="bg-[#0b2bba] text-white text-xs font-semibold px-4 py-1.5 rounded hover:bg-blue-800 transition">Disable</button>
-            
-            
-          </td>
-        </tr>
-        {% endfor %}
-      </tbody>
-    </table>
-  </div>
-
-</div>
 
 {% endblock %}
