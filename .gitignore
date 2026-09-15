@@ -1,10 +1,11 @@
-# Virtual environments
+# Virtual environment
 .venv/
 venv/
 
 # Python
 __pycache__/
 *.py[cod]
+*.pyo
 
 # Django
 db.sqlite3
@@ -16,16 +17,7 @@ db.sqlite3
 .vscode/
 
 # Environment variables
-<<<<<<< HEAD
 .env
 
 # Python cache
 *.egg-info/
-
-__pycache__/
-*.pyc
-.env
-db.sqlite3
-=======
-.env
->>>>>>> main
