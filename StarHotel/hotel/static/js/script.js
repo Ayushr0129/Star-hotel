@@ -71,4 +71,26 @@ class SiteNavPill {
 }
  
 new SiteNavPill('siteNav', 'navPill', 'registerLink');
-                
+   
+/*Home booking animation*/
+
+const tabs = document.querySelectorAll('.tab-item');
+const tabHighlight = document.getElementById('tabHighlight');
+
+function moveTabHighlight(activeTab) {
+    tabHighlight.style.left = activeTab.offsetLeft + 'px';
+    tabHighlight.style.width = activeTab.offsetWidth + 'px';
+}
+
+// position on load
+if (document.querySelector('.tab-item.active')) {
+    moveTabHighlight(document.querySelector('.tab-item.active'));
+}
+
+tabs.forEach(tab => {
+    tab.addEventListener('click', function () {
+        tabs.forEach(t => t.classList.remove('active'));
+        this.classList.add('active');
+        moveTabHighlight(this);
+    });
+});

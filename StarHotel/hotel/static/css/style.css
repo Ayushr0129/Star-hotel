@@ -576,3 +576,43 @@ header:has(~ main .layout) {
     }
 }
 
+/*home booking button animation*/
+.booking-tabs {
+    position: relative;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    margin-top: 24px;
+    padding-bottom: 12px;
+    border-bottom: 2px solid #e5e7eb;
+}
+
+.tab-highlight {
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: calc(100% - 12px);
+    background: var(--navy);
+    border-radius: 9999px;
+    transition: left 0.25s ease, width 0.25s ease;
+    z-index: 0;
+}
+
+.tab-item {
+    position: relative;
+    z-index: 1;
+    background: none;
+    border: none;
+    padding: 10px 20px;
+    font-size: 15px;
+    font-weight: 700;
+    cursor: pointer;
+    color: #111827;
+    border-radius: 9999px;
+    transition: color 0.2s ease;
+}
+
+.tab-item.active {
+    color: white;
+    background: none;
+}
