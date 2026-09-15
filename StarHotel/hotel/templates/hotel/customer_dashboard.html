@@ -1,0 +1,40 @@
+{% extends "base.html" %}
+{% load static %}
+{% block title %}Customer Dashboard - Star Hotel{% endblock %}
+{% block content %}
+
+
+    <div class="layout">
+
+        <aside class="sidebar">
+            <div class="profile">
+                <div class="avatar"></div>
+                <div class="profile-info">
+                    <div class="name">Name</div>
+                    <div class="member">Gold member</div>
+                </div>
+            </div>
+        
+            <nav id="nav">
+                <div class="nav-highlight" id="navHighlight"></div>
+                <a href="#" class="nav-item">Dashboard</a>
+                <a href="#" class="nav-item">Profile</a>
+                <a href="#" class="nav-item">Rewards</a>
+                <a href="#" class="nav-item">Support</a>
+
+            </nav>
+
+            <hr class = "divider">
+
+            <a href="#" class="logout">Logout</a>
+        </aside>
+
+        <div class="dashboard-content">
+            <h1>Welcome Back,Name</h1>
+        </div>
+        
+    </div>
+
+    <script src="{% static 'js/script.js' %}"></script>
+
+{% endblock %}

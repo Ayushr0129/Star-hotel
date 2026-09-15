@@ -1,0 +1,40 @@
+{% extends "base.html" %}
+
+{% block header %}
+<!-- Dedicated Admin Header -->
+<header class="border-b border-gray-300 px-6 py-3 flex items-center justify-between bg-white">
+    <div class="flex items-center space-x-8">
+        <!-- Brand Logo -->
+        <div class="flex items-center space-x-2">
+            <svg class="w-6 h-6" viewBox="0 0 24 24" fill="#f5b400">
+                <path d="M12 2l2.9 6.26L22 9.27l-5 4.87L18.18 21 12 17.27 5.82 21 7 14.14l-5-4.87 7.1-1.01L12 2z"/>
+            </svg>
+            <span class="font-bold text-gray-900 text-lg tracking-wide">STAR HOTEL</span>
+        </div>
+
+        <!-- Dedicated Admin Navigation Links -->
+        <nav class="flex items-center space-x-4">
+            <a href="#" class="bg-[#0b2bba] text-white px-4 py-2 rounded font-medium text-sm">
+                Admin Section
+            </a>
+            <a href="{% url 'manage_rooms' %}" class="text-gray-800 hover:text-blue-700 px-3 py-2 text-sm font-medium">
+                Manage rooms
+            </a>
+            <a href="#" class="text-gray-800 hover:text-blue-700 px-3 py-2 text-sm font-medium">
+                Reports
+            </a>
+        </nav>
+    </div>
+
+    <!-- User Profile Badge -->
+    <div class="flex items-center space-x-3 cursor-pointer">
+        <div class="w-8 h-8 rounded-full bg-[#0b2bba] text-white font-bold flex items-center justify-center text-xs">
+            JS
+        </div>
+        <span class="text-sm font-semibold text-gray-800">John Smith</span>
+        <svg class="w-4 h-4 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+        </svg>
+    </div>
+</header>
+{% endblock %}

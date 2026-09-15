@@ -1,11 +1,10 @@
-# Virtual environment
+# Virtual environments
 .venv/
 venv/
 
 # Python
 __pycache__/
 *.py[cod]
-*.pyo
 
 # Django
 db.sqlite3
@@ -17,6 +16,7 @@ db.sqlite3
 .vscode/
 
 # Environment variables
+<<<<<<< HEAD
 .env
 
 # Python cache
@@ -26,3 +26,6 @@ __pycache__/
 *.pyc
 .env
 db.sqlite3
+=======
+.env
+>>>>>>> main

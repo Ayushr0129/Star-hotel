@@ -1,13 +1,233 @@
-{% extends "base.html" %}
+{% extends "base_admin.html" %}
 
 {% block title %}
-
-Manage Rooms
-
+Manage Rooms - STAR HOTEL
 {% endblock %}
 
 {% block content %}
+<div class="max-w-6xl mx-auto px-6 py-8">
 
-<h1>Manage Rooms</h1>
+  <!-- Page Title & Subtitle -->
+  <div class="mb-8">
+    <h1 class="text-3xl font-extrabold text-black mb-2">Rooms Management</h1>
+    <p class="text-gray-500 font-medium">Manage rooms availability, pricing and maintenance</p>
+  </div>
 
+  <!-- Metrics Cards Grid -->
+  <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-10">
+    
+        <!-- Available Card -->
+    <div class="border border-gray-300 rounded-xl p-5 flex items-center justify-between shadow-sm">
+      <div class="w-12 h-12 rounded-full bg-[#34d399]"></div>
+      <div class="text-center pr-6">
+        <p class="text-sm font-semibold text-gray-500 mb-1">Available</p>
+        <p class="text-2xl font-bold text-black">{{ available_count|default:"45" }}</p>
+      </div>
+      <div></div>
+    </div>
+    <!-- Occupied Card -->
+    <div class="border border-gray-300 rounded-xl p-5 flex items-center justify-between shadow-sm">
+      <div class="w-12 h-12 rounded-full bg-[#ef4444]"></div>
+      <div class="text-center pr-6">
+        <p class="text-sm font-semibold text-gray-500 mb-1">Occupied</p>
+        <p class="text-2xl font-bold text-black">{{ occupied_count|default:"32" }}</p>
+      </div>
+      <div></div>
+    </div>
+
+    <!-- Maintenance Card -->
+    <div class="border border-gray-300 rounded-xl p-5 flex items-center justify-between shadow-sm">
+      <div class="w-12 h-12 rounded-full bg-[#eab308]"></div>
+      <div class="text-center pr-6">
+        <p class="text-sm font-semibold text-gray-500 mb-1">Maintenance</p>
+        <p class="text-2xl font-bold text-black">{{ maintenance_count|default:"5" }}</p>
+      </div>
+      <div></div>
+    </div>
+
+  </div>
+
+  <!-- Table Header Controls -->
+  <div class="flex items-center justify-between mb-6">
+    <h2 class="text-xl font-bold text-black">All Rooms</h2>
+    
+    <div class="flex items-center space-x-4">
+      <!-- Add New Button Trigger -->
+      <button type="button" onclick="toggleModal('add-modal', true)" class="border border-gray-400 text-gray-700 px-4 py-1.5 rounded text-sm font-medium hover:bg-gray-50 transition">
+        + Add new
+      </button>
+
+      <!-- Search Bar -->
+      <form method="GET" action="." class="flex items-center">
+        <input 
+          type="text" 
+          name="search" 
+          value="{{ search_query|default:'' }}" 
+          placeholder="Search" 
+          class="border border-gray-400 rounded-l px-3 py-1.5 text-sm focus:outline-none w-48"
+        />
+        <button type="submit" class="bg-[#0b2bba] text-white px-4 py-2 rounded-r hover:bg-blue-800 transition flex items-center justify-center">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+          </svg>
+        </button>
+      </form>
+    </div>
+  </div>
+
+    <!-- Rooms Table -->
+  <div class="overflow-x-auto">
+    <table class="w-full border-collapse border border-gray-300 text-left">
+      <thead>
+        <tr class="bg-[#0b2bba] text-white text-base">
+          <th class="py-3 px-6 font-semibold border-r border-blue-800 w-1/5">Room no</th>
+          <th class="py-3 px-6 font-semibold border-r border-blue-800 w-1/4">Type</th>
+          <th class="py-3 px-6 font-semibold border-r border-blue-800 text-center w-1/4">Status</th>
+          <th class="py-3 px-6 font-semibold text-center w-1/4">Action</th>
+        </tr>
+      </thead>
+      <tbody class="divide-y divide-gray-300">
+        {% for room in rooms %}
+        <tr class="hover:bg-gray-50">
+          <td class="py-4 px-6 text-sm font-bold text-black border-r border-gray-300">
+            {{ room.room_number }}
+          </td>
+          <td class="py-4 px-6 text-sm font-medium text-gray-800 border-r border-gray-300">
+            {{ room.room_type }}
+          </td>
+          <td class="py-4 px-6 text-center border-r border-gray-300">
+            {% if room.is_enabled %}
+              <span class="inline-block bg-[#0b2bba] text-white text-xs font-medium px-8 py-1.5 rounded-full">
+                Enabled
+              </span>
+            {% else %}
+              <span class="inline-block bg-gray-400 text-white text-xs font-medium px-8 py-1.5 rounded-full">
+                Disabled
+              </span>
+            {% endif %}
+          </td>
+          <td class="py-4 px-6 text-center space-x-2">
+            <!-- Edit Button Trigger -->
+            <button type="button" onclick="openEditModal('{{ room.id }}', '{{ room.room_number }}', '{{ room.room_type }}', '{{ room.status }}')" class="bg-[#0b2bba] text-white text-xs font-semibold px-4 py-1.5 rounded hover:bg-blue-800 transition">
+              Edit
+            </button>
+            <a href="{% url 'room_toggle' room.id %}" class="inline-block bg-[#0b2bba] text-white text-xs font-semibold px-4 py-1.5 rounded hover:bg-blue-800 transition">
+              {% if room.is_enabled %}Disable{% else %}Enable{% endif %}
+            </a>
+          </td>
+        </tr>
+        {% empty %}
+        <!-- UI Fallback Mockup Row -->
+        <tr class="hover:bg-gray-50">
+          <td class="py-4 px-6 text-sm font-bold text-black border-r border-gray-300">101</td>
+          <td class="py-4 px-6 text-sm font-medium text-gray-800 border-r border-gray-300">Deluxe</td>
+          <td class="py-4 px-6 text-center border-r border-gray-300">
+            <span class="inline-block bg-[#0b2bba] text-white text-xs font-medium px-8 py-1.5 rounded-full">Enabled</span>
+          </td>
+          <td class="py-4 px-6 text-center space-x-2">
+            <button type="button" onclick="openEditModal('1', '101', 'Deluxe', 'available')" class="bg-[#0b2bba] text-white text-xs font-semibold px-4 py-1.5 rounded hover:bg-blue-800 transition">Edit</button>
+            <button class="bg-[#0b2bba] text-white text-xs font-semibold px-4 py-1.5 rounded hover:bg-blue-800 transition">Disable</button>
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+
+</div>
+
+<!-- ADD ROOM MODAL -->
+<div id="add-modal" class="fixed inset-0 bg-black/50 hidden items-center justify-center z-50">
+  <div class="bg-white rounded-lg p-6 w-full max-w-md shadow-xl border border-gray-200">
+    <div class="flex justify-between items-center mb-4">
+      <h3 class="text-xl font-bold text-black">Add New Room</h3>
+      <button type="button" onclick="toggleModal('add-modal', false)" class="text-gray-400 hover:text-black font-bold text-lg">&times;</button>
+    </div>
+    <form method="POST" action="{% url 'room_create' %}">
+      {% csrf_token %}
+      <div class="mb-4">
+        <label class="block text-sm font-semibold text-gray-700 mb-1">Room Number</label>
+        <input type="text" name="room_number" required placeholder="e.g. 107" class="w-full border border-gray-300 rounded px-3 py-2 text-sm focus:outline-none focus:border-blue-600">
+      </div>
+      <div class="mb-4">
+        <label class="block text-sm font-semibold text-gray-700 mb-1">Room Type</label>
+        <select name="room_type" class="w-full border border-gray-300 rounded px-3 py-2 text-sm focus:outline-none focus:border-blue-600">
+          <option value="Deluxe">Deluxe</option>
+          <option value="Suit Room">Suit Room</option>
+        </select>
+      </div>
+      <div class="mb-6">
+        <label class="block text-sm font-semibold text-gray-700 mb-1">Status</label>
+        <select name="status" class="w-full border border-gray-300 rounded px-3 py-2 text-sm focus:outline-none focus:border-blue-600">
+          <option value="available">Available</option>
+          <option value="occupied">Occupied</option>
+          <option value="maintenance">Maintenance</option>
+        </select>
+      </div>
+      <div class="flex justify-end space-x-3">
+        <button type="button" onclick="toggleModal('add-modal', false)" class="px-4 py-2 border border-gray-300 rounded text-sm text-gray-700 hover:bg-gray-100">Cancel</button>
+        <button type="submit" class="px-4 py-2 bg-[#0b2bba] text-white rounded text-sm hover:bg-blue-800">Save Room</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- EDIT ROOM MODAL -->
+<div id="edit-modal" class="fixed inset-0 bg-black/50 hidden items-center justify-center z-50">
+  <div class="bg-white rounded-lg p-6 w-full max-w-md shadow-xl border border-gray-200">
+    <div class="flex justify-between items-center mb-4">
+      <h3 class="text-xl font-bold text-black">Edit Room</h3>
+      <button type="button" onclick="toggleModal('edit-modal', false)" class="text-gray-400 hover:text-black font-bold text-lg">&times;</button>
+    </div>
+    <form id="edit-form" method="POST" action="">
+      {% csrf_token %}
+      <div class="mb-4">
+        <label class="block text-sm font-semibold text-gray-700 mb-1">Room Number</label>
+        <input type="text" id="edit-room-number" name="room_number" required class="w-full border border-gray-300 rounded px-3 py-2 text-sm focus:outline-none focus:border-blue-600">
+      </div>
+      <div class="mb-4">
+        <label class="block text-sm font-semibold text-gray-700 mb-1">Room Type</label>
+        <select id="edit-room-type" name="room_type" class="w-full border border-gray-300 rounded px-3 py-2 text-sm focus:outline-none focus:border-blue-600">
+          <option value="Deluxe">Deluxe</option>
+          <option value="Suit Room">Suit Room</option>
+        </select>
+      </div>
+      <div class="mb-6">
+        <label class="block text-sm font-semibold text-gray-700 mb-1">Status</label>
+        <select id="edit-status" name="status" class="w-full border border-gray-300 rounded px-3 py-2 text-sm focus:outline-none focus:border-blue-600">
+          <option value="available">Available</option>
+          <option value="occupied">Occupied</option>
+          <option value="maintenance">Maintenance</option>
+        </select>
+      </div>
+      <div class="flex justify-end space-x-3">
+        <button type="button" onclick="toggleModal('edit-modal', false)" class="px-4 py-2 border border-gray-300 rounded text-sm text-gray-700 hover:bg-gray-100">Cancel</button>
+        <button type="submit" class="px-4 py-2 bg-[#0b2bba] text-white rounded text-sm hover:bg-blue-800">Update Room</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- Simple JavaScript for Modal Control -->
+<script>
+  function toggleModal(modalId, show) {
+    const modal = document.getElementById(modalId);
+    if (show) {
+      modal.classList.remove('hidden');
+      modal.classList.add('flex');
+    } else {
+      modal.classList.add('hidden');
+      modal.classList.remove('flex');
+    }
+  }
+
+  function openEditModal(id, number, type, status) {
+    document.getElementById('edit-room-number').value = number;
+    document.getElementById('edit-room-type').value = type;
+    document.getElementById('edit-status').value = status;
+    // Dynamically sets action URL matching Django pattern: /rooms/edit/<id>/
+    document.getElementById('edit-form').action = /rooms/edit/${id}/;
+    toggleModal('edit-modal', true);
+  }
+</script>
 {% endblock %}
