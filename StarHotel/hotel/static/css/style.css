@@ -342,7 +342,7 @@ header:has(~ main .layout) {
 }
 
 .tab-item.active {
-    bckground: var(--navy);
+    background: var(--navy);
     color: white;
 }
 
@@ -351,9 +351,6 @@ header:has(~ main .layout) {
     gap: 12px;
     margin-top: 20px;
 }
-
-
-
 .toolbar-btn {
     padding: 8px 20px;
     border: 1px solid #d1d5db;
@@ -374,7 +371,6 @@ header:has(~ main .layout) {
     align-items: flex-start;
 }
 
-
 .room-list {
     flex: 1;
     display: flex;
@@ -383,7 +379,7 @@ header:has(~ main .layout) {
     min-width: 0;
 }
 
-.roomcard {
+.room-card {
     display: flex;
     gap: 20px;
     background: white;
@@ -418,7 +414,7 @@ header:has(~ main .layout) {
     color: #111827;
 }
 
-.selected-tg {
+.selected-tag {
     color: #16a34a;
     font-weight: 700;
     font-size: 13px;
@@ -432,7 +428,7 @@ header:has(~ main .layout) {
     letter-spacing: 0.5px;
 }
 
-.room-infop {
+.room-info p {
     margin: 0;
     font-size: 14px;
     color: #374151;
@@ -445,7 +441,7 @@ header:has(~ main .layout) {
     margin-top: 12px;
     font-size: 13px;
     color: #6b7280;
-    fontweight: 600;
+    font-weight: 600;
 }
 
 .room-info hr {

@@ -1,4 +1,4 @@
-from django.shortcuts import render
+from django.shortcuts import redirect, render
 
 def home(request):
     return render(request, "hotel/home.html")
@@ -37,6 +37,16 @@ def admin_dashboard(request):
 
 def manage_rooms(request):
     return render(request, "hotel/manage_rooms.html")
+
+def room_create(request):
+    if request.method == "POST":
+        room_number = request.POST.get("room_number")
+        room_type = request.POST.get("room_type")
+        status = request.POST.get("status")
+
+        # create room here
+
+    return redirect("manage_rooms")
 
 
 def reports(request):
