@@ -21,3 +21,8 @@ db.sqlite3
 
 # Python cache
 *.egg-info/
+
+__pycache__/
+*.pyc
+.env
+db.sqlite3
