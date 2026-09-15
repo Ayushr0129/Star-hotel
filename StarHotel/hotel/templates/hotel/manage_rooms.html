@@ -226,7 +226,7 @@ Manage Rooms - STAR HOTEL
     document.getElementById('edit-room-type').value = type;
     document.getElementById('edit-status').value = status;
     // Dynamically sets action URL matching Django pattern: /rooms/edit/<id>/
-    document.getElementById('edit-form').action = /rooms/edit/${id}/;
+    document.getElementById('edit-form').action = '/rooms/edit/${id}/';
     toggleModal('edit-modal', true);
   }
 </script>
