@@ -1,12 +1,18 @@
-body{
-
-    margin:0;
-
-    font-family:Arial, Helvetica, sans-serif;
-
-    background:#F6F8FA;
-
+/* Colour Variables */
+:root {
+    --primary-blue: #1d39c4;
+    --primary-hover: #10239e;
+    --dark-navy: #091a30;
+    --text-dark: #1e293b;
+    --text-muted: #64748b;
+    --bg-light: #f8fafc;
+    --border-color: #e2e8f0;
+    --radius-md: 12px;
 }
+
+* {
+    box-sizing: border-box;
+    margin: 0;
 
 header{
 
@@ -157,115 +163,184 @@ main{
 }
 
 main:has(.layout) {
+>>>>>>> main
     padding: 0;
-    min-height: auto;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
 }
 
-header:has(~ main .layout) {
-    display: none;
+body {
+    background-color: #ffffff;
+    color: var(--text-dark);
 }
 
-/*Header for all pages*/
-
-.site-header{ 
-    display:flex;
+/* Header & Nav */
+.site-header {
+    display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 16px 40px;
-    background: white;
-    border-bottom: 1px solid #e5e7eb;
+    padding: 1rem 5%;
+    background: #ffffff;
+    border-bottom: 1px solid var(--border-color);
+    position: sticky;
+    top: 0;
+    z-index: 100;
 }
 
 .brand {
     display: flex;
     align-items: center;
-    gap: 10px;
+    gap: 0.5rem;
 }
 
-.brand-icon{
-    width: 18px;
-    height: 18px;
-    flex-shrink: 0;
+.brand-icon {
+    width: 24px;
+    height: 24px;
 }
 
 .brand-text {
     display: flex;
     flex-direction: column;
-    line-height: 1.2;
 }
 
-.brand-name{
-    font-size: 17px;
+.brand-name {
     font-weight: 800;
-    color: #111827;
+    font-size: 1.1rem;
+    letter-spacing: 0.5px;
 }
 
 .brand-tagline {
-    font-size: 11px;
-    color: #6b7280;
-
+    font-size: 0.65rem;
+    color: var(--text-muted);
 }
-
-.site-nav {
-    display: flex;
-    align-items: center;
-    gap: 20px;
-    flex-wrap: nowrap;
-    white-space: nowrap;
-}
-
-
-/*for header animation*/
-
-.btn-register {
-    background: #2952e3 !important;
-    color: white !important;
-    padding: 10px 22px;
-    border-radius: 9999px;
-    font-weight: 700 !important;
-    box-shadow: 0 2px 6px rgba(41, 82, 227, 0.35);
-}
- 
-.btn-register:hover {
-    background: #1f3fc4 !important;
-}
- 
 
 .site-nav {
     position: relative;
     display: flex;
     align-items: center;
-    gap: 6px;
-    flex-wrap: nowrap;
+    gap: 1.5rem;
 }
- 
-.nav-pill {
-    position: absolute;
-    top: 2px;
-    bottom: 2px;
-    left: 0;
-    width: 0;
-    background: #2952e3;
-    border-radius: 0px;
-    box-shadow: 0 2px 6px rgba(41, 82, 227, 0.35);
-    transition: left 0.25s ease, width 0.25s ease;
-    z-index: 0;
-}
- 
+
 .site-nav-item {
-    position: relative;
-    z-index: 1;
-    padding: 8px 18px;
-    font-size: 14px;
-    font-weight: 600;
-    color: #1f2937;
     text-decoration: none;
-    white-space: nowrap;
-    transition: color 0.2s ease;
+    color: var(--text-dark);
+    font-size: 0.9rem;
+    font-weight: 500;
 }
- 
-.site-nav-item.on-pill {
+
+#registerLink {
+    background-color: var(--primary-blue);
+    color: #ffffff;
+    padding: 0.5rem 1.25rem;
+    border-radius: 6px;
+}
+
+/* Hero & Booking Bar */
+.hero {
+    position: relative;
+    height: 420px;
+    background: linear-gradient(rgba(0,0,0,0.4), rgba(0,0,0,0.4)), 
+                url('../images/hero-bg.jpg') center/cover no-repeat;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
     color: white;
+<<<<<<< HEAD
+    text-align: center;
+}
+
+.hero h1 { font-size: 2.5rem; margin-bottom: 0.5rem; }
+.hero p { margin-bottom: 2rem; opacity: 0.9; }
+
+.booking-bar {
+    background: rgba(255, 255, 255, 0.25);
+    backdrop-filter: blur(10px);
+    padding: 0.75rem;
+    border-radius: 12px;
+    display: flex;
+    gap: 0.75rem;
+    width: 90%;
+    max-width: 950px;
+}
+
+.booking-field {
+    flex: 1;
+    background: white;
+    padding: 0.5rem 0.8rem;
+    border-radius: 6px;
+    display: flex;
+    flex-direction: column;
+    text-align: left;
+}
+
+.booking-field label {
+    font-size: 0.65rem;
+    color: var(--text-muted);
+    font-weight: 700;
+    text-transform: uppercase;
+}
+
+.booking-field select, .booking-field input {
+    border: none;
+    outline: none;
+    font-weight: 600;
+    background: transparent;
+}
+
+.btn-search {
+    background: var(--primary-blue);
+    color: white;
+    border: none;
+    padding: 0 1.5rem;
+    border-radius: 6px;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+/* Cards & Layout */
+.container {
+    max-width: 1200px;
+    margin: 3rem auto;
+    padding: 0 1.5rem;
+}
+
+.card-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 1.5rem;
+    margin-top: 1.5rem;
+}
+
+.card {
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-md);
+    overflow: hidden;
+    background: #fff;
+}
+
+.card-img {
+    width: 100%;
+    height: 180px;
+    object-fit: cover;
+}
+
+.card-body {
+    padding: 1rem;
+}
+
+.card-title {
+    font-size: 1.1rem;
+    font-weight: 700;
+}
+
+.card-meta {
+    font-size: 0.75rem;
+    color: var(--text-muted);
+    margin: 0.4rem 0 1rem;
+}
+
+.card-footer {
+=======
 }
 
 /*Dashbaord content**/
@@ -599,11 +674,30 @@ header:has(~ main .layout) {
 }
 
 .room-title-row {
+>>>>>>> main
     display: flex;
     justify-content: space-between;
     align-items: center;
 }
 
+<<<<<<< HEAD
+.btn-sm {
+    background-color: var(--primary-blue);
+    color: white;
+    padding: 0.4rem 0.9rem;
+    border-radius: 4px;
+    text-decoration: none;
+    font-size: 0.85rem;
+}
+
+/* Footer */
+footer {
+    background-color: var(--dark-navy);
+    color: white;
+    text-align: center;
+    padding: 2rem 0;
+    margin-top: 4rem;
+=======
 .room-title-row h3 {
     margin: 0;
     font-size: 18px;
@@ -1046,4 +1140,5 @@ header:has(~ main .layout) {
         width: 100%;
         position: static;
     }
+>>>>>>> main
 }
