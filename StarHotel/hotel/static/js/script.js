@@ -88,10 +88,19 @@ function showPanel(tabKey) {
     });
 }
 
+function updateHero(tabButton) {
+    const heroImg = document.getElementById('heroImg');
+    const heroSrc = tabButton.dataset.hero;
+    if (heroImg && heroSrc) {
+        heroImg.src = heroSrc;
+    }
+}
+
 const initialTab = document.querySelector('.tab-item.active');
 if (initialTab) {
     moveTabHighlight(initialTab);
     showPanel(initialTab.dataset.tab);
+    updateHero(initialTab);
 }
 
 if (document.querySelector('.tab-item.active')) {
@@ -104,6 +113,7 @@ tabs.forEach(tab => {
         this.classList.add('active');
         moveTabHighlight(this);
         showPanel(this.dataset.tab);
+        updateHero(this);
     });
 });
 

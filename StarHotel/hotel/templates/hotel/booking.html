@@ -9,7 +9,7 @@ Booking
 {% block content %}
 
 <section class ="hero-banner">
-    <img src="/static/images/Receptionist-Booking.jpg" alt="Hotel Receptionist" class="hero-img">
+    <img src="/static/images/Receptionist-Booking.jpg" alt="Hotel Receptionist" class="hero-img" id="heroImg">
 </section>
 
 <div class="booking-container">
@@ -37,9 +37,9 @@ Booking
 
     <div class="booking-tabs" id="bookingTabs">
         <div class="tab-highlight" id="tabHighlight"></div>
-        <button class="tab-item active" data-tab="rooms">Room</button>
-        <button class="tab-item" data-tab="packages">Packages</button>
-        <button class="tab-item" data-tab="events">Events</button>
+        <button class="tab-item active" data-tab="rooms" data-hero="/static/images/Receptionist-Booking.jpg">Room</button>
+        <button class="tab-item" data-tab="packages" data-hero="/static/images/packages-booking.jpg">Packages</button>
+        <button class="tab-item" data-tab="events" data-hero="/static/images/Event-booking.jpg">Events</button>
     </div>
 
     <div class="toolbar">
@@ -138,7 +138,7 @@ Booking
 
                 <div class="room-card" data-name="Weekend Getaway" data-price="9500">
                     <div class="room-media">
-                        <img src="/static/images/weekend-getaway.jpeg" alt="Weekend Getaway" class="room-img">
+                        <img src="/static/images/D9A39033-A805-4A04-8D07-513C44D4902B_1_105_c.jpeg" alt="Weekend Getaway" class="room-img">
                     </div>
                     <div class="room-info">
                         <div class="room-title-row"><h3>Weekend Getaway</h3></div>
@@ -157,7 +157,7 @@ Booking
 
                 <div class="room-card" data-name="Romantic Escape" data-price="12000">
                     <div class="room-media">
-                        <img src="/static/images/romantic-escape.jpeg" alt="Romantic Escape" class="room-img">
+                        <img src="/static/images/romantic.jpeg" alt="Romantic Escape" class="room-img">
                     </div>
                     <div class="room-info">
                         <div class="room-title-row"><h3>Romantic Escape</h3></div>
@@ -176,7 +176,7 @@ Booking
 
                 <div class="room-card" data-name="Family Fun Package" data-price="15500">
                     <div class="room-media">
-                        <img src="/static/images/family-fun.jpeg" alt="Family Fun Package" class="room-img">
+                        <img src="/static/images/romantic.jpeg" alt="Family Fun Package" class="room-img">
                     </div>
                     <div class="room-info">
                         <div class="room-title-row"><h3>Family Fun Package</h3></div>
@@ -196,7 +196,62 @@ Booking
             </div>
 
             <div class="tab-panel" data-tab="events" hidden>
-                <!-- add event cards here, same .room-card structure -->
+                <div class="room-card" data-name="Live Jazz Night" data-price="2500">
+        <div class="room-media">
+            <img src="/static/images/jazz-night.jpeg" alt="Live Jazz Night" class="room-img">
+        </div>
+        <div class="room-info">
+            <div class="room-title-row"><h3>Live Jazz Night</h3></div>
+            <h4>Description</h4>
+            <p>An evening of live jazz by the poolside, with a welcome drink and light appetizers included.</p>
+            <hr>
+            <div class="room-footer">
+                <span class="room-price">Price : Rs 2 500</span>
+                <div class="room-actions">
+                    <button class="btn-outline-navy">View</button>
+                    <button class="btn-navy btn-book">Book</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="room-card" data-name="Sunset Beach BBQ" data-price="3500">
+        <div class="room-media">
+            <img src="/static/images/beach-bbq.jpeg" alt="Sunset Beach BBQ" class="room-img">
+        </div>
+        <div class="room-info">
+            <div class="room-title-row"><h3>Sunset Beach BBQ</h3></div>
+            <h4>Description</h4>
+            <p>A beachfront barbecue at sunset, featuring grilled seafood, live music and a full bar.</p>
+            <hr>
+            <div class="room-footer">
+                <span class="room-price">Price : Rs 3 500</span>
+                <div class="room-actions">
+                    <button class="btn-outline-navy">View</button>
+                    <button class="btn-navy btn-book">Book</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="room-card" data-name="Wine Tasting Evening" data-price="4000">
+        <div class="room-media">
+            <img src="/static/images/wine-tasting.jpeg" alt="Wine Tasting Evening" class="room-img">
+        </div>
+        <div class="room-info">
+            <div class="room-title-row"><h3>Wine Tasting Evening</h3></div>
+            <h4>Description</h4>
+            <p>Sample a curated selection of wines paired with cheese and charcuterie, guided by our in-house sommelier.</p>
+            <hr>
+            <div class="room-footer">
+                <span class="room-price">Price : Rs 4 000</span>
+                <div class="room-actions">
+                    <button class="btn-outline-navy">View</button>
+                    <button class="btn-navy btn-book">Book</button>
+                </div>
+            </div>
+        </div>
+    </div>
             </div>
 
         </div>
