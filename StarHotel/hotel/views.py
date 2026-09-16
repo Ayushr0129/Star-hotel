@@ -1,7 +1,34 @@
 from django.shortcuts import render
 
 def home(request):
-    return render(request, "hotel/home.html")
+    rooms = [
+        {
+            'name': 'Deluxe Room',
+            'details': '2 Guests • King Bed',
+            'price': '10,000',
+            'image_path': 'images/rooms/deluxe.jpg'
+        },
+        {
+            'name': 'Standard Room',
+            'details': '2 Guests • Queen Bed',
+            'price': '8,000',
+            'image_path': 'images/rooms/standard.jpg'
+        },
+        {
+            'name': 'Studio Room',
+            'details': '2 Guests • King Bed • Terrace',
+            'price': '12,000',
+            'image_path': 'images/rooms/studio.jpg'
+        },
+        {
+            'name': 'Executive Room',
+            'details': '3 Guests • King Bed • Pool Building',
+            'price': '18,000',
+            'image_path': 'images/rooms/executive.jpg'
+        },
+    ]
+    return render(request, 'home.html', {'rooms': rooms})
+    
 
 def search_results(request):
     return render(request, "hotel/search_results.html")
