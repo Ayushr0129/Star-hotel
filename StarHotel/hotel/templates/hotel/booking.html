@@ -13,30 +13,27 @@ Booking
 </section>
 
 <div class="booking-container">
-    
-        <div class="search-bar">
-            <div class ="search-field">
-                <label>Hotels</label>
-                <select>
-                    <option> Star Hotel - Main</option>
-                </select>
-            </div>
 
-        
+    <div class="search-bar">
+        <div class="search-field">
+            <label>Hotels</label>
+            <select>
+                <option>Star Hotel - Main</option>
+            </select>
+        </div>
         <div class="search-field">
             <label>Guests</label>
-            <input type = "number" min="1" placeholder="2">
+            <input type="number" min="1" placeholder="2">
         </div>
-        <div class = "search-field">
+        <div class="search-field">
             <label>Check-In</label>
             <input type="date">
         </div>
-        
-        <div class = "search-field">
+        <div class="search-field">
             <label>Check-Out</label>
             <input type="date">
         </div>
-     </div>
+    </div>
 
     <div class="booking-tabs" id="bookingTabs">
         <div class="tab-highlight" id="tabHighlight"></div>
@@ -46,98 +43,161 @@ Booking
     </div>
 
     <div class="toolbar">
-       
         <button class="toolbar-btn">Sort By</button>
         <button class="toolbar-btn">Filters</button>
     </div>
 
-      <div class="booking-layout">
+    <div class="booking-layout">
 
         <div class="room-list">
 
-            <div class="room-card" data-name="Deluxe king room" data-price="15000">
-    <div class="room-media">
-        <img src="/static/images/2BDDF7B0-9FE3-4B62-AB2A-B6CEE2FB6361_4_5005_c.jpeg" alt="Deluxe king room" class="room-img">
-        <div class="room-specs">
-            <span>2 Guests</span>
-            <span>King Bed</span>
-            <span>35 m²</span>
-        </div>
-    </div>
-    <div class="room-info">
-        <div class="room-title-row">
-            <h3>Deluxe king room</h3>
-            <span class="selected-tag">Selected</span>
-        </div>
-        <h4>Description</h4>
-        <p>Experience comfort and luxury in our Deluxe Room, featuring a king-size bed, complimentary breakfast, air conditioning, free Wi-Fi and panoramic garden views.</p>
-        <hr>
-        <div class="room-footer">
-            <span class="room-price">Price : Rs 15 000</span>
-            <div class="room-actions">
-                <button class="btn-outline-navy">View</button>
-                <button class="btn-navy btn-book">Book</button>
+            <div class="tab-panel" data-tab="rooms">
+
+                <div class="room-card" data-name="Deluxe king room" data-price="15000">
+                    <div class="room-media">
+                        <img src="/static/images/2BDDF7B0-9FE3-4B62-AB2A-B6CEE2FB6361_4_5005_c.jpeg" alt="Deluxe king room" class="room-img">
+                        <div class="room-specs">
+                            <span>2 Guests</span>
+                            <span>King Bed</span>
+                            <span>35 m²</span>
+                        </div>
+                    </div>
+                    <div class="room-info">
+                        <div class="room-title-row">
+                            <h3>Deluxe king room</h3>
+                            <span class="selected-tag">Selected</span>
+                        </div>
+                        <h4>Description</h4>
+                        <p>Experience comfort and luxury in our Deluxe Room, featuring a king-size bed, complimentary breakfast, air conditioning, free Wi-Fi and panoramic garden views.</p>
+                        <hr>
+                        <div class="room-footer">
+                            <span class="room-price">Price : Rs 15 000</span>
+                            <div class="room-actions">
+                                <button class="btn-outline-navy">View</button>
+                                <button class="btn-navy btn-book">Book</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="room-card" data-name="Executive Room" data-price="17000">
+                    <div class="room-media">
+                        <img src="/static/images/1567D193-D446-4DC8-AF61-EC6D96F1F0FB.jpeg" alt="Executive Room" class="room-img">
+                        <div class="room-specs">
+                            <span>2 Guests</span>
+                            <span>Queen Bed</span>
+                            <span>40 m²</span>
+                        </div>
+                    </div>
+                    <div class="room-info">
+                        <div class="room-title-row">
+                            <h3>Executive Room</h3>
+                        </div>
+                        <h4>Description</h4>
+                        <p>Experience comfort and elegance in our Deluxe Room, featuring a king-size bed, a spacious seating area, complimentary high-speed Wi-Fi, air conditioning, and a private balcony with breathtaking ocean views. Designed for both relaxation and convenience, this room is perfect for couples or business travellers seeking a luxurious stay.</p>
+                        <hr>
+                        <div class="room-footer">
+                            <span class="room-price">Price : Rs 17 000</span>
+                            <div class="room-actions">
+                                <button class="btn-outline-navy">View</button>
+                                <button class="btn-navy btn-book">Book</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="room-card" data-name="Family Suit" data-price="21000">
+                    <div class="room-media">
+                        <img src="/static/images/920D2250-EB91-4678-8B4D-F188CD1C4E7B.jpeg" alt="Family Suit" class="room-img">
+                        <div class="room-specs">
+                            <span>4 Guests</span>
+                            <span>2 Double Beds</span>
+                            <span>50 m²</span>
+                        </div>
+                    </div>
+                    <div class="room-info">
+                        <div class="room-title-row">
+                            <h3>Family Suit</h3>
+                        </div>
+                        <h4>Description</h4>
+                        <p>Enjoy a spacious and welcoming Family Suite designed for comfort and convenience. Featuring two double beds, a comfortable seating area, complimentary high-speed Wi-Fi, air conditioning, a private balcony, and modern amenities, this room is perfect for families or small groups looking for a relaxing getaway.</p>
+                        <hr>
+                        <div class="room-footer">
+                            <span class="room-price">Price : Rs 21 000</span>
+                            <div class="room-actions">
+                                <button class="btn-outline-navy">View</button>
+                                <button class="btn-navy btn-book">Book</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
             </div>
-        </div>
-    </div>
-</div>
 
-<div class="room-card" data-name="Executive Room" data-price="17000">
-    <div class="room-media">
-        <img src="/static/images/1567D193-D446-4DC8-AF61-EC6D96F1F0FB.jpeg" alt="Executive Room" class="room-img">
-        <div class="room-specs">
-            <span>2 Guests</span>
-            <span>Queen Bed</span>
-            <span>40 m²</span>
-        </div>
-    </div>
-    <div class="room-info">
-        <div class="room-title-row">
-            <h3>Executive Room</h3>
-        </div>
-        <h4>Description</h4>
-        <p>Experience comfort and elegance in our Deluxe Room, featuring a king-size bed, a spacious seating area, complimentary high-speed Wi-Fi, air conditioning, and a private balcony with breathtaking ocean views. Designed for both relaxation and convenience, this room is perfect for couples or business travellers seeking a luxurious stay.</p>
-        <hr>
-        <div class="room-footer">
-            <span class="room-price">Price : Rs 17 000</span>
-            <div class="room-actions">
-                <button class="btn-outline-navy">View</button>
-                <button class="btn-navy btn-book">Book</button>
+            <div class="tab-panel" data-tab="packages" hidden>
+
+                <div class="room-card" data-name="Weekend Getaway" data-price="9500">
+                    <div class="room-media">
+                        <img src="/static/images/weekend-getaway.jpeg" alt="Weekend Getaway" class="room-img">
+                    </div>
+                    <div class="room-info">
+                        <div class="room-title-row"><h3>Weekend Getaway</h3></div>
+                        <h4>Description</h4>
+                        <p>Relax with a two-night stay, complimentary breakfast and selected activities.</p>
+                        <hr>
+                        <div class="room-footer">
+                            <span class="room-price">Price : Rs 9 500</span>
+                            <div class="room-actions">
+                                <button class="btn-outline-navy">View</button>
+                                <button class="btn-navy btn-book">Book</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="room-card" data-name="Romantic Escape" data-price="12000">
+                    <div class="room-media">
+                        <img src="/static/images/romantic-escape.jpeg" alt="Romantic Escape" class="room-img">
+                    </div>
+                    <div class="room-info">
+                        <div class="room-title-row"><h3>Romantic Escape</h3></div>
+                        <h4>Description</h4>
+                        <p>Enjoy a romantic stay with breakfast, spa access and a special dinner.</p>
+                        <hr>
+                        <div class="room-footer">
+                            <span class="room-price">Price : Rs 12 000</span>
+                            <div class="room-actions">
+                                <button class="btn-outline-navy">View</button>
+                                <button class="btn-navy btn-book">Book</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="room-card" data-name="Family Fun Package" data-price="15500">
+                    <div class="room-media">
+                        <img src="/static/images/family-fun.jpeg" alt="Family Fun Package" class="room-img">
+                    </div>
+                    <div class="room-info">
+                        <div class="room-title-row"><h3>Family Fun Package</h3></div>
+                        <h4>Description</h4>
+                        <p>Perfect for families with breakfast, children's activities and late checkout.</p>
+                        <hr>
+                        <div class="room-footer">
+                            <span class="room-price">Price : Rs 15 500</span>
+                            <div class="room-actions">
+                                <button class="btn-outline-navy">View</button>
+                                <button class="btn-navy btn-book">Book</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
             </div>
-        </div>
-    </div>
-</div>
 
-
-
-
-
-
-            <div class="room-card" data-name="Family Suit" data-price="21000">
-    <div class="room-media">
-        <img src="/static/images/920D2250-EB91-4678-8B4D-F188CD1C4E7B.jpeg" alt="Family Suit" class="room-img">
-        <div class="room-specs">
-            <span>4 Guests</span>
-            <span>2 Double Beds</span>
-            <span>50 m²</span>
-        </div>
-    </div>
-    <div class="room-info">
-        <div class="room-title-row">
-            <h3>Family Suit</h3>
-        </div>
-        <h4>Description</h4>
-        <p>Enjoy a spacious and welcoming Family Suite designed for comfort and convenience. Featuring two double beds, a comfortable seating area, complimentary high-speed Wi-Fi, air conditioning, a private balcony, and modern amenities, this room is perfect for families or small groups looking for a relaxing getaway.</p>
-        <hr>
-        <div class="room-footer">
-            <span class="room-price">Price : Rs 21 000</span>
-            <div class="room-actions">
-                <button class="btn-outline-navy">View</button>
-                <button class="btn-navy btn-book">Book</button>
+            <div class="tab-panel" data-tab="events" hidden>
+                <!-- add event cards here, same .room-card structure -->
             </div>
-        </div>
-    </div>
-</div>
 
         </div>
 
@@ -159,6 +219,8 @@ Booking
     </div>
 
 </div>
+
+
 
 {% endblock %}
 
