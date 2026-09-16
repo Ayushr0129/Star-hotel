@@ -8,6 +8,275 @@ Booking
 
 {% block content %}
 
-<h1>Booking Page</h1>
+<section class ="hero-banner">
+    <img src="/static/images/Receptionist-Booking.jpg" alt="Hotel Receptionist" class="hero-img" id="heroImg">
+</section>
+
+<div class="booking-container">
+
+    <div class="search-bar">
+        <div class="search-field">
+            <label>Hotels</label>
+            <select>
+                <option>Star Hotel - Main</option>
+            </select>
+        </div>
+        <div class="search-field">
+            <label>Guests</label>
+            <input type="number" min="1" placeholder="2">
+        </div>
+        <div class="search-field">
+            <label>Check-In</label>
+            <input type="date">
+        </div>
+        <div class="search-field">
+            <label>Check-Out</label>
+            <input type="date">
+        </div>
+    </div>
+
+    <div class="booking-tabs" id="bookingTabs">
+        <div class="tab-highlight" id="tabHighlight"></div>
+        <button class="tab-item active" data-tab="rooms" data-hero="/static/images/Receptionist-Booking.jpg">Room</button>
+        <button class="tab-item" data-tab="packages" data-hero="/static/images/packages-booking.jpg">Packages</button>
+        <button class="tab-item" data-tab="events" data-hero="/static/images/Event-booking.jpg">Events</button>
+    </div>
+
+    <div class="toolbar">
+        <button class="toolbar-btn">Sort By</button>
+        <button class="toolbar-btn">Filters</button>
+    </div>
+
+    <div class="booking-layout">
+
+        <div class="room-list">
+
+            <div class="tab-panel" data-tab="rooms">
+
+                <div class="room-card" data-name="Deluxe king room" data-price="15000">
+                    <div class="room-media">
+                        <img src="/static/images/2BDDF7B0-9FE3-4B62-AB2A-B6CEE2FB6361_4_5005_c.jpeg" alt="Deluxe king room" class="room-img">
+                        <div class="room-specs">
+                            <span>2 Guests</span>
+                            <span>King Bed</span>
+                            <span>35 m²</span>
+                        </div>
+                    </div>
+                    <div class="room-info">
+                        <div class="room-title-row">
+                            <h3>Deluxe king room</h3>
+                            <span class="selected-tag">Selected</span>
+                        </div>
+                        <h4>Description</h4>
+                        <p>Experience comfort and luxury in our Deluxe Room, featuring a king-size bed, complimentary breakfast, air conditioning, free Wi-Fi and panoramic garden views.</p>
+                        <hr>
+                        <div class="room-footer">
+                            <span class="room-price">Price : Rs 15 000</span>
+                            <div class="room-actions">
+                                <button class="btn-outline-navy">View</button>
+                                <button class="btn-navy btn-book">Book</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="room-card" data-name="Executive Room" data-price="17000">
+                    <div class="room-media">
+                        <img src="/static/images/1567D193-D446-4DC8-AF61-EC6D96F1F0FB.jpeg" alt="Executive Room" class="room-img">
+                        <div class="room-specs">
+                            <span>2 Guests</span>
+                            <span>Queen Bed</span>
+                            <span>40 m²</span>
+                        </div>
+                    </div>
+                    <div class="room-info">
+                        <div class="room-title-row">
+                            <h3>Executive Room</h3>
+                        </div>
+                        <h4>Description</h4>
+                        <p>Experience comfort and elegance in our Deluxe Room, featuring a king-size bed, a spacious seating area, complimentary high-speed Wi-Fi, air conditioning, and a private balcony with breathtaking ocean views. Designed for both relaxation and convenience, this room is perfect for couples or business travellers seeking a luxurious stay.</p>
+                        <hr>
+                        <div class="room-footer">
+                            <span class="room-price">Price : Rs 17 000</span>
+                            <div class="room-actions">
+                                <button class="btn-outline-navy">View</button>
+                                <button class="btn-navy btn-book">Book</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="room-card" data-name="Family Suit" data-price="21000">
+                    <div class="room-media">
+                        <img src="/static/images/920D2250-EB91-4678-8B4D-F188CD1C4E7B.jpeg" alt="Family Suit" class="room-img">
+                        <div class="room-specs">
+                            <span>4 Guests</span>
+                            <span>2 Double Beds</span>
+                            <span>50 m²</span>
+                        </div>
+                    </div>
+                    <div class="room-info">
+                        <div class="room-title-row">
+                            <h3>Family Suit</h3>
+                        </div>
+                        <h4>Description</h4>
+                        <p>Enjoy a spacious and welcoming Family Suite designed for comfort and convenience. Featuring two double beds, a comfortable seating area, complimentary high-speed Wi-Fi, air conditioning, a private balcony, and modern amenities, this room is perfect for families or small groups looking for a relaxing getaway.</p>
+                        <hr>
+                        <div class="room-footer">
+                            <span class="room-price">Price : Rs 21 000</span>
+                            <div class="room-actions">
+                                <button class="btn-outline-navy">View</button>
+                                <button class="btn-navy btn-book">Book</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+            <div class="tab-panel" data-tab="packages" hidden>
+
+                <div class="room-card" data-name="Weekend Getaway" data-price="9500">
+                    <div class="room-media">
+                        <img src="/static/images/D9A39033-A805-4A04-8D07-513C44D4902B_1_105_c.jpeg" alt="Weekend Getaway" class="room-img">
+                    </div>
+                    <div class="room-info">
+                        <div class="room-title-row"><h3>Weekend Getaway</h3></div>
+                        <h4>Description</h4>
+                        <p>Relax with a two-night stay, complimentary breakfast and selected activities.</p>
+                        <hr>
+                        <div class="room-footer">
+                            <span class="room-price">Price : Rs 9 500</span>
+                            <div class="room-actions">
+                                <button class="btn-outline-navy">View</button>
+                                <button class="btn-navy btn-book">Book</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="room-card" data-name="Romantic Escape" data-price="12000">
+                    <div class="room-media">
+                        <img src="/static/images/romantic.jpeg" alt="Romantic Escape" class="room-img">
+                    </div>
+                    <div class="room-info">
+                        <div class="room-title-row"><h3>Romantic Escape</h3></div>
+                        <h4>Description</h4>
+                        <p>Enjoy a romantic stay with breakfast, spa access and a special dinner.</p>
+                        <hr>
+                        <div class="room-footer">
+                            <span class="room-price">Price : Rs 12 000</span>
+                            <div class="room-actions">
+                                <button class="btn-outline-navy">View</button>
+                                <button class="btn-navy btn-book">Book</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="room-card" data-name="Family Fun Package" data-price="15500">
+                    <div class="room-media">
+                        <img src="/static/images/romantic.jpeg" alt="Family Fun Package" class="room-img">
+                    </div>
+                    <div class="room-info">
+                        <div class="room-title-row"><h3>Family Fun Package</h3></div>
+                        <h4>Description</h4>
+                        <p>Perfect for families with breakfast, children's activities and late checkout.</p>
+                        <hr>
+                        <div class="room-footer">
+                            <span class="room-price">Price : Rs 15 500</span>
+                            <div class="room-actions">
+                                <button class="btn-outline-navy">View</button>
+                                <button class="btn-navy btn-book">Book</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+            <div class="tab-panel" data-tab="events" hidden>
+                <div class="room-card" data-name="Garden Wedding Package" data-price="2500">
+        <div class="room-media">
+            <img src="/static/images/wedding.webp" alt="Garden Wedding Package" class="room-img">
+        </div>
+        <div class="room-info">
+            <div class="room-title-row"><h3>Garden Wedding Package</h3></div>
+            <h4>Description</h4>
+            <p>A full wedding venue set among landscaped gardens with ocean views, including ceremony and reception setup, floral arch, seating for guests, a dedicated event coordinator, and a private bridal suite for preparation. .</p>
+            <hr>
+            <div class="room-footer">
+                <span class="room-price">Price : Rs 2 500</span>
+                <div class="room-actions">
+                    <button class="btn-outline-navy">View</button>
+                    <button class="btn-navy btn-book">Book</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="room-card" data-name="Birthday Celebration Package" data-price="3500">
+        <div class="room-media">
+            <img src="/static/images/birthday.png" alt="Birthday Celebration Package" class="room-img">
+        </div>
+        <div class="room-info">
+            <div class="room-title-row"><h3>Birthday Celebration Package</h3></div>
+            <h4>Description</h4>
+            <p>A private poolside or garden setup for milestone birthdays, with decor, a dessert table, and background music/DJ setup included. Great for smaller, festive gatherings.</p>
+            <hr>
+            <div class="room-footer">
+                <span class="room-price">Price : Rs 3 500</span>
+                <div class="room-actions">
+                    <button class="btn-outline-navy">View</button>
+                    <button class="btn-navy btn-book">Book</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="room-card" data-name="Corporate Retreat Package" data-price="4000">
+        <div class="room-media">
+            <img src="/static/images/worker.jpg" alt="Corporate Retreat Package" class="room-img">
+        </div>
+        <div class="room-info">
+            <div class="room-title-row"><h3>Corporate Retreat Package</h3></div>
+            <h4>Description</h4>
+            <p>Full-day private venue booking for team offsites, workshops, or strategy sessions. Includes a conference hall with AV equipment, a dedicated coordinator, and a working lunch for the group.</p>
+            <hr>
+            <div class="room-footer">
+                <span class="room-price">Price : Rs 4 000</span>
+                <div class="room-actions">
+                    <button class="btn-outline-navy">View</button>
+                    <button class="btn-navy btn-book">Book</button>
+                </div>
+            </div>
+        </div>
+    </div>
+            </div>
+
+        </div>
+
+        <aside class="cart-box" id="cartBox">
+            <h3>YOUR CART</h3>
+            <div class="cart-items" id="cartItems">
+                <div class="cart-item">
+                    <p class="cart-item-name">Deluxe king room</p>
+                    <p class="cart-item-nights">3 nights</p>
+                </div>
+            </div>
+            <div class="cart-total">
+                <span>Total :</span>
+                <span id="cartTotal">Rs 16 000</span>
+            </div>
+            <button class="btn-checkout">Checkout</button>
+        </aside>
+
+    </div>
+
+</div>
+
+
 
 {% endblock %}
+
+

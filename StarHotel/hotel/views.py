@@ -1,6 +1,7 @@
-from django.shortcuts import render
+from django.shortcuts import redirect, render
 
 def home(request):
+<<<<<<< HEAD
     rooms = [
         {
             'name': 'Deluxe Room',
@@ -29,6 +30,9 @@ def home(request):
     ]
     return render(request, 'home.html', {'rooms': rooms})
     
+=======
+    return render(request, "hotel/home.html")
+>>>>>>> main
 
 def search_results(request):
     return render(request, "hotel/search_results.html")
@@ -50,6 +54,22 @@ def customer_dashboard(request):
     return render(request, "hotel/customer_dashboard.html")
 
 
+<<<<<<< HEAD
+=======
+ 
+def customer_profile(request):
+    return render(request, "hotel/customer_profile.html")
+ 
+ 
+def customer_rewards(request):
+    return render(request, "hotel/customer_rewards.html")
+ 
+ 
+def customer_support(request):
+    return render(request, "hotel/customer_support.html")
+
+
+>>>>>>> main
 def booking(request):
     return render(request, "hotel/booking.html")
 
@@ -65,6 +85,39 @@ def admin_dashboard(request):
 def manage_rooms(request):
     return render(request, "hotel/manage_rooms.html")
 
+<<<<<<< HEAD
 
 def reports(request):
     return render(request, "hotel/reports.html")
+=======
+def room_create(request):
+    if request.method == "POST":
+        room_number = request.POST.get("room_number")
+        room_type = request.POST.get("room_type")
+        status = request.POST.get("status")
+
+        # create room here
+
+    return redirect("manage_rooms")
+
+
+def reports(request):
+    return render(request, "hotel/reports.html")
+
+
+def cart_review(request):
+    return render(request, "hotel/cart_review.html")
+ 
+ 
+def cart_guest_details(request):
+    return render(request, "hotel/cart_guest_details.html")
+ 
+ 
+def cart_payment(request):
+    return render(request, "hotel/cart_payment.html")
+ 
+ 
+def booking_confirmation(request):
+    return render(request, "hotel/booking_confirmation.html")
+ 
+>>>>>>> main
