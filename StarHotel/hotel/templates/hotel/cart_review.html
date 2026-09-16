@@ -1,0 +1,50 @@
+{% extends "base.html" %}
+{% load static %}
+{% block title %}Review Your Order - Star Hotel{% endblock %}
+{% block content %}
+ 
+<div class="checkout-container">
+    <h1>Review your order</h1>
+ 
+    <div class="checkout-layout">
+        <div class="checkout-main">
+ 
+            <div class="room-card">
+                <img src="{% static 'images/2BDDF7B0-9FE3-4B62-AB2A-B6CEE2FB6361_4_5005_c.jpeg' %}" alt="Deluxe king room" class="room-img" style="width:180px; height:140px;">
+                <div class="room-info">
+                    <h3>Deluxe king room</h3>
+                    <p>Sep 12 - Sep 15, 2026 &middot; 3 nights &middot; 2 adults</p>
+                    <div class="room-specs" style="justify-content:flex-start; margin-top:8px;">
+                        <span>2 Guests</span>
+                        <span>King Bed</span>
+                        <span>35 m&sup2;</span>
+                    </div>
+                    <hr>
+                    <div class="room-footer">
+                        <span class="room-price">Price: Rs 15 000</span>
+                        <a href="#" class="btn-remove">Remove</a>
+                    </div>
+                </div>
+            </div>
+ 
+            <a href="{% url 'search_results' %}" class="add-another">+ Add another room, package or event</a>
+        </div>
+ 
+        <div class="order-summary">
+            <h3>ORDER SUMMARY</h3>
+            <div class="order-row"><span>Room</span><span>Rs 15 000</span></div>
+            <hr class="order-divider">
+            <div class="order-row"><span>Subtotal</span><span>Rs 15 000</span></div>
+            <div class="order-row"><span>Taxes</span><span>Rs 1 000</span></div>
+            <div class="order-total"><span>Total</span><span>Rs 16 000</span></div>
+        </div>
+    </div>
+ 
+    <div class="checkout-actions">
+        <a href="{% url 'search_results' %}" class="btn-outline-navy">Back to browsing</a>
+        <a href="{% url 'cart_guest_details' %}" class="btn-navy btn-continue">Continue</a>
+    </div>
+</div>
+ 
+{% endblock %}
+ 

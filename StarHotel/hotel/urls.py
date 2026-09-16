@@ -30,4 +30,14 @@ urlpatterns = [
 
     path("reports/", views.reports, name="reports"),
 
+    
+ 
+    path("cart/review/", views.cart_review, name="cart_review"),
+    path("cart/guest-details/", views.cart_guest_details, name="cart_guest_details"),
+    path("cart/payment/", views.cart_payment, name="cart_payment"),
+    path("booking-confirmation/", views.booking_confirmation, name="booking_confirmation"),
+ 
+
+
+
 ]
