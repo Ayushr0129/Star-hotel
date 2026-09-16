@@ -25,7 +25,6 @@ class SidebarNav {
 
         this.items.forEach(item => {
             item.addEventListener('click', (e) => {
-                e.preventDefault();
                 this.item.forEach(i => i.classList.remove('active'));
                 item.classList.add('active');
                 this.moveHighlight(item);

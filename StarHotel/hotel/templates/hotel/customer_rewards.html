@@ -1,11 +1,10 @@
 {% extends "base.html" %}
 {% load static %}
-{% block title %}Customer Dashboard - Star Hotel{% endblock %}
+{% block title %}Rewards - Star Hotel{% endblock %}
 {% block content %}
-
-
+ 
     <div class="layout">
-
+ 
         <aside class="sidebar">
             <div class="profile">
                 <div class="avatar"></div>
@@ -14,7 +13,7 @@
                     <div class="member">Gold member</div>
                 </div>
             </div>
-        
+ 
             <nav id="nav">
                 <div class="nav-highlight" id="navHighlight"></div>
                 <a href="{% url 'customer_dashboard' %}" class="nav-item {% if request.resolver_match.url_name == 'customer_dashboard' %}active{% endif %}">Dashboard</a>
@@ -22,76 +21,48 @@
                 <a href="{% url 'customer_rewards' %}" class="nav-item {% if request.resolver_match.url_name == 'customer_rewards' %}active{% endif %}">Rewards</a>
                 <a href="{% url 'customer_support' %}" class="nav-item {% if request.resolver_match.url_name == 'customer_support' %}active{% endif %}">Support</a>
             </nav>
-
-            <hr class = "divider">
-
+ 
+            <hr class="divider">
+ 
             <a href="#" class="logout">Logout</a>
         </aside>
-
-        
-
-
-
+ 
         <div class="dashboard-content">
             <div class="content-header">
-                <h1>Welcome Back,Name</h1>
+                <h1>Your Rewards</h1>
                 <a href="{% url 'home' %}" class="btn-home">HOME</a>
             </div>
-        
-        
-
-        <h2 class="section-title">Your Bookings</h2>
-        <div class="booking-card">
-            <img src="{% static 'images/2BDDF7B0-9FE3-4B62-AB2A-B6CEE2FB6361_4_5005_c.jpeg' %}" alt="Deluxe king room" class="booking-image">
-        <div class="booking-details">
-                    <div class="booking-title-row">
-                        <h3>Deluxe king room</h3>
-                        <span class="booking-status">Confirmed</span>
-                    </div>
-                    <p>Experience comfort and luxury in our Deluxe Room, featuring a king-size bed, complimentary breakfast, air conditioning, free Wi-Fi and panoramic garden views.</p>
-                    <div class="booking-meta">
-                        <span>2 Guests</span>
-                        <span>King Bed</span>
-                        <span>35 m&sup2;</span>
-                    </div>
-                    <div class="booking-actions">
-                        <a href="#" class="btn-action btn-modify">Modify</a>
-                        <a href="#" class="btn-action btn-cancel">Cancel</a>
-                        <a href="#" class="btn-action btn-checkin">Check-In</a>
-                    </div>
-                </div>
-            </div>
-
+ 
+            <h2 class="section-title">Rewards Summary</h2>
             <div class="stats-row">
-                <div class="stat-box">
-                    <div class="stat-label">Stays</div>
-                    <div class="stat-value">1</div>
-                </div>
                 <div class="stat-box">
                     <div class="stat-label">Points</div>
                     <div class="stat-value">2450</div>
                 </div>
                 <div class="stat-box">
-                    <div class="stat-label">Next Tier</div>
+                    <div class="stat-label">Tier</div>
+                    <div class="stat-value" style="font-size:20px;">Gold</div>
+                </div>
+                <div class="stat-box">
+                    <div class="stat-label">Points to Next Tier</div>
                     <div class="stat-value">550</div>
                 </div>
             </div>
-            <h2 class="section-title">Past Bookings</h2>
+ 
+            <h2 class="section-title">Points History</h2>
  
             <div class="past-booking-row">
                 <div>
-                    <div class="past-booking-name">Executive Room</div>
+                    <div class="past-booking-name">Executive Room Stay</div>
                     <div class="past-booking-dates">Jun 3 - Jun 6, 2026</div>
                 </div>
-                <a href="#" class="btn-book-again">Book again</a>
+                <span class="btn-book-again" style="cursor:default;">+320 pts</span>
             </div>
+ 
         </div>
-        
+ 
     </div>
-
-
-
+ 
     <script src="{% static 'js/script.js' %}"></script>
-
-
-    {% endblock %}
+ 
+{% endblock %}

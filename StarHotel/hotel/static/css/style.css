@@ -149,9 +149,11 @@ main{
     flex: 1;
     padding: 40px;
 }
-    
+/* Prefer H1*/
 .dashboard-content h1 {
     margin-top: 0;
+    font-size: 28px;
+    font-weight: 800;
 }
 
 main:has(.layout) {

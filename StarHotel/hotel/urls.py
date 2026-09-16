@@ -12,9 +12,14 @@ urlpatterns = [
 
     path("register/", views.register, name="register"),
 
+
     path("customer-dashboard/", views.customer_dashboard, name="customer_dashboard"),
 
-    path("booking/", views.booking, name="booking"),
+    path("profile/", views.customer_profile, name="customer_profile"),
+    path("rewards/", views.customer_rewards, name="customer_rewards"),
+    path("support/", views.customer_support, name="customer_support"),
+
+   path("booking/", views.booking, name="booking"),
 
     path("staff-dashboard/", views.staff_dashboard, name="staff_dashboard"),
 
