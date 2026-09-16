@@ -64,3 +64,20 @@ def room_create(request):
 
 def reports(request):
     return render(request, "hotel/reports.html")
+
+
+def cart_review(request):
+    return render(request, "hotel/cart_review.html")
+ 
+ 
+def cart_guest_details(request):
+    return render(request, "hotel/cart_guest_details.html")
+ 
+ 
+def cart_payment(request):
+    return render(request, "hotel/cart_payment.html")
+ 
+ 
+def booking_confirmation(request):
+    return render(request, "hotel/booking_confirmation.html")
+ 
