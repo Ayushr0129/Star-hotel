@@ -13,36 +13,30 @@
         <div class="booking-field">
             <label>Hotel Branch</label>
             <select name="branch">
-                <option value="">Select branch</option>
-                <option value="mont_choisy" selected>Mont Choisy</option>
+                <option>Select Branch</option>
+                <option>Mont Choisy</option>
             </select>
         </div>
-
         <div class="booking-field">
             <label>Check-in</label>
-            <input type="text" name="check_in" value="25 Aug 2026" onfocus="(this.type='date')">
+            <input type="date" name="check_in" value="2026-08-24">
         </div>
-
         <div class="booking-field">
             <label>Check-out</label>
-            <input type="text" name="check_out" value="28 Aug 2026" onfocus="(this.type='date')">
+            <input type="date" name="check_out" value="2026-08-28">
         </div>
-
         <div class="booking-field">
             <label>Guests</label>
             <select name="guests">
-                <option value="2" selected>2 Guests</option>
-                <option value="1">1 Guest</option>
-                <option value="3">3 Guests</option>
+                <option>2 Guests</option>
             </select>
         </div>
-
         <button type="submit" class="btn-search">Search Rooms</button>
     </form>
 </section>
 
-<!-- Featured Rooms Section with Background Overlay -->
-<section class="featured-section">
+<!-- Featured Rooms -->
+<section class="container">
     <h2>Featured rooms</h2>
     
     <div class="card-grid">
@@ -51,57 +45,11 @@
             <img src="{% static room.image_path %}" alt="{{ room.name }}" class="card-img">
             <div class="card-body">
                 <h3 class="card-title">{{ room.name }}</h3>
-                <div class="card-stars">★★★★★</div>
-                <p class="card-meta">{{ room.details }}</p>
-                <div class="card-price">
-                    Rs {{ room.price }} <span>/ night</span>
+                <p class="card-meta">★ ★ ★ ★ ★ &nbsp;•&nbsp; {{ room.details }}</p>
+                <div class="card-footer">
+                    <strong>Rs {{ room.price }} <span style="font-weight:400; font-size:0.75rem;">/ night</span></strong>
+                    <a href="#" class="btn-sm">View Details</a>
                 </div>
-                <a href="#" class="btn-details">View Details</a>
-            </div>
-        </div>
-        {% empty %}
-        <!-- Fallback static cards matching the exact wireframe design -->
-        <div class="card">
-            <img src="{% static 'images/deluxe.jpg' %}" alt="Deluxe Room" class="card-img">
-            <div class="card-body">
-                <h3 class="card-title">Deluxe Room</h3>
-                <div class="card-stars">★★★★★</div>
-                <p class="card-meta">2 Guests &bull; King Bed</p>
-                <div class="card-price">Rs 15,000 <span>/ night</span></div>
-                <a href="#" class="btn-details">View Details</a>
-            </div>
-        </div>
-
-        <div class="card">
-            <img src="{% static 'images/standard.jpg' %}" alt="Standard Room" class="card-img">
-            <div class="card-body">
-                <h3 class="card-title">Standard Room</h3>
-                <div class="card-stars">★★★★★</div>
-                <p class="card-meta">2 Guests &bull; Queen Bed</p>
-                <div class="card-price">Rs 9,500 <span>/ night</span></div>
-                <a href="#" class="btn-details">View Details</a>
-            </div>
-        </div>
-
-        <div class="card">
-            <img src="{% static 'images/studio.jpg' %}" alt="Studio Room" class="card-img">
-            <div class="card-body">
-                <h3 class="card-title">Studio Room</h3>
-                <div class="card-stars">★★★★★</div>
-                <p class="card-meta">2 Guests &bull; King Bed &bull; Terrace</p>
-                <div class="card-price">Rs 12,500 <span>/ night</span></div>
-                <a href="#" class="btn-details">View Details</a>
-            </div>
-        </div>
-
-        <div class="card">
-            <img src="{% static 'images/executive.jpg' %}" alt="Executive Room" class="card-img">
-            <div class="card-body">
-                <h3 class="card-title">Executive Room</h3>
-                <div class="card-stars">★★★★★</div>
-                <p class="card-meta">2 Guests &bull; King Bed &bull; Fire heating</p>
-                <div class="card-price">Rs 18,000 <span>/ night</span></div>
-                <a href="#" class="btn-details">View Details</a>
             </div>
         </div>
         {% endfor %}

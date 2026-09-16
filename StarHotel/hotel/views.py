@@ -6,29 +6,29 @@ def home(request):
             'name': 'Deluxe Room',
             'details': '2 Guests • King Bed',
             'price': '10,000',
-            'image_path': 'images/rooms/deluxe.jpg'
+            'image_path': 'images/deluxe.jpg'
         },
         {
             'name': 'Standard Room',
             'details': '2 Guests • Queen Bed',
             'price': '8,000',
-            'image_path': 'images/rooms/standard.jpg'
+            'image_path': 'images/standard.jpg'
         },
         {
             'name': 'Studio Room',
             'details': '2 Guests • King Bed • Terrace',
             'price': '12,000',
-            'image_path': 'images/rooms/studio.jpg'
+            'image_path': 'images/studio.jpg'
         },
         {
             'name': 'Executive Room',
             'details': '3 Guests • King Bed • Pool Building',
             'price': '18,000',
-            'image_path': 'images/rooms/executive.jpg'
+            'image_path': 'images/executive.jpg'
         },
     ]
 
-    return render(request, "hotel/home.html")
+    return render(request, "hotel/home.html", {"rooms": rooms})
 
 
 def search_results(request):

@@ -113,7 +113,7 @@ main:has(.layout) {
 .hero {
     position: relative;
     height: 420px;
-    background: linear-gradient(rgba(0,0,0,0.4), rgba(0,0,0,0.4)), 
+    background: linear-gradient(rgba(0, 0, 0, 0.45), rgba(0, 0, 0, 0.45)), 
                 url('../images/hero-bg.jpg') center/cover no-repeat;
     display: flex;
     flex-direction: column;
