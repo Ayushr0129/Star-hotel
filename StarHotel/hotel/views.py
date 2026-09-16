@@ -23,6 +23,19 @@ def customer_dashboard(request):
     return render(request, "hotel/customer_dashboard.html")
 
 
+ 
+def customer_profile(request):
+    return render(request, "hotel/customer_profile.html")
+ 
+ 
+def customer_rewards(request):
+    return render(request, "hotel/customer_rewards.html")
+ 
+ 
+def customer_support(request):
+    return render(request, "hotel/customer_support.html")
+
+
 def booking(request):
     return render(request, "hotel/booking.html")
 
