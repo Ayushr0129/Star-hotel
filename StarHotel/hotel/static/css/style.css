@@ -568,6 +568,12 @@ header:has(~ main .layout) {
     min-width: 0;
 }
 
+.tab-panel {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
 .room-card {
     display: flex;
     align-items: flex-start;
