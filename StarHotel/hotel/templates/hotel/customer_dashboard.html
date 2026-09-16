@@ -29,12 +29,70 @@
             <a href="#" class="logout">Logout</a>
         </aside>
 
+        
+
+
+
         <div class="dashboard-content">
-            <h1>Welcome Back,Name</h1>
+            <div class="content-header">
+                <h1>Welcome Back,Name</h1>
+                <a href="http://127.0.0.1:8000/" class="btn-home">HOME</a>
+            </div>
+        
+        
+
+        <h2 class="section-title">Your Bookings</h2>
+        <div class="booking-card">
+            <img src="{% static 'images/2BDDF7B0-9FE3-4B62-AB2A-B6CEE2FB6361_4_5005_c.jpeg' %}" alt="Deluxe king room" class="booking-image">
+        <div class="booking-details">
+                    <div class="booking-title-row">
+                        <h3>Deluxe king room</h3>
+                        <span class="booking-status">Confirmed</span>
+                    </div>
+                    <p>Experience comfort and luxury in our Deluxe Room, featuring a king-size bed, complimentary breakfast, air conditioning, free Wi-Fi and panoramic garden views.</p>
+                    <div class="booking-meta">
+                        <span>2 Guests</span>
+                        <span>King Bed</span>
+                        <span>35 m&sup2;</span>
+                    </div>
+                    <div class="booking-actions">
+                        <a href="#" class="btn-action btn-modify">Modify</a>
+                        <a href="#" class="btn-action btn-cancel">Cancel</a>
+                        <a href="#" class="btn-action btn-checkin">Check-In</a>
+                    </div>
+                </div>
+            </div>
+
+            <div class="stats-row">
+                <div class="stat-box">
+                    <div class="stat-label">Stays</div>
+                    <div class="stat-value">1</div>
+                </div>
+                <div class="stat-box">
+                    <div class="stat-label">Points</div>
+                    <div class="stat-value">2450</div>
+                </div>
+                <div class="stat-box">
+                    <div class="stat-label">Next Tier</div>
+                    <div class="stat-value">550</div>
+                </div>
+            </div>
+            <h2 class="section-title">Past Bookings</h2>
+ 
+            <div class="past-booking-row">
+                <div>
+                    <div class="past-booking-name">Executive Room</div>
+                    <div class="past-booking-dates">Jun 3 - Jun 6, 2026</div>
+                </div>
+                <a href="#" class="btn-book-again">Book again</a>
+            </div>
         </div>
         
     </div>
 
+
+
     <script src="{% static 'js/script.js' %}"></script>
 
-{% endblock %}
+
+    {% endblock %}
