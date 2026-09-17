@@ -8,53 +8,44 @@
     <title>{% block title %}Star Hotel{% endblock %}</title>
 
     {% load static %}
-    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Custom Stylesheet -->
     <link rel="stylesheet" href="{% static 'css/style.css' %}">
 </head>
 
-
-
-
-<body class="bg-gray-100 text-gray-800">
-{% block header %}
-<header class = "site-header">
-    <div class="brand">
-        <svg class="brand-icon" viewBox="0 0 24 24" fill="#f5b400">
-            <path d="M12 2l2.9 6.26L22 9.27l-5 4.87L18.18 21 12 17.27 5.82 21 7 14.14l-5-4.87 7.1-1.01L12 2z"/>
-        </svg>
-        <div class="brand-text">
-            <span class="brand-name">STAR HOTEL</span>
-            <span class="brand-tagline">Luxury &bull; Comfort &bull; Hospitality</span> 
+<body>
+    {% block header %}
+    <header class="site-header">
+        <div class="brand">
+            <svg class="brand-icon" viewBox="0 0 24 24" fill="#f5b400">
+                <path d="M12 2l2.9 6.26L22 9.27l-5 4.87L18.18 21 12 17.27 5.82 21 7 14.14l-5-4.87 7.1-1.01L12 2z"/>
+            </svg>
+            <div class="brand-text">
+                <span class="brand-name">STAR HOTEL</span>
+                <span class="brand-tagline">Luxury &bull; Comfort &bull; Hospitality</span> 
+            </div>
         </div>
-    </div>
 
-    <nav class="site-nav" id="siteNav">
-        <div class="nav-pill" id="navPill"></div>
-        <a href="{% url 'home' %}" class="site-nav-item">Home</a>
-        <a href="#" class="site-nav-item">Rooms</a>
-        <a href="#" class="site-nav-item">Packages</a>
-        <a href="#" class="site-nav-item">Activities</a>
-        <a href="#" class="site-nav-item">Login</a>
-        <a href="#" class="site-nav-item" id="registerLink">Register</a>
-    </nav>
+        <nav class="site-nav">
+            <a href="{% url 'home' %}" class="site-nav-item">Home</a>
+            <a href="#" class="site-nav-item">Rooms</a>
+            <a href="#" class="site-nav-item">Packages</a>
+            <a href="#" class="site-nav-item">Activities</a>
+            <a href="#" class="site-nav-item">Login</a>
+            <a href="#" class="site-nav-item" id="registerLink">Register</a>
+        </nav>
+    </header>
+    {% endblock %} 
 
-</header>
+    <main>
+        {% block content %}
+        {% endblock %}
+    </main>
 
-{% endblock %} 
-<main class="min-h-screen">
+    <footer>
+        <p>© 2026 Star Hotel</p>
+    </footer>
 
-{% block content %}
-{% endblock %}
-</main>
-
-
-<footer>
-
-<p>© 2026 Star Hotel</p>
-
-</footer>
-<script src="{% static 'js/script.js' %}"></script>
+    <script src="{% static 'js/script.js' %}"></script>
 </body>
 
 </html>
-
