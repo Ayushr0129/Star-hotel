@@ -1,18 +1,12 @@
-/* Colour Variables */
-:root {
-    --primary-blue: #1d39c4;
-    --primary-hover: #10239e;
-    --dark-navy: #091a30;
-    --text-dark: #1e293b;
-    --text-muted: #64748b;
-    --bg-light: #f8fafc;
-    --border-color: #e2e8f0;
-    --radius-md: 12px;
-}
+body{
 
-* {
-    box-sizing: border-box;
-    margin: 0;
+    margin:0;
+
+    font-family:Arial, Helvetica, sans-serif;
+
+    background:#F6F8FA;
+
+}
 
 header{
 
@@ -163,184 +157,115 @@ main{
 }
 
 main:has(.layout) {
->>>>>>> main
     padding: 0;
-    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    min-height: auto;
 }
 
-body {
-    background-color: #ffffff;
-    color: var(--text-dark);
+header:has(~ main .layout) {
+    display: none;
 }
 
-/* Header & Nav */
-.site-header {
-    display: flex;
+/*Header for all pages*/
+
+.site-header{ 
+    display:flex;
     justify-content: space-between;
     align-items: center;
-    padding: 1rem 5%;
-    background: #ffffff;
-    border-bottom: 1px solid var(--border-color);
-    position: sticky;
-    top: 0;
-    z-index: 100;
+    padding: 16px 40px;
+    background: white;
+    border-bottom: 1px solid #e5e7eb;
 }
 
 .brand {
     display: flex;
     align-items: center;
-    gap: 0.5rem;
+    gap: 10px;
 }
 
-.brand-icon {
-    width: 24px;
-    height: 24px;
+.brand-icon{
+    width: 18px;
+    height: 18px;
+    flex-shrink: 0;
 }
 
 .brand-text {
     display: flex;
     flex-direction: column;
+    line-height: 1.2;
 }
 
-.brand-name {
+.brand-name{
+    font-size: 17px;
     font-weight: 800;
-    font-size: 1.1rem;
-    letter-spacing: 0.5px;
+    color: #111827;
 }
 
 .brand-tagline {
-    font-size: 0.65rem;
-    color: var(--text-muted);
+    font-size: 11px;
+    color: #6b7280;
+
 }
+
+.site-nav {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    flex-wrap: nowrap;
+    white-space: nowrap;
+}
+
+
+/*for header animation*/
+
+.btn-register {
+    background: #2952e3 !important;
+    color: white !important;
+    padding: 10px 22px;
+    border-radius: 9999px;
+    font-weight: 700 !important;
+    box-shadow: 0 2px 6px rgba(41, 82, 227, 0.35);
+}
+ 
+.btn-register:hover {
+    background: #1f3fc4 !important;
+}
+ 
 
 .site-nav {
     position: relative;
     display: flex;
     align-items: center;
-    gap: 1.5rem;
+    gap: 6px;
+    flex-wrap: nowrap;
 }
-
+ 
+.nav-pill {
+    position: absolute;
+    top: 2px;
+    bottom: 2px;
+    left: 0;
+    width: 0;
+    background: #2952e3;
+    border-radius: 0px;
+    box-shadow: 0 2px 6px rgba(41, 82, 227, 0.35);
+    transition: left 0.25s ease, width 0.25s ease;
+    z-index: 0;
+}
+ 
 .site-nav-item {
-    text-decoration: none;
-    color: var(--text-dark);
-    font-size: 0.9rem;
-    font-weight: 500;
-}
-
-#registerLink {
-    background-color: var(--primary-blue);
-    color: #ffffff;
-    padding: 0.5rem 1.25rem;
-    border-radius: 6px;
-}
-
-/* Hero & Booking Bar */
-.hero {
     position: relative;
-    height: 420px;
-    background: linear-gradient(rgba(0,0,0,0.4), rgba(0,0,0,0.4)), 
-                url('../images/hero-bg.jpg') center/cover no-repeat;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    color: white;
-<<<<<<< HEAD
-    text-align: center;
-}
-
-.hero h1 { font-size: 2.5rem; margin-bottom: 0.5rem; }
-.hero p { margin-bottom: 2rem; opacity: 0.9; }
-
-.booking-bar {
-    background: rgba(255, 255, 255, 0.25);
-    backdrop-filter: blur(10px);
-    padding: 0.75rem;
-    border-radius: 12px;
-    display: flex;
-    gap: 0.75rem;
-    width: 90%;
-    max-width: 950px;
-}
-
-.booking-field {
-    flex: 1;
-    background: white;
-    padding: 0.5rem 0.8rem;
-    border-radius: 6px;
-    display: flex;
-    flex-direction: column;
-    text-align: left;
-}
-
-.booking-field label {
-    font-size: 0.65rem;
-    color: var(--text-muted);
-    font-weight: 700;
-    text-transform: uppercase;
-}
-
-.booking-field select, .booking-field input {
-    border: none;
-    outline: none;
+    z-index: 1;
+    padding: 8px 18px;
+    font-size: 14px;
     font-weight: 600;
-    background: transparent;
+    color: #1f2937;
+    text-decoration: none;
+    white-space: nowrap;
+    transition: color 0.2s ease;
 }
-
-.btn-search {
-    background: var(--primary-blue);
+ 
+.site-nav-item.on-pill {
     color: white;
-    border: none;
-    padding: 0 1.5rem;
-    border-radius: 6px;
-    font-weight: 600;
-    cursor: pointer;
-}
-
-/* Cards & Layout */
-.container {
-    max-width: 1200px;
-    margin: 3rem auto;
-    padding: 0 1.5rem;
-}
-
-.card-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-    gap: 1.5rem;
-    margin-top: 1.5rem;
-}
-
-.card {
-    border: 1px solid var(--border-color);
-    border-radius: var(--radius-md);
-    overflow: hidden;
-    background: #fff;
-}
-
-.card-img {
-    width: 100%;
-    height: 180px;
-    object-fit: cover;
-}
-
-.card-body {
-    padding: 1rem;
-}
-
-.card-title {
-    font-size: 1.1rem;
-    font-weight: 700;
-}
-
-.card-meta {
-    font-size: 0.75rem;
-    color: var(--text-muted);
-    margin: 0.4rem 0 1rem;
-}
-
-.card-footer {
-=======
 }
 
 /*Dashbaord content**/
@@ -643,12 +568,6 @@ body {
     min-width: 0;
 }
 
-.tab-panel {
-    display: flex;
-    flex-direction: column;
-    gap: 20px;
-}
-
 .room-card {
     display: flex;
     align-items: flex-start;
@@ -674,30 +593,11 @@ body {
 }
 
 .room-title-row {
->>>>>>> main
     display: flex;
     justify-content: space-between;
     align-items: center;
 }
 
-<<<<<<< HEAD
-.btn-sm {
-    background-color: var(--primary-blue);
-    color: white;
-    padding: 0.4rem 0.9rem;
-    border-radius: 4px;
-    text-decoration: none;
-    font-size: 0.85rem;
-}
-
-/* Footer */
-footer {
-    background-color: var(--dark-navy);
-    color: white;
-    text-align: center;
-    padding: 2rem 0;
-    margin-top: 4rem;
-=======
 .room-title-row h3 {
     margin: 0;
     font-size: 18px;
@@ -915,32 +815,32 @@ footer {
     background: none;
 }
 
-/*  flow of (cart review / guest details / payment / confirmation) */
- 
+/* ── Checkout flow (cart review / guest details / payment / confirmation) ── */
+
 .checkout-container {
     max-width: 1200px;
     margin: 0 auto;
     padding: 40px;
 }
- 
+
 .checkout-layout {
     display: flex;
     gap: 24px;
     align-items: flex-start;
     margin-top: 20px;
 }
- 
+
 .checkout-main {
     flex: 1;
     min-width: 0;
 }
- 
+
 .checkout-actions {
     display: flex;
     justify-content: space-between;
     margin-top: 24px;
 }
- 
+
 .btn-continue {
     background: #16a34a;
     border-color: #16a34a;
@@ -957,7 +857,7 @@ footer {
 .btn-continue:hover {
     background: #128a3e;
 }
- 
+
 .btn-continue-outline {
     background: white;
     color: #16a34a;
@@ -975,7 +875,7 @@ footer {
     background: #16a34a;
     color: white;
 }
- 
+
 .btn-remove {
     color: #dc2626;
     border: 1px solid #dc2626;
@@ -988,7 +888,7 @@ footer {
     text-decoration: none;
     display: inline-block;
 }
- 
+
 .add-another {
     color: var(--navy);
     font-weight: 700;
@@ -996,8 +896,8 @@ footer {
     display: inline-block;
     margin-top: 12px;
 }
- 
-/* Order summary box  */
+
+/* Order summary box (used on every checkout step) */
 .order-summary {
     width: 300px;
     flex-shrink: 0;
@@ -1008,26 +908,26 @@ footer {
     position: sticky;
     top: 20px;
 }
- 
+
 .order-summary h3 {
     margin: 0 0 16px;
     font-size: 15px;
     letter-spacing: 0.5px;
 }
- 
+
 .order-row {
     display: flex;
     justify-content: space-between;
     font-size: 14px;
     margin-bottom: 8px;
 }
- 
+
 .order-divider {
     border: none;
     border-top: 1px solid #e5e7eb;
     margin: 12px 0;
 }
- 
+
 .order-total {
     display: flex;
     justify-content: space-between;
@@ -1035,8 +935,8 @@ footer {
     font-size: 16px;
     margin-top: 12px;
 }
- 
-/* Form section (guest details / payment) */
+
+/* Form sections (guest details / payment) */
 .form-section {
     background: white;
     border: 1px solid #e5e7eb;
@@ -1044,38 +944,38 @@ footer {
     padding: 24px;
     margin-bottom: 20px;
 }
- 
+
 .form-section h2 {
     margin-top: 0;
     font-size: 18px;
 }
- 
+
 .form-row {
     display: flex;
     gap: 16px;
     margin-bottom: 16px;
 }
- 
+
 .form-field {
     display: flex;
     flex-direction: column;
     gap: 6px;
     flex: 1;
 }
- 
+
 .form-field label {
     font-weight: 700;
     font-size: 14px;
     color: #111827;
 }
- 
+
 .form-field input {
     padding: 10px 12px;
     border: 1px solid #d1d5db;
     border-radius: 6px;
     font-size: 14px;
 }
- 
+
 .checkbox-row {
     display: flex;
     align-items: flex-start;
@@ -1084,14 +984,14 @@ footer {
     color: #4b5563;
     margin: 16px 0 4px;
 }
- 
+
 /* Confirmation page */
 .confirmation-box {
     max-width: 480px;
     margin: 40px auto;
     text-align: center;
 }
- 
+
 .confirm-icon {
     width: 64px;
     height: 64px;
@@ -1104,7 +1004,7 @@ footer {
     font-size: 30px;
     margin: 0 auto 20px;
 }
- 
+
 .confirmation-card {
     background: #eaf2fb;
     border: 1px solid #b8d4f0;
@@ -1113,7 +1013,7 @@ footer {
     text-align: left;
     margin: 24px 0;
 }
- 
+
 .confirm-actions {
     display: flex;
     gap: 10px;
@@ -1121,7 +1021,7 @@ footer {
     margin-bottom: 20px;
     flex-wrap: wrap;
 }
- 
+
 .upsell-box {
     border: 1px solid #e5e7eb;
     border-radius: 8px;
@@ -1131,7 +1031,7 @@ footer {
     align-items: center;
     text-align: left;
 }
- 
+
 @media (max-width: 900px) {
     .checkout-layout {
         flex-direction: column;
@@ -1140,5 +1040,146 @@ footer {
         width: 100%;
         position: static;
     }
->>>>>>> main
 }
+
+/* Filtered out contents from previous css*/
+ 
+
+:root {
+    --primary-blue: #1d39c4;
+    --primary-hover: #10239e;
+    --dark-navy: #091a30;
+    --text-dark: #1e293b;
+    --bg-light: #f8fafc;
+    --border-color: #e2e8f0;
+    --radius-md: 12px;
+}
+ 
+/* Alternate hero + booking bar (not wired into any page yet) */
+.hero {
+    position: relative;
+    height: 420px;
+    background: linear-gradient(rgba(0,0,0,0.4), rgba(0,0,0,0.4)),
+                url('../images/hero-bg.jpg') center/cover no-repeat;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    color: white;
+    text-align: center;
+}
+ 
+.hero h1 { font-size: 2.5rem; margin-bottom: 0.5rem; }
+.hero p { margin-bottom: 2rem; opacity: 0.9; }
+ 
+.booking-bar {
+    background: rgba(255, 255, 255, 0.25);
+    backdrop-filter: blur(10px);
+    padding: 0.75rem;
+    border-radius: 12px;
+    display: flex;
+    gap: 0.75rem;
+    width: 90%;
+    max-width: 950px;
+}
+ 
+.booking-field {
+    flex: 1;
+    background: white;
+    padding: 0.5rem 0.8rem;
+    border-radius: 6px;
+    display: flex;
+    flex-direction: column;
+    text-align: left;
+}
+ 
+.booking-field label {
+    font-size: 0.65rem;
+    color: var(--text-dark);
+    font-weight: 700;
+    text-transform: uppercase;
+}
+ 
+.booking-field select,
+.booking-field input {
+    border: none;
+    outline: none;
+    font-weight: 600;
+    background: transparent;
+}
+ 
+.btn-search {
+    background: var(--primary-blue);
+    color: white;
+    border: none;
+    padding: 0 1.5rem;
+    border-radius: 6px;
+    font-weight: 600;
+    cursor: pointer;
+}
+ 
+/* Generic card grid system (not present in ours) */
+.container {
+    max-width: 1200px;
+    margin: 3rem auto;
+    padding: 0 1.5rem;
+}
+ 
+.card-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 1.5rem;
+    margin-top: 1.5rem;
+}
+ 
+.card {
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-md);
+    overflow: hidden;
+    background: #fff;
+}
+ 
+.card-img {
+    width: 100%;
+    height: 180px;
+    object-fit: cover;
+}
+ 
+.card-body {
+    padding: 1rem;
+}
+ 
+.card-title {
+    font-size: 1.1rem;
+    font-weight: 700;
+}
+ 
+.card-meta {
+    font-size: 0.75rem;
+    color: var(--text-dark);
+    margin: 0.4rem 0 1rem;
+}
+ 
+.card-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+ 
+.btn-sm {
+    background-color: var(--primary-blue);
+    color: white;
+    padding: 0.4rem 0.9rem;
+    border-radius: 4px;
+    text-decoration: none;
+    font-size: 0.85rem;
+}
+ 
+/* Register button in top nav (id referenced in base.html, never styled) */
+#registerLink {
+    background-color: var(--primary-blue);
+    color: #ffffff;
+    padding: 0.5rem 1.25rem;
+    border-radius: 6px;
+}
+ 
