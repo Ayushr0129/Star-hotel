@@ -48,8 +48,7 @@ main{
 
 }
 
-<<<<<<< HEAD
-* {
+*{
     box-sizing: border-box;
     margin: 0;
     padding: 0;
@@ -136,12 +135,7 @@ main:has(.layout) {
     font-weight: 500;
 }
 
-#registerLink {
-    background-color: var(--primary-blue);
-    color: #ffffff;
-    padding: 0.5rem 1.25rem;
-    border-radius: 6px;
-}
+
 
 /* Hero & Booking Bar */
 .hero {
@@ -1340,4 +1334,3 @@ header:has(~ main .layout) {
     padding: 0.5rem 1.25rem;
     border-radius: 6px;
 }
- 
