@@ -5,24 +5,24 @@ def home(request):
         {
             'name': 'Deluxe Room',
             'details': '2 Guests • King Bed',
-            'price': '10,000',
+            'price': '15,000',
             'image_path': 'images/deluxe.jpg'
         },
         {
             'name': 'Standard Room',
             'details': '2 Guests • Queen Bed',
-            'price': '8,000',
+            'price': '9,500',
             'image_path': 'images/standard.jpg'
         },
         {
             'name': 'Studio Room',
             'details': '2 Guests • King Bed • Terrace',
-            'price': '12,000',
+            'price': '12,500',
             'image_path': 'images/studio.jpg'
         },
         {
             'name': 'Executive Room',
-            'details': '3 Guests • King Bed • Pool Building',
+            'details': '3 Guests • King Bed • Fire heating',
             'price': '18,000',
             'image_path': 'images/executive.jpg'
         },
@@ -32,6 +32,29 @@ def home(request):
 
 
 def search_results(request):
+    rooms = [
+        {
+            'name': 'Deluxe Room',
+            'price': '15,000',
+            'guests': 2,
+            'features': ['King Bed', 'Free Wi-Fi', 'Breakfast Included'],
+            'image_path': 'images/deluxe.jpg'
+        },
+        {
+            'name': 'Executive Room',
+            'price': '18,000',
+            'guests': 2,
+            'features': ['Queen Bed', 'Sea View', 'Breakfast Included'],
+            'image_path': 'images/executive.jpg'
+        },
+        {
+            'name': 'Family Suite',
+            'price': '21,000',
+            'guests': 4,
+            'features': ['2 Double Beds', 'Sea View', 'Breakfast Included'],
+            'image_path': 'images/family_suite.jpg'
+        },
+    ]
     return render(request, "hotel/search_results.html")
 
 
