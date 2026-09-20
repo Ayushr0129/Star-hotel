@@ -55,7 +55,7 @@ def search_results(request):
             'image_path': 'images/family_suite.jpg'
         },
     ]
-    return render(request, "hotel/search_results.html")
+    return render(request, "hotel/search_results.html", {"rooms": rooms})
 
 
 def room_details(request):

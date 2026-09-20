@@ -87,7 +87,32 @@
         </aside>
 
         <div class="room-listings">
-          
+            {% for room in rooms %}
+            <div class="room-card">
+                <div class="room-card-image">
+                    <img src="{% static room.image_path %}" alt="{{ room.name }}">
+                </div>
+
+                <div class="room-card-info">
+                    <h3 class="room-card-name">{{ room.name }}</h3>
+                    <p class="room-card-guests">{{ room.guests }} Guests</p>
+
+                    <ul class="room-card-features">
+                        {% for feature in room.features %}
+                        <li>{{ feature }}</li>
+                        {% endfor %}
+                    </ul>
+                </div>
+
+                <div class="room-card-action">
+                    <p class="room-card-price">
+                        <span class="price-amount">Rs {{ room.price }}</span>
+                        <span class="price-period">per night</span>
+                    </p>
+                    <a href="{% url 'room_details' %}" class="view-details-btn">View Details</a>
+                </div>
+            </div>
+            {% endfor %}
         </div>
     </div>
 </div>
