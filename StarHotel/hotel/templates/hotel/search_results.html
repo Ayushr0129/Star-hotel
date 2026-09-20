@@ -5,9 +5,6 @@
 
 {% block content %}
 <div class="search-results-page">
-    <h1>Available Rooms</h1>
-{% block content %}
-<div class="search-results-page">
     <div class="search-results-heading">
         <h1>Available Rooms</h1>
         <p class="results-count">12 rooms found for your selected dates</p>
@@ -16,7 +13,7 @@
     <div class="search-summary-bar">
         <div class="summary-box">
             <span class="summary-label">Check-in</span>
-            <span class="summary-value">20 Sep 2026</span>
+            <span class="summary-value">25 Sep 2026</span>
         </div>
         <div class="summary-box">
             <span class="summary-label">Check-out</span>
@@ -33,6 +30,64 @@
                 <option>Price: High to Low</option>
                 <option>Rating</option>
             </select>
+        </div>
+    </div>
+
+    <div class="search-results-body">
+        <aside class="filter-sidebar">
+            <h2>Filter Rooms</h2>
+
+            <div class="filter-group">
+                <label for="hotelBranch">Hotel Branch</label>
+                <select id="hotelBranch" name="hotel_branch">
+                    <option>All branches</option>
+                </select>
+            </div>
+
+            <div class="filter-group">
+                <label for="roomType">Room Type</label>
+                <select id="roomType" name="room_type">
+                    <option>All room types</option>
+                </select>
+            </div>
+
+            <div class="filter-group">
+                <label for="priceRange">Price Range</label>
+                <select id="priceRange" name="price_range">
+                    <option>Rs 5,000 - Rs 25,000</option>
+                </select>
+            </div>
+
+            <div class="filter-group">
+                <label for="numGuests">Number of Guests</label>
+                <select id="numGuests" name="num_guests">
+                    <option>2 Guests</option>
+                </select>
+            </div>
+
+            <div class="filter-group">
+                <label>Amenities</label>
+                <div class="amenities-checkboxes">
+                    <label class="amenity-item">
+                        <input type="checkbox" name="amenities" value="wifi">
+                        Wi-Fi
+                    </label>
+                    <label class="amenity-item">
+                        <input type="checkbox" name="amenities" value="breakfast">
+                        Breakfast
+                    </label>
+                    <label class="amenity-item">
+                        <input type="checkbox" name="amenities" value="sea_view">
+                        Sea View
+                    </label>
+                </div>
+            </div>
+
+            <button type="button" class="apply-filters-btn">Apply Filters</button>
+        </aside>
+
+        <div class="room-listings">
+          
         </div>
     </div>
 </div>
