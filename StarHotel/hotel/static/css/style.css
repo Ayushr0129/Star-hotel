@@ -1162,8 +1162,9 @@ header:has(~ main .layout) {
  
 .card-footer {
     display: flex;
-    justify-content: space-between;
+    flex-direction: column;
     align-items: center;
+    gap: 0.5rem;
 }
  
 .btn-sm {

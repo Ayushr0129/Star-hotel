@@ -7,7 +7,7 @@
 <!-- Hero Section -->
 <section class="hero">
     <h1>Experience Luxury and Comfort</h1>
-    <p>Find the perfect room for your next stay</p>
+    <p>Find the perfect room for your next stay.</p>
 
     <form class="booking-bar" action="#" method="GET">
         <div class="booking-field">
@@ -15,15 +15,18 @@
             <select name="branch">
                 <option>Select Branch</option>
                 <option>Mont Choisy</option>
+                <option>Surinam</option>
+                <option>Belle Mare</option>
+                <option>Flic en Flac</option>
             </select>
         </div>
         <div class="booking-field">
             <label>Check-in</label>
-            <input type="date" name="check_in" value="2026-08-24">
+            <input type="date" name="check_in" value="2026-09-20">
         </div>
         <div class="booking-field">
             <label>Check-out</label>
-            <input type="date" name="check_out" value="2026-08-28">
+            <input type="date" name="check_out" value="2026-09-28">
         </div>
         <div class="booking-field">
             <label>Guests</label>
@@ -45,7 +48,7 @@
             <img src="{% static room.image_path %}" alt="{{ room.name }}" class="card-img">
             <div class="card-body">
                 <h3 class="card-title">{{ room.name }}</h3>
-                <p class="card-meta">★ ★ ★ ★ ★ &nbsp;•&nbsp; {{ room.details }}</p>
+                <p class="card-meta"><span style="color:#FFD700;">★ ★ ★ ★ ★</span> &nbsp;•&nbsp; {{ room.details }}</p>
                 <div class="card-footer">
                     <strong>Rs {{ room.price }} <span style="font-weight:400; font-size:0.75rem;">/ night</span></strong>
                     <a href="#" class="btn-sm">View Details</a>
