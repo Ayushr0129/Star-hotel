@@ -1,10 +1,31 @@
-{% extends "base.html" %}
-{% load static %}
-
-{% block title %}Search Results - Star Hotel{% endblock %}
-
 {% block content %}
 <div class="search-results-page">
-    <h1>Available Rooms</h1>
+    <div class="search-results-heading">
+        <h1>Available Rooms</h1>
+        <p class="results-count">12 rooms found for your selected dates</p>
+    </div>
+
+    <div class="search-summary-bar">
+        <div class="summary-box">
+            <span class="summary-label">Check-in</span>
+            <span class="summary-value">20 Sep 2026</span>
+        </div>
+        <div class="summary-box">
+            <span class="summary-label">Check-out</span>
+            <span class="summary-value">28 Sep 2026</span>
+        </div>
+        <div class="summary-box">
+            <span class="summary-label">Guests</span>
+            <span class="summary-value">2 Guests</span>
+        </div>
+        <div class="summary-box sort-box">
+            <span class="summary-label">Sort by</span>
+            <select class="sort-select">
+                <option>Price: Low to High</option>
+                <option>Price: High to Low</option>
+                <option>Rating</option>
+            </select>
+        </div>
+    </div>
 </div>
 {% endblock %}
