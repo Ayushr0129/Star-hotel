@@ -1534,3 +1534,58 @@ header:has(~ main .layout) {
     border: 1px solid #ccc;
     border-radius: 4px;
 }
+/* Sidebar + listings layout */
+.search-results-body {
+    display: flex;
+    gap: 2rem;
+    align-items: flex-start;
+}
+
+.filter-sidebar {
+    width: 260px;
+    flex-shrink: 0;
+    background: #fff;
+    border: 1px solid #e2e2e2;
+    border-radius: 8px;
+    padding: 1.5rem;
+}
+
+.filter-group {
+    margin-bottom: 1.25rem;
+}
+
+.filter-group label {
+    display: block;
+    font-weight: 600;
+    margin-bottom: 0.4rem;
+}
+
+.filter-group select {
+    width: 100%;
+    padding: 0.5rem;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+}
+
+.amenities-checkboxes {
+    display: flex;
+    gap: 1rem;
+}
+
+.amenity-item {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    font-weight: normal;
+}
+
+.apply-filters-btn {
+    width: 100%;
+    padding: 0.7rem;
+    background: #1e2a4a;
+    color: #fff;
+    border: none;
+    border-radius: 4px;
+    font-weight: 600;
+    cursor: pointer;
+}
