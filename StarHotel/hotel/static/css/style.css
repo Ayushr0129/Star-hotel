@@ -1589,3 +1589,88 @@ header:has(~ main .layout) {
     font-weight: 600;
     cursor: pointer;
 }
+/* Room cards */
+.room-listings {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+}
+
+.room-card {
+    display: flex;
+    gap: 1.5rem;
+    background: #fff;
+    border: 1px solid #e2e2e2;
+    border-radius: 8px;
+    padding: 1rem;
+}
+
+.room-card-image {
+    width: 260px;
+    flex-shrink: 0;
+}
+
+.room-card-image img {
+    width: 100%;
+    height: 180px;
+    object-fit: cover;
+    border-radius: 6px;
+}
+
+.room-card-info {
+    flex: 1;
+}
+
+.room-card-name {
+    margin: 0 0 0.5rem 0;
+}
+
+.room-card-guests {
+    color: #666;
+    margin: 0 0 0.75rem 0;
+}
+
+.room-card-features {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.room-card-features li {
+    margin-bottom: 0.4rem;
+}
+
+.room-card-action {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    justify-content: space-between;
+    text-align: right;
+}
+
+.room-card-price {
+    margin: 0;
+}
+
+.price-amount {
+    display: block;
+    font-size: 1.3rem;
+    font-weight: 700;
+    color: #1e2a4a;
+}
+
+.price-period {
+    font-size: 0.85rem;
+    color: #777;
+}
+
+.view-details-btn {
+    display: inline-block;
+    background: #1e2a4a;
+    color: #fff;
+    padding: 0.6rem 1.2rem;
+    border-radius: 4px;
+    text-decoration: none;
+    font-weight: 600;
+}
