@@ -1482,3 +1482,55 @@ header:has(~ main .layout) {
         margin-right: 20px;
     }
 }
+/* Search Results Page  */
+
+.search-results-page {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 2rem 1.5rem;
+}
+
+.search-results-heading h1 {
+    margin: 0 0 0.25rem 0;
+}
+
+.results-count {
+    color: #666;
+    margin: 0 0 1.5rem 0;
+}
+
+/* Summary bar */
+.search-summary-bar {
+    display: flex;
+    gap: 1.5rem;
+    background: #fff;
+    border: 1px solid #e2e2e2;
+    border-radius: 8px;
+    padding: 1rem 1.5rem;
+    margin-bottom: 2rem;
+}
+
+.summary-box {
+    display: flex;
+    flex-direction: column;
+}
+
+.summary-label {
+    font-size: 0.8rem;
+    color: #777;
+    margin-bottom: 0.25rem;
+}
+
+.summary-value {
+    font-weight: 600;
+}
+
+.sort-box {
+    margin-left: auto;
+}
+
+.sort-select {
+    padding: 0.4rem 0.6rem;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+}
