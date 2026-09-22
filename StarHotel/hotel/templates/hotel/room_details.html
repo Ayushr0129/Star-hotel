@@ -1,9 +1,8 @@
 {% extends "base.html" %}
+{% load static %}
 
 {% block title %}
-
 Deluxe Room | Star Hotel
-
 {% endblock %}
 
 {% block content %}
@@ -16,11 +15,20 @@ Deluxe Room | Star Hotel
 
     <div class="room-details-layout">
         <div class="room-gallery">
-            <!--Image + thumbnails will be placed here -->
+            <div class="room-main-image">
+                <img src="{% static 'images/deluxe.jpg' %}" alt="Deluxe Room">
+            </div>
+
+            <div class="room-thumbnails">
+                <img src="{% static 'images/deluxe-thumb-1.jpg' %}" alt="Deluxe Room thumbnail 1">
+                <img src="{% static 'images/deluxe-thumb-2.jpg' %}" alt="Deluxe Room thumbnail 2">
+                <img src="{% static 'images/deluxe-thumb-3.jpg' %}" alt="Deluxe Room thumbnail 3">
+                <img src="{% static 'images/deluxe-thumb-4.jpg' %}" alt="Deluxe Room thumbnail 4">
+            </div>
         </div>
 
         <div class="room-info-panel">
-            <!-- The price, capacity, amenities, booking form will be written here -->
+            <!-- price, capacity, amenities, booking form go here next -->
         </div>
     </div>
 </div>
