@@ -1674,3 +1674,29 @@ header:has(~ main .layout) {
     text-decoration: none;
     font-weight: 600;
 }
+
+/* Room Details Page */
+.room-details-page {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 24px 40px 60px;
+}
+
+.room-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 20px;
+}
+
+.room-name {
+    font-size: 28px;
+    font-weight: 800;
+    color: #111827;
+    margin: 0;
+}
+
+.room-rating {
+    color: #f5b400;
+    font-size: 16px;
+}
