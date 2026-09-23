@@ -1708,13 +1708,13 @@ header:has(~ main .layout) {
 }
 
 .room-gallery {
-    flex: 1.6;
+    flex: 1.8;
     min-width: 0;
 }
 
 .room-info-panel {
     flex: 1;
-    min-width: 300px;
+    min-width: 220px;
 }
 
 @media (max-width: 900px) {
@@ -1820,4 +1820,71 @@ header:has(~ main .layout) {
     color: var(--navy);
     position: absolute;
     left: 0;
+}
+
+.room-booking-widget {
+    flex: 1.1;
+    min-width: 280px;
+    background: white;
+    border: 1px solid #e5e7eb;
+    border-radius: 8px;
+    padding: 20px;
+}
+
+.room-booking-widget h3 {
+    margin: 0 0 16px;
+    font-size: 16px;
+}
+
+.booking-widget-row {
+    display: flex;
+    gap: 12px;
+    margin-bottom: 14px;
+}
+
+.booking-widget-field {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.booking-widget-field label {
+    font-size: 12px;
+    font-weight: 700;
+    color: #6b7280;
+}
+
+.booking-widget-field input,
+.booking-widget-field select {
+    padding: 8px 10px;
+    border: 1px solid #d1d5db;
+    border-radius: 6px;
+    font-size: 13px;
+}
+
+.booking-widget-total {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    margin: 16px 0;
+    padding-top: 14px;
+    border-top: 1px solid #e5e7eb;
+}
+
+.booking-widget-total span {
+    font-size: 13px;
+    color: #6b7280;
+}
+
+.booking-widget-total p {
+    font-size: 18px;
+    font-weight: 800;
+    margin: 0;
+    color: #111827;
+}
+
+.btn-book-now {
+    width: 100%;
+    padding: 12px;
 }
