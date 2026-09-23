@@ -1751,3 +1751,73 @@ header:has(~ main .layout) {
 .room-thumbnails img:hover {
     border-color: var(--navy);
 }
+
+.room-info-panel {
+    background: white;
+    border: 1px solid #e5e7eb;
+    border-radius: 8px;
+    padding: 20px;
+}
+
+.room-price-block {
+    margin-bottom: 20px;
+}
+
+.price-label {
+    font-size: 12px;
+    color: #6b7280;
+    text-transform: uppercase;
+    font-weight: 700;
+}
+
+.room-price {
+    font-size: 24px;
+    font-weight: 800;
+    color: #111827;
+    margin: 4px 0 0;
+}
+
+.price-per {
+    font-size: 14px;
+    font-weight: 500;
+    color: #6b7280;
+}
+
+.room-spec-block {
+    margin-bottom: 16px;
+}
+
+.room-spec-block h4 {
+    font-size: 12px;
+    text-transform: uppercase;
+    color: #6b7280;
+    font-weight: 700;
+    margin: 0 0 4px;
+}
+
+.room-spec-block p {
+    margin: 0;
+    font-size: 14px;
+    color: #111827;
+}
+
+.room-amenities-list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+
+.room-amenities-list li {
+    font-size: 14px;
+    color: #111827;
+    margin-bottom: 6px;
+    padding-left: 18px;
+    position: relative;
+}
+
+.room-amenities-list li::before {
+    content: "•";
+    color: var(--navy);
+    position: absolute;
+    left: 0;
+}
