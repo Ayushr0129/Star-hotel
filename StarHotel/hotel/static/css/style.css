@@ -1888,3 +1888,21 @@ header:has(~ main .layout) {
     width: 100%;
     padding: 12px;
 }
+
+.room-description {
+    margin-top: 30px;
+    max-width: 700px;
+}
+
+.room-description h3 {
+    font-size: 16px;
+    font-weight: 700;
+    margin-bottom: 8px;
+    color: #111827;
+}
+
+.room-description p {
+    font-size: 14px;
+    color: #4b5563;
+    line-height: 1.6;
+}
