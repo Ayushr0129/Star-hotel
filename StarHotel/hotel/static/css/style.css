@@ -39,7 +39,7 @@ main{
 /*customer-dashboard formatting*/
 
 :root{
-    --navy: #14213d;
+    --navy: #1E3A8A;
     --navy-light: #1d2f52;
     --accent-red: #d62828;
     --text-light: #f4f4f4;
@@ -594,10 +594,7 @@ header:has(~ main .layout) {
     color: var(--navy);
     display: inline-block;
 }
-
-
-
-
+ 
 /* Booking page */
 
 .hero-banner {
@@ -1582,7 +1579,7 @@ header:has(~ main .layout) {
 .apply-filters-btn {
     width: 100%;
     padding: 0.7rem;
-    background: #1e2a4a;
+    background: var(--navy);
     color: #fff;
     border: none;
     border-radius: 4px;
@@ -1657,7 +1654,7 @@ header:has(~ main .layout) {
     display: block;
     font-size: 1.3rem;
     font-weight: 700;
-    color: #1e2a4a;
+    color: var(--navy);
 }
 
 .price-period {
@@ -1667,7 +1664,7 @@ header:has(~ main .layout) {
 
 .view-details-btn {
     display: inline-block;
-    background: #1e2a4a;
+    background: var(--navy);
     color: #fff;
     padding: 0.6rem 1.2rem;
     border-radius: 4px;
@@ -1708,7 +1705,7 @@ header:has(~ main .layout) {
 }
 
 .room-gallery {
-    flex: 1.8;
+    flex: 1.6;
     min-width: 0;
 }
 
@@ -1823,8 +1820,6 @@ header:has(~ main .layout) {
 }
 
 .room-booking-widget {
-    flex: 1.1;
-    min-width: 280px;
     background: white;
     border: 1px solid #e5e7eb;
     border-radius: 8px;
@@ -1890,7 +1885,7 @@ header:has(~ main .layout) {
 }
 
 .room-description {
-    margin-top: 30px;
+    margin-top: 20px;
     max-width: 700px;
 }
 
@@ -1905,4 +1900,11 @@ header:has(~ main .layout) {
     font-size: 14px;
     color: #4b5563;
     line-height: 1.6;
+}
+
+.room-right-column {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
 }
