@@ -1,0 +1,114 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}
+Family Suite | Star Hotel
+{% endblock %}
+
+{% block content %}
+
+<div class="room-details-page">
+    <div class="room-header">
+        <h1 class="room-name">Family Suite</h1>
+        <span class="room-rating">★★★★★</span>
+    </div>
+
+    <div class="room-details-layout">
+        <div class="room-gallery">
+            <div class="room-main-image">
+                <img src="{% static 'images/family-thumb-1.jpg' %}" alt="Family Suite">
+            </div>
+
+            <div class="room-thumbnails">
+                <img src="{% static 'images/family-thumb-1.jpg' %}" alt="Family Suite thumbnail 1">
+                <img src="{% static 'images/family-thumb-2.jpg' %}" alt="Family Suite thumbnail 2">
+                <img src="{% static 'images/family-thumb-3.jpg' %}" alt="Family Suite thumbnail 3">
+                <img src="{% static 'images/family-thumb-4.jpg' %}" alt="Family Suite thumbnail 4">
+            </div>
+
+            <div class="room-description">
+                <h3>Description</h3>
+                <p>Spacious and welcoming, our Family Suite is designed for comfort and convenience. Featuring two double beds, a seating area, complimentary high-speed Wi-Fi, air conditioning, a pull-out sofa bed and modern amenities, this suite is perfect for families or small groups looking for a relaxing getaway.</p>
+            </div>
+        </div>
+
+        <div class="room-right-column">
+            <div class="room-info-panel">
+                <div class="room-price-block">
+                    <span class="price-label">Price</span>
+                    <p class="room-price">Rs 21,000 <span class="price-per">/ night</span></p>
+                </div>
+
+                <div class="room-spec-block">
+                    <h4>Capacity</h4>
+                    <p>4 Guests</p>
+                </div>
+
+                <div class="room-spec-block">
+                    <h4>Bed Type</h4>
+                    <p>2 Double Beds</p>
+                </div>
+
+                <div class="room-spec-block">
+                    <h4>Room Size</h4>
+                    <p>50 m²</p>
+                </div>
+
+                <div class="room-spec-block">
+                    <h4>Amenities</h4>
+                    <ul class="room-amenities-list">
+                        <li>Complimentary Wi-Fi</li>
+                        <li>Air Conditioning</li>
+                        <li>Smart TV</li>
+                        <li>Mini Bar</li>
+                        <li>Sea View</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="room-booking-widget">
+                <h3>Book This Room</h3>
+
+                <div class="booking-widget-row">
+                    <div class="booking-widget-field">
+                        <label>Check-in</label>
+                        <input type="date" name="checkin">
+                    </div>
+                    <div class="booking-widget-field">
+                        <label>Check-out</label>
+                        <input type="date" name="checkout">
+                    </div>
+                </div>
+
+                <div class="booking-widget-row">
+                    <div class="booking-widget-field">
+                        <label>Guests</label>
+                        <select name="guests">
+                            <option>4 Guests</option>
+                            <option>1 Guest</option>
+                            <option>2 Guests</option>
+                            <option>3 Guests</option>
+                        </select>
+                    </div>
+                    <div class="booking-widget-field">
+                        <label>Package</label>
+                        <select name="package">
+                            <option>Standard</option>
+                            <option>Family Package</option>
+                            <option>Half Board</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="booking-widget-total">
+                    <span>Estimated Total</span>
+                    <p>Rs 21,000</p>
+                </div>
+
+                <button type="button" class="btn-navy btn-book-now">Book Now</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}

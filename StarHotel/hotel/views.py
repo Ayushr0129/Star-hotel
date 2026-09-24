@@ -52,7 +52,7 @@ def search_results(request):
             'price': '21,000',
             'guests': 4,
             'features': ['2 Double Beds', 'Sea View', 'Breakfast Included'],
-            'image_path': 'images/family_suite.jpg'
+            'image_path': 'images/family-thumb-1.jpg'
         },
     ]
     return render(request, "hotel/search_results.html", {"rooms": rooms})
