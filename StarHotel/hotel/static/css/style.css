@@ -1908,3 +1908,10 @@ header:has(~ main .layout) {
     flex-direction: column;
     gap: 20px;
 }
+
+.section-subtitle {
+    color: #6b7280;
+    font-size: 14px;
+    margin-top: -8px;
+    margin-bottom: 8px;
+}
