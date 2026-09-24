@@ -58,8 +58,16 @@ def search_results(request):
     return render(request, "hotel/search_results.html", {"rooms": rooms})
 
 
-def room_details(request):
-    return render(request, "hotel/room_details.html")
+def room_details_deluxe(request):
+    return render(request, "hotel/room_details_deluxe.html")
+
+
+def room_details_executive(request):
+    return render(request, "hotel/room_details_executive.html")
+
+
+def room_details_family(request):
+    return render(request, "hotel/room_details_family.html")
 
 
 def login(request):

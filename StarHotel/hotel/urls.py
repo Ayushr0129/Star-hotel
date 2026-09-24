@@ -5,7 +5,9 @@ urlpatterns = [
 
     path("",views.home, name="home"),
     path("search-results/", views.search_results, name="search_results"),
-    path("room-details/", views.room_details, name="room_details"),
+    path("room-details/deluxe/", views.room_details_deluxe, name="room_details_deluxe"),
+    path("room-details/executive/", views.room_details_executive, name="room_details_executive"),
+    path("room-details/family-suite/", views.room_details_family, name="room_details_family"),
     path("login/", views.login, name="login"),
     path("register/", views.register, name="register"),
     path("customer-dashboard/", views.customer_dashboard, name="customer_dashboard"),
