@@ -1946,3 +1946,10 @@ header:has(~ main .layout) {
     text-align: center;
     margin-top: 28px;
 }
+
+.featured-rooms {
+    background: linear-gradient(rgba(255, 255, 255,0.1), rgba(255, 255, 255,0.1)),
+                url('../images/beach.jpg') center/cover no-repeat;
+    padding: 40px 24px;
+    border-radius: 8px;
+}
