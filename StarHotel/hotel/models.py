@@ -57,3 +57,17 @@ class Employee(User):
 class Administrator(Employee):
     def __str__(self):
         return f"{self.username} (Administrator)"
+
+class Branch(models.Model):
+    branch_id = models.AutoField(primary_key=True)
+    branch_name = models.CharField(max_length=100)
+    tel_no = models.CharField(max_length=20)
+    street = models.CharField(max_length=150)
+    city = models.CharField(max_length=100)
+    zipcode = models.CharField(max_length=10)
+
+    class Meta:
+        verbose_name_plural = "branches"
+
+    def __str__(self):
+        return self.branch_name
