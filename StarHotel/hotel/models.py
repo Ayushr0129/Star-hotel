@@ -32,3 +32,24 @@ class Customer(User):
 
     def __str__(self):
         return f"{self.username} ({self.nid})"
+
+class Role(models.Model):
+    role_id = models.AutoField(primary_key=True)
+    role_type = models.CharField(max_length=50, unique=True)
+
+    def __str__(self):
+        return self.role_type
+
+
+class Employee(User):
+    job_title = models.CharField(max_length=100)
+    salary = models.DecimalField(max_digits=10, decimal_places=2)
+    active = models.BooleanField(default=True)
+    role = models.ForeignKey(
+        Role,
+        on_delete=models.PROTECT,
+        related_name='employees'
+    )
+
+    def __str__(self):
+        return f"{self.username} ({self.job_title})"
