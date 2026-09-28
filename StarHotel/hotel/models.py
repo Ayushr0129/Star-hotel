@@ -10,3 +10,12 @@ class User(AbstractUser):
 
     def __str__(self):
         return self.username
+
+class Loyalty(models.Model):
+    loyalty_num = models.AutoField(primary_key=True)
+    tier = models.CharField(max_length=50)
+    discount_rate = models.FloatField(default=0.0)
+    multiplier_rate = models.FloatField(default=1.0)
+
+    def __str__(self):
+        return self.tier
