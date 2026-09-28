@@ -19,3 +19,16 @@ class Loyalty(models.Model):
 
     def __str__(self):
         return self.tier
+
+class Customer(User):
+    nid = models.CharField(max_length=20, unique=True)
+    loyalty = models.ForeignKey(
+        Loyalty,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name='customers'
+    )
+
+    def __str__(self):
+        return f"{self.username} ({self.nid})"
