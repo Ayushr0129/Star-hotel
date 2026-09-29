@@ -40,24 +40,6 @@ class Role(models.Model):
     def __str__(self):
         return self.role_type
 
-
-class Employee(User):
-    job_title = models.CharField(max_length=100)
-    salary = models.DecimalField(max_digits=10, decimal_places=2)
-    active = models.BooleanField(default=True)
-    role = models.ForeignKey(
-        Role,
-        on_delete=models.PROTECT,
-        related_name='employees'
-    )
-
-    def __str__(self):
-        return f"{self.username} ({self.job_title})"
-
-class Administrator(Employee):
-    def __str__(self):
-        return f"{self.username} (Administrator)"
-
 class Branch(models.Model):
     branch_id = models.AutoField(primary_key=True)
     branch_name = models.CharField(max_length=100)
@@ -70,4 +52,28 @@ class Branch(models.Model):
         verbose_name_plural = "branches"
 
     def __str__(self):
-        return self.branch_name
+        return self.branch_name    
+ 
+class Employee(User):
+    job_title = models.CharField(max_length=100)
+    salary = models.DecimalField(max_digits=10, decimal_places=2)
+    active = models.BooleanField(default=True)
+    role = models.ForeignKey(
+        Role,
+        on_delete=models.PROTECT,
+        related_name='employees'
+    )
+    branch = models.ForeignKey(
+        'Branch',
+        on_delete=models.PROTECT,
+        null =True,
+        blank = True,
+        related_name='employees'
+    )
+
+    def __str__(self):
+        return f"{self.username} ({self.job_title})"
+    
+class Administrator(Employee):
+    def __str__(self):
+        return f"{self.username} (Administrator)"
