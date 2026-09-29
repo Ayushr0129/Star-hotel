@@ -77,3 +77,17 @@ class Employee(User):
 class Administrator(Employee):
     def __str__(self):
         return f"{self.username} (Administrator)"
+
+class Room(models.Model):
+    room_id = models.AutoField(primary_key=True)
+    room_type = models.CharField(max_length=50)
+    room_status = models.CharField(max_length=20, default='available')
+    price = models.DecimalField(max_digits=10, decimal_places=2)
+    branch = models.ForeignKey(
+        Branch,
+        on_delete=models.CASCADE,
+        related_name='rooms'
+    )
+
+    def __str__(self):
+        return f"{self.room_type} - {self.branch.branch_name}"
