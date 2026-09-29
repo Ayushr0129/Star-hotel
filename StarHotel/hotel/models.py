@@ -91,3 +91,27 @@ class Room(models.Model):
 
     def __str__(self):
         return f"{self.room_type} - {self.branch.branch_name}"
+
+class Booking(models.Model):
+    bk_id = models.AutoField(primary_key=True)
+    no_of_guests = models.PositiveIntegerField()
+    check_in = models.DateField()
+    check_out = models.DateField()
+    bk_date = models.DateField(auto_now_add=True)
+    bk_status = models.CharField(max_length=20, default='pending')
+    estimated_sum = models.DecimalField(max_digits=10, decimal_places=2)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+    customer = models.ForeignKey(
+        Customer,
+        on_delete=models.CASCADE,
+        related_name='bookings'
+    )
+    branch = models.ForeignKey(
+        Branch,
+        on_delete=models.CASCADE,
+        related_name='bookings'
+    )
+
+    def __str__(self):
+        return f"Booking #{self.bk_id} - {self.customer.username}"
