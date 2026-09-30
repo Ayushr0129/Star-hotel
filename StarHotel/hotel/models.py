@@ -115,3 +115,18 @@ class Booking(models.Model):
 
     def __str__(self):
         return f"Booking #{self.bk_id} - {self.customer.username}"
+
+class Booking_Item(models.Model):
+    bi_type = models.CharField(max_length=20)
+    price = models.DecimalField(max_digits=10, decimal_places=2)
+    payment_method = models.CharField(max_length=30)
+    purchase_date = models.DateField(auto_now_add=True)
+    description = models.CharField(max_length=255, blank=True)
+    booking = models.ForeignKey(
+        Booking,
+        on_delete=models.CASCADE,
+        related_name='booking_items'
+    )
+
+    def __str__(self):
+        return f"{self.bi_type} - {self.price}"
