@@ -75,36 +75,25 @@ new SiteNavPill('siteNav', 'navPill', 'registerLink');
 
 const tabs = document.querySelectorAll('.tab-item');
 const tabHighlight = document.getElementById('tabHighlight');
-const tabPanels = document.querySelectorAll('.tab-panel');
+const heroImg = document.getElementById('heroImg');
+const panels = document.querySelectorAll('.tab-panel');
 
 function moveTabHighlight(activeTab) {
     tabHighlight.style.left = activeTab.offsetLeft + 'px';
     tabHighlight.style.width = activeTab.offsetWidth + 'px';
 }
 
-function showPanel(tabKey) {
-    tabPanels.forEach(panel => {
-        panel.hidden = panel.dataset.tab !== tabKey;
+function showPanel(tabName) {
+    panels.forEach(panel => {
+        panel.hidden = panel.dataset.tab !== tabName;
     });
 }
 
-function updateHero(tabButton) {
-    const heroImg = document.getElementById('heroImg');
-    const heroSrc = tabButton.dataset.hero;
-    if (heroImg && heroSrc) {
-        heroImg.src = heroSrc;
-    }
-}
-
-const initialTab = document.querySelector('.tab-item.active');
-if (initialTab) {
+// position highlight + show correct panel on load
+const initialTab = document.querySelector('.tab-item.active') || tabs[0];
+if (initialTab && tabHighlight) {
     moveTabHighlight(initialTab);
     showPanel(initialTab.dataset.tab);
-    updateHero(initialTab);
-}
-
-if (document.querySelector('.tab-item.active')) {
-    moveTabHighlight(document.querySelector('.tab-item.active'));
 }
 
 tabs.forEach(tab => {
@@ -113,10 +102,12 @@ tabs.forEach(tab => {
         this.classList.add('active');
         moveTabHighlight(this);
         showPanel(this.dataset.tab);
-        updateHero(this);
+
+        if (heroImg && this.dataset.hero) {
+            heroImg.src = this.dataset.hero;
+        }
     });
 });
-
 
 document.querySelectorAll('.btn-book').forEach(btn => {
     btn.addEventListener('click', () => {

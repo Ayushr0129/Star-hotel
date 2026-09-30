@@ -9,12 +9,14 @@ from .models import (
 
 CART_SESSION_KEY = "cart"
 
+
 def _get_cart(request):
     return request.session.setdefault(CART_SESSION_KEY, [])
 
 
 def _cart_total(cart):
     return sum(item["price"] for item in cart)
+
 
 def home(request):
     rooms = [
@@ -174,86 +176,85 @@ def customer_rewards(request):
     return render(request, "hotel/customer_rewards.html", context)
  
 def customer_support(request):
-    rooms = Room.objects.select_related("branch").filter(room_status="available")
-    packages = Packages.objects.filter(is_active=True)
-    events = Event.objects.all()
-
-    if request.method == "POST":
-        add_item = request.POST.get("add_item", "")
-        checkin = request.POST.get("checkin")
-        checkout = request.POST.get("checkout")
-        try:
-            guests = int(request.POST.get("guests") or 1)
-        except ValueError:
-            guests = 1
-
-        item_type, _, item_id = add_item.partition("-")
-        cart = _get_cart(request)
-
-        if item_type == "room" and checkin and checkout:
-            room = Room.objects.filter(pk=item_id).first()
-            try:
-                ci = date.fromisoformat(checkin)
-                co = date.fromisoformat(checkout)
-            except ValueError:
-                ci = co = None
-            if room and ci and co and co > ci:
-                nights = (co - ci).days
-                cart.append({
-                    "item_type": "room",
-                    "ref_id": room.pk,
-                    "name": f"{room.room_type} room",
-                    "description": f"{room.room_type} room, {room.branch.branch_name}",
-                    "price": float(room.price) * nights,
-                    "check_in": checkin,
-                    "check_out": checkout,
-                    "guests": guests,
-                    "nights": nights,
-                })
-                request.session.modified = True
-
-        elif item_type == "package":
-            package = Packages.objects.filter(pk=item_id).first()
-            if package:
-                cart.append({
-                    "item_type": "package",
-                    "ref_id": package.pk,
-                    "name": package.p_name,
-                    "description": package.p_name,
-                    "price": float(package.base_price) * guests,
-                    "guests": guests,
-                })
-                request.session.modified = True
-
-        elif item_type == "event":
-            event = Event.objects.filter(pk=item_id).first()
-            if event:
-                cart.append({
-                    "item_type": "event",
-                    "ref_id": event.pk,
-                    "name": event.title,
-                    "description": event.title,
-                    "price": float(event.price_per_person) * guests,
-                    "guests": guests,
-                })
-                request.session.modified = True
-
-        return redirect("booking")
-
-    cart = _get_cart(request)
-    context = {
-        "rooms": rooms,
-        "packages": packages,
-        "events": events,
-        "cart": cart,
-        "cart_total": _cart_total(cart),
-    }
-    return render(request, "hotel/booking.html", context)
+   return render(request, "hotel/customer_support.html")
 
 
 def booking(request):
-    return render(request, "hotel/booking.html")
-
+        rooms = Room.objects.select_related("branch").filter(room_status="available")
+        packages = Packages.objects.filter(is_active=True)
+        events = Event.objects.all()
+    
+        if request.method == "POST":
+            add_item = request.POST.get("add_item", "")
+            checkin = request.POST.get("checkin")
+            checkout = request.POST.get("checkout")
+            try:
+                guests = int(request.POST.get("guests") or 1)
+            except ValueError:
+                guests = 1
+    
+            item_type, _, item_id = add_item.partition("-")
+            cart = _get_cart(request)
+    
+            if item_type == "room" and checkin and checkout:
+                room = Room.objects.filter(pk=item_id).first()
+                try:
+                    ci = date.fromisoformat(checkin)
+                    co = date.fromisoformat(checkout)
+                except ValueError:
+                    ci = co = None
+                if room and ci and co and co > ci:
+                    nights = (co - ci).days
+                    cart.append({
+                        "item_type": "room",
+                        "ref_id": room.pk,
+                        "name": f"{room.room_type} room",
+                        "description": f"{room.room_type} room, {room.branch.branch_name}",
+                        "price": float(room.price) * nights,
+                        "check_in": checkin,
+                        "check_out": checkout,
+                        "guests": guests,
+                        "nights": nights,
+                    })
+                    request.session.modified = True
+    
+            elif item_type == "package":
+                package = Packages.objects.filter(pk=item_id).first()
+                if package:
+                    cart.append({
+                        "item_type": "package",
+                        "ref_id": package.pk,
+                        "name": package.p_name,
+                        "description": package.p_name,
+                        "price": float(package.base_price) * guests,
+                        "guests": guests,
+                    })
+                    request.session.modified = True
+    
+            elif item_type == "event":
+                event = Event.objects.filter(pk=item_id).first()
+                if event:
+                    cart.append({
+                        "item_type": "event",
+                        "ref_id": event.pk,
+                        "name": event.title,
+                        "description": event.title,
+                        "price": float(event.price_per_person) * guests,
+                        "guests": guests,
+                    })
+                    request.session.modified = True
+    
+            return redirect("booking")
+    
+        cart = _get_cart(request)
+        context = {
+            "rooms": rooms,
+            "packages": packages,
+            "events": events,
+            "cart": cart,
+            "cart_total": _cart_total(cart),
+        }
+        return render(request, "hotel/booking.html", context)
 
 def staff_dashboard(request):
     return render(request, "hotel/staff_dashboard.html")
