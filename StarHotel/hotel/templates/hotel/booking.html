@@ -55,7 +55,7 @@ Booking
 
                 <div class="tab-panel" data-tab="rooms">
                     {% for room in rooms %}
-                    <div class="room-card" data-name="{{ room.room_type }}" data-price="{{ room.price }}">
+                    <div class="booking-room-card" data-name="{{ room.room_type }}" data-price="{{ room.price }}">
                         <div class="room-media">
                             <img src="{% static 'images/deluxe-thumb-1.jpg' %}" alt="{{ room.room_type }}" class="room-img">
                             <div class="room-specs">
@@ -68,7 +68,7 @@ Booking
                             </div>
                             <hr>
                             <div class="room-footer">
-                                <span class="room-price">Price : Rs {{ room.price }} / night</span>
+                                <span class="booking-room-price">Price : Rs {{ room.price }} / night</span>
                                 <div class="room-actions">
                                     <button type="button" class="btn-outline-navy">View</button>
                                     <button type="submit" name="add_item" value="room-{{ room.room_id }}" class="btn-navy btn-book">Book</button>
@@ -83,7 +83,7 @@ Booking
 
                 <div class="tab-panel" data-tab="packages" hidden>
                     {% for package in packages %}
-                    <div class="room-card" data-name="{{ package.p_name }}" data-price="{{ package.base_price }}">
+                    <div class="booking-room-card" data-name="{{ package.p_name }}" data-price="{{ package.base_price }}">
                         <div class="room-media">
                             <img src="{% static 'images/Weekend.jpg' %}" alt="{{ package.p_name }}" class="room-img">
                         </div>
@@ -91,7 +91,7 @@ Booking
                             <div class="room-title-row"><h3>{{ package.p_name }}</h3></div>
                             <hr>
                             <div class="room-footer">
-                                <span class="room-price">Price : Rs {{ package.base_price }} / guest</span>
+                                <span class="booking-room-price">Price : Rs {{ package.base_price }} / guest</span>
                                 <div class="room-actions">
                                     <button type="button" class="btn-outline-navy">View</button>
                                     <button type="submit" name="add_item" value="package-{{ package.p_id }}" class="btn-navy btn-book">Book</button>
@@ -106,7 +106,7 @@ Booking
 
                 <div class="tab-panel" data-tab="events" hidden>
                     {% for event in events %}
-                    <div class="room-card" data-name="{{ event.title }}" data-price="{{ event.price_per_person }}">
+                    <div class="booking-room-card" data-name="{{ event.title }}" data-price="{{ event.price_per_person }}">
                         <div class="room-media">
                             <img src="{% static 'images/wedding.webp' %}" alt="{{ event.title }}" class="room-img">
                         </div>
@@ -115,7 +115,7 @@ Booking
                             <p>{{ event.eventdate }} &middot; {{ event.location }}</p>
                             <hr>
                             <div class="room-footer">
-                                <span class="room-price">Price : Rs {{ event.price_per_person }} / guest</span>
+                                <span class="boooking-room-price">Price : Rs {{ event.price_per_person }} / guest</span>
                                 <div class="room-actions">
                                     <button type="button" class="btn-outline-navy">View</button>
                                     <button type="submit" name="add_item" value="event-{{ event.event_id }}" class="btn-navy btn-book">Book</button>

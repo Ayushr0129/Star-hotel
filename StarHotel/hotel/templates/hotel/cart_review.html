@@ -9,42 +9,53 @@
     <div class="checkout-layout">
         <div class="checkout-main">
  
+            {% for item in cart %}
+
             <div class="room-card">
                 <img src="{% static 'images/2BDDF7B0-9FE3-4B62-AB2A-B6CEE2FB6361_4_5005_c.jpeg' %}" alt="Deluxe king room" class="room-img" style="width:180px; height:140px;">
                 <div class="room-info">
-                    <h3>Deluxe king room</h3>
-                    <p>Sep 12 - Sep 15, 2026 &middot; 3 nights &middot; 2 adults</p>
-                    <div class="room-specs" style="justify-content:flex-start; margin-top:8px;">
-                        <span>2 Guests</span>
-                        <span>King Bed</span>
-                        <span>35 m&sup2;</span>
-                    </div>
+                    <h3>{{ item.name }}</h3>
+
+                    {% if item.item_type == "room" %}
+                    <p>{{ item.check_in }} &middot; {{ item.check_out }} &middot; {{ item.nights }} nights &middot; {{ item.guests }} guests</p>
+                    {% else %}
+                    <p>{{ item.description }} &middot; {{ item.guests }} guests</p>
+                    {% endif %}
+
+
                     <hr>
                     <div class="room-footer">
-                        <span class="room-price">Price: Rs 15 000</span>
-                        <a href="#" class="btn-remove">Remove</a>
+                        <span class="room-price">Price:{{ item.price }}</span>
+                        <form method="post" style="margin:0;">
+                            {% csrf_token %}
+                            <input type="hidden" name="remove_index" value="{{ forloop.counter0 }}">
+                            <button type="submit" class="btn-remove">Remove</button>
+                        </form>
+                        
                     </div>
                 </div>
             </div>
- 
-            <a href="{% url 'search_results' %}" class="add-another">+ Add another room, package or event</a>
+            {% empty %}
+            <div class="room-card">
+                <div class="room-info">
+                    <h3>Your cart is empty</h3>
+                    <p>Add a room, package or event to get started.</p>
+                </div>
+            </div>
+            {% endfor %}
+
+            <a href="{% url 'booking' %}" class="add-another">+ Add another room, package or event</a>
         </div>
  
         <div class="order-summary">
-            <h3>ORDER SUMMARY</h3>
-            <div class="order-row"><span>Room</span><span>Rs 15 000</span></div>
+            <h3>Order Summary</h3>
+            {% for item in cart %}
+            <div class="order-row"><span>{{ item.name }}</span><span>Rs {{ item.price }}</span></div>
+            {% endfor %}
             <hr class="order-divider">
-            <div class="order-row"><span>Subtotal</span><span>Rs 15 000</span></div>
-            <div class="order-row"><span>Taxes</span><span>Rs 1 000</span></div>
-            <div class="order-total"><span>Total</span><span>Rs 16 000</span></div>
+            <div class="order-total"><span>Total</span><span>Rs {{ cart_total }}</span></div>
         </div>
     </div>
- 
-    <div class="checkout-actions">
-        <a href="{% url 'search_results' %}" class="btn-outline-navy">Back to browsing</a>
-        <a href="{% url 'cart_guest_details' %}" class="btn-navy btn-continue">Continue</a>
-    </div>
-</div>
  
 {% endblock %}
  

@@ -39,8 +39,8 @@ main{
 /*customer-dashboard formatting*/
 
 :root{
-    --navy: #1E3A8A;
-    --navy-light: #1d2f52;
+    --navy: #1d39c4;
+    --navy-light: #2a48df;
     --accent-red: #d62828;
     --text-light: #f4f4f4;
     --text-muted: #9fb0cc;
@@ -717,7 +717,7 @@ header:has(~ main .layout) {
     min-width: 0;
 }
 
-.room-card {
+.booking-room-card {
     display: flex;
     align-items: flex-start;
     gap: 20px;
@@ -809,7 +809,7 @@ header:has(~ main .layout) {
     gap: 12px;
 }
 
-.room-price {
+.booking-room-price {
     font-weight: 700;
     font-size: 15px;
     color: #111827;
