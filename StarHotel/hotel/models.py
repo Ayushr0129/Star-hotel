@@ -142,3 +142,43 @@ class Room_Item(Booking_Item):
 
     def __str__(self):
         return f"Room Item - {self.room.room_type}"
+
+class Activity(models.Model):
+    act_id = models.AutoField(primary_key=True)
+    act_name = models.CharField(max_length=100)
+    act_date = models.DateField()
+    location = models.CharField(max_length=150)
+    capacity = models.PositiveIntegerField()
+    duration = models.PositiveIntegerField(help_text="Duration in minutes")
+    price_per_person = models.DecimalField(max_digits=10, decimal_places=2)
+
+    def __str__(self):
+        return self.act_name
+
+class Event(models.Model):
+    event_id = models.AutoField(primary_key=True)
+    title = models.CharField(max_length=150)
+    event_type = models.CharField(max_length=50)
+    eventdate = models.DateField()
+    start_time = models.TimeField()
+    end_time = models.TimeField()
+    max_attendees = models.PositiveIntegerField()
+    price_per_person = models.DecimalField(max_digits=10, decimal_places=2)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    def __str__(self):
+        return self.title
+
+class Packages(models.Model):
+    p_id = models.AutoField(primary_key=True)
+    p_name = models.CharField(max_length=100)
+    base_price = models.DecimalField(max_digits=10, decimal_places=2)
+    is_active = models.BooleanField(default=True)
+    valid_from = models.DateField()
+    valid_to = models.DateField()
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    def __str__(self):
+        return self.p_name
