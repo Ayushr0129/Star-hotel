@@ -182,3 +182,26 @@ class Packages(models.Model):
 
     def __str__(self):
         return self.p_name
+
+class Package_Item(Booking_Item):
+    package = models.ForeignKey(
+        Packages,
+        on_delete=models.PROTECT,
+        related_name='package_items'
+    )
+    no_of_guests = models.PositiveIntegerField()
+
+    def __str__(self):
+        return f"Package Item - {self.package.p_name}"
+
+
+class Event_Item(Booking_Item):
+    event = models.ForeignKey(
+        Event,
+        on_delete=models.PROTECT,
+        related_name='event_items'
+    )
+    no_of_guests = models.PositiveIntegerField()
+
+    def __str__(self):
+        return f"Event Item - {self.event.title}"
