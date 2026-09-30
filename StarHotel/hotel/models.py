@@ -130,3 +130,15 @@ class Booking_Item(models.Model):
 
     def __str__(self):
         return f"{self.bi_type} - {self.price}"
+
+class Room_Item(Booking_Item):
+    room = models.ForeignKey(
+        Room,
+        on_delete=models.PROTECT,
+        related_name='room_items'
+    )
+    check_in = models.DateField()
+    check_out = models.DateField()
+
+    def __str__(self):
+        return f"Room Item - {self.room.room_type}"
