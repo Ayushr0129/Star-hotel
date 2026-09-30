@@ -9,8 +9,8 @@
             <div class="profile">
                 <div class="avatar"></div>
                 <div class="profile-info">
-                    <div class="name">Name</div>
-                    <div class="member">Gold member</div>
+                    <div class="name">{{ customer.first_name|default:customer.username }}</div>
+                    <div class="member">{{ customer.loyalty.tier|default:"No tier" }} member</div>
                 </div>
             </div>
  
@@ -37,15 +37,30 @@
             <div class="stats-row">
                 <div class="stat-box">
                     <div class="stat-label">Full Name</div>
-                    <div class="stat-value" style="font-size:18px;">Name</div>
+                    <div class="stat-value" style="font-size:18px;">{{ customer.first_name }} {{ customer.last_name }}</div>
                 </div>
                 <div class="stat-box">
                     <div class="stat-label">Email</div>
-                    <div class="stat-value" style="font-size:18px;">name@example.com</div>
+                    <div class="stat-value" style="font-size:18px;">{{ customer.email }}</div>
                 </div>
                 <div class="stat-box">
                     <div class="stat-label">Phone</div>
-                    <div class="stat-value" style="font-size:18px;">+230 000 0000</div>
+                    <div class="stat-value" style="font-size:18px;">{{ customer.phone|default:"Not set" }}</div>
+                </div>
+            </div>
+
+            <div class="stats-row">
+                <div class="stat-box">
+                    <div class="stat-label">Date of Birth</div>
+                    <div class="stat-value" style="font-size:18px;">{{ customer.dob|default:"Not set" }}</div>
+                </div>
+                <div class="stat-box">
+                    <div class="stat-label">Address</div>
+                    <div class="stat-value" style="font-size:18px;">{{ customer.address|default:"Not set" }}</div>
+                </div>
+                <div class="stat-box">
+                    <div class="stat-label">National ID</div>
+                    <div class="stat-value" style="font-size:18px;">{{ customer.nid }}</div>
                 </div>
             </div>
  

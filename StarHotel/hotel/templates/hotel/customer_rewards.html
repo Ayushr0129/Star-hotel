@@ -9,8 +9,8 @@
             <div class="profile">
                 <div class="avatar"></div>
                 <div class="profile-info">
-                    <div class="name">Name</div>
-                    <div class="member">Gold member</div>
+                    <div class="name">{{ customer.first_name|default:customer.username }}</div>
+                    <div class="member">{{ customer.loyalty.tier|default:"No tier" }} member</div>
                 </div>
             </div>
  
@@ -37,27 +37,31 @@
             <div class="stats-row">
                 <div class="stat-box">
                     <div class="stat-label">Points</div>
-                    <div class="stat-value">2450</div>
+                    <div class="stat-value">{{ total_points }}</div>
                 </div>
                 <div class="stat-box">
                     <div class="stat-label">Tier</div>
-                    <div class="stat-value" style="font-size:20px;">Gold</div>
+                    <div class="stat-value" style="font-size:20px;">{{ customer.loyalty.tier|default:"None" }}</div>
                 </div>
                 <div class="stat-box">
                     <div class="stat-label">Points to Next Tier</div>
-                    <div class="stat-value">550</div>
+                    <div class="stat-value">&mdash;</div>
                 </div>
             </div>
  
             <h2 class="section-title">Points History</h2>
- 
+            
+            {% for entry in history %}
             <div class="past-booking-row">
                 <div>
-                    <div class="past-booking-name">Executive Room Stay</div>
-                    <div class="past-booking-dates">Jun 3 - Jun 6, 2026</div>
+                    <div class="past-booking-name">{{ entry.booking.booking_items.first.description|default:"Booking" }}</div>
+                    <div class="past-booking-dates">{{ entry.booking.check_in }} &ndash; {{ entry.booking.check_out }}</div>
                 </div>
-                <span class="btn-book-again" style="cursor:default;">+320 pts</span>
+                <span class="btn-book-again" style="cursor:default;">+{{ entry.points }} pts</span>
             </div>
+            {% empty %}
+            <p>No points history yet.</p>
+            {% endfor %}
  
         </div>
  
