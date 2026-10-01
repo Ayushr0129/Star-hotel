@@ -180,11 +180,91 @@ def customer_support(request):
 
 
 def booking(request):
-        rooms = Room.objects.select_related("branch").filter(room_status="available")
+        rooms_qs = Room.objects.select_related("branch").filter(
+            room_status="available"
+        ).order_by("room_id")
+        seen_types = set()
+        rooms = []
+        for r in rooms_qs:
+            if r.room_type not in seen_types:
+                seen_types.add(r.room_type)
+                rooms.append(r)
+
+        # Room has no guests/bed-type fields in the model, so this just
+        # mirrors the same spec text already shown on the home page cards.
+                ROOM_SPECS = {
+            "Deluxe Room": "2 Guests • King Bed",
+            "Standard Room": "2 Guests • Queen Bed",
+            "Studio Room": "2 Guests • King Bed • Terrace",
+            "Executive Room": "3 Guests • King Bed • Fire heating",
+        }
+        ROOM_IMAGES = {
+            "Deluxe Room": "images/deluxe.jpg",
+            "Standard Room": "images/standard.jpg",
+            "Studio Room": "images/studio.jpg",
+            "Executive Room": "images/executive.jpg",
+        }
+        ROOM_DESCRIPTIONS = {
+            "Deluxe Room": "Experience comfort and luxury in our Deluxe Room, featuring a king-size bed, complimentary breakfast, air conditioning, free Wi-Fi and panoramic garden views.",
+            "Standard Room": "A cozy, well-appointed room with a queen-size bed, air conditioning, free Wi-Fi and all the essentials for a comfortable stay.",
+            "Studio Room": "Enjoy extra space in our Studio Room, featuring a king-size bed, private terrace, air conditioning and complimentary Wi-Fi.",
+            "Executive Room": "Designed for comfort and convenience, our Executive Room features a king-size bed, fire heating, a spacious seating area and ocean views.",
+        }
+        room_cards = [
+            {
+                "room": r,
+                "specs": ROOM_SPECS.get(r.room_type, ""),
+                "image": ROOM_IMAGES.get(r.room_type, "images/deluxe.jpg"),
+                "description": ROOM_DESCRIPTIONS.get(r.room_type, ""),
+            }
+            for r in rooms
+        ]
+
+        PACKAGE_IMAGES = {
+            "Weekend Getaway": "images/Weekend.jpg",
+            "Romantic Escape": "images/romantic.jpg",
+            "Family Fun Package": "images/package-family.jpg",
+        }
+        PACKAGE_DESCRIPTIONS = {
+            "Weekend Getaway": "Relax with a two-night stay, complimentary breakfast and selected activities.",
+            "Romantic Escape": "Enjoy a romantic stay with breakfast, spa access and a special dinner.",
+            "Family Fun Package": "Perfect for families with breakfast, children's activities and late checkout.",
+        }
+        package_cards = [
+            {
+                "package": p,
+                "image": PACKAGE_IMAGES.get(p.p_name, "images/Weekend.jpg"),
+                "description": PACKAGE_DESCRIPTIONS.get(p.p_name, ""),
+            }
+            for p in Packages.objects.filter(is_active=True)
+        ]
+
+        EVENT_IMAGES = {
+            "Garden Wedding Package": "images/wedding.webp",
+            "Birthday Celebration Package": "images/birthday.png",
+            "Corporate Retreat Package": "images/worker.jpg",
+        }
+        EVENT_DESCRIPTIONS = {
+            "Garden Wedding Package": "A full wedding venue set among landscaped gardens with ocean views, including ceremony and reception setup, floral arch, seating for guests, a dedicated event coordinator, and a private bridal suite for preparation.",
+            "Birthday Celebration Package": "A private poolside or garden setup for milestone birthdays, with decor, a dessert table, and background music/DJ setup included.",
+            "Corporate Retreat Package": "Full-day private venue booking for team offsites, workshops, or strategy sessions. Includes a conference hall with AV equipment, a dedicated coordinator, and a working lunch for the group.",
+        }
+        event_cards = [
+            {
+                "event": e,
+                "image": EVENT_IMAGES.get(e.title, "images/wedding.webp"),
+                "description": EVENT_DESCRIPTIONS.get(e.title, ""),
+            }
+            for e in Event.objects.all()
+        ]
+
         packages = Packages.objects.filter(is_active=True)
         events = Event.objects.all()
+
+        
     
         if request.method == "POST":
+
             add_item = request.POST.get("add_item", "")
             checkin = request.POST.get("checkin")
             checkout = request.POST.get("checkout")
@@ -248,9 +328,9 @@ def booking(request):
     
         cart = _get_cart(request)
         context = {
-            "rooms": rooms,
-            "packages": packages,
-            "events": events,
+            "room_cards": room_cards,
+            "package_cards": package_cards,
+            "event_cards": event_cards,
             "cart": cart,
             "cart_total": _cart_total(cart),
         }
