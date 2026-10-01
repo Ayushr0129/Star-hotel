@@ -189,6 +189,9 @@ main:has(.layout) {
     background: transparent;
 }
 
+.booking-message { background:#fff4e5; border:1px solid #f0c987; color:#7a4b00; padding:10px 14px; border-radius:6px; margin-bottom:12px; }
+.date-hint { font-size:13px; color:#666; margin:6px 0 12px; }
+
 .btn-search {
     background: var(--primary-blue);
     color: white;

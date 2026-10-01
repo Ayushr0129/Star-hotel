@@ -1,6 +1,10 @@
-from django.shortcuts import redirect, render
-from datetime import date
-from datetime import datetime, timedelta
+from decimal import Decimal
+from datetime import date, timedelta
+
+from django.contrib import messages
+from django.db import transaction
+from django.shortcuts import get_object_or_404, redirect, render
+from django.urls import reverse
 
 from .models import (
     Customer, Room, Packages, Event, Branch,
@@ -9,13 +13,110 @@ from .models import (
 
 CART_SESSION_KEY = "cart"
 
+ROOM_IMAGES = {
+    "Deluxe Room": "images/deluxe.jpg",
+    "Standard Room": "images/standard.jpg",
+    "Studio Room": "images/studio.jpg",
+    "Executive Room": "images/executive.jpg",
+}
+PACKAGE_IMAGES = {
+    "Weekend Getaway": "images/Weekend.jpg",
+    "Romantic Escape": "images/romantic.jpg",
+    "Family Fun Package": "images/package-family.jpg",
+}
+EVENT_IMAGES = {
+    "Garden Wedding Package": "images/wedding.webp",
+    "Birthday Celebration Package": "images/birthday.png",
+    "Corporate Retreat Package": "images/worker.jpg",
+}
+
 
 def _get_cart(request):
     return request.session.setdefault(CART_SESSION_KEY, [])
 
 
 def _cart_total(cart):
-    return sum(item["price"] for item in cart)
+    return sum((Decimal(i["price"]) for i in cart), Decimal("0"))
+
+
+def _parse_date(value):
+    try:
+        return date.fromisoformat(value)
+    except (TypeError, ValueError):
+        return None
+
+
+def _build_cart_item(item_type, item_id, checkin, checkout, guests):
+    """Return (item, error). Exactly one of the two is None."""
+    if guests < 1:
+        return None, "Please enter at least 1 guest."
+
+    if item_type == "room":
+        room = Room.objects.select_related("branch").filter(pk=item_id).first()
+        if not room:
+            return None, "That room is no longer available."
+        ci, co = _parse_date(checkin), _parse_date(checkout)
+        if not ci or not co:
+            return None, "Choose your check-in and check-out dates first."
+        if ci < date.today():
+            return None, "Check-in cannot be in the past."
+        if co <= ci:
+            return None, "Check-out must be after check-in."
+        nights = (co - ci).days
+        return {
+            "kind": "stay", "item_type": "room", "ref_id": room.pk,
+            "name": room.room_type,
+            "description": f"{room.room_type}, {room.branch.branch_name}",
+            "image": ROOM_IMAGES.get(room.room_type, "images/deluxe.jpg"),
+            "price": str(room.price * nights),
+            "breakdown": f"{nights} night(s) × Rs {room.price:,.2f}",
+            "check_in": ci.isoformat(), "check_out": co.isoformat(),
+            "guests": guests, "nights": nights,
+        }, None
+
+    if item_type == "package":
+        package = Packages.objects.filter(pk=item_id, is_active=True).first()
+        if not package:
+            return None, "That package is no longer available."
+        ci = _parse_date(checkin)
+        if not ci:
+            return None, "Choose your check-in date first."
+        if ci < date.today():
+            return None, "Check-in cannot be in the past."
+        co = ci + timedelta(days=package.nights)
+        if not (package.valid_from <= ci and co <= package.valid_to):
+            return None, (f"{package.p_name} is only valid between "
+                          f"{package.valid_from:%d %b %Y} and {package.valid_to:%d %b %Y}.")
+        return {
+            "kind": "stay", "item_type": "package", "ref_id": package.pk,
+            "name": package.p_name, "description": package.p_name,
+            "image": PACKAGE_IMAGES.get(package.p_name, "images/Weekend.jpg"),
+            "price": str(package.base_price * guests),
+            "breakdown": f"{guests} guest(s) × Rs {package.base_price:,.2f}",
+            "check_in": ci.isoformat(), "check_out": co.isoformat(),
+            "guests": guests, "nights": package.nights,
+        }, None
+
+    if item_type == "event":
+        event = Event.objects.filter(pk=item_id).first()
+        if not event:
+            return None, "That event is no longer available."
+        if event.eventdate < date.today():
+            return None, "That event has already taken place."
+        if guests > event.max_attendees:
+            return None, f"This event holds a maximum of {event.max_attendees} guests."
+        return {
+            "kind": "event", "item_type": "event", "ref_id": event.pk,
+            "name": event.title, "description": event.title,
+            "image": EVENT_IMAGES.get(event.title, "images/wedding.webp"),
+            "price": str(event.price_per_person * guests),
+            "breakdown": f"{guests} guest(s) × Rs {event.price_per_person:,.2f}",
+            "check_in": event.eventdate.isoformat(),
+            "check_out": event.eventdate.isoformat(),
+            "guests": guests, "nights": 0,
+        }, None
+
+    return None, "Unknown item."
 
 
 def home(request):
@@ -276,67 +377,41 @@ def booking(request):
         
     
         if request.method == "POST":
-
-            add_item = request.POST.get("add_item", "")
-            checkin = request.POST.get("checkin")
-            checkout = request.POST.get("checkout")
+            item_type, _, item_id = request.POST.get("add_item", "").partition("-")
             try:
                 guests = int(request.POST.get("guests") or 1)
             except ValueError:
                 guests = 1
-    
-            item_type, _, item_id = add_item.partition("-")
-            cart = _get_cart(request)
-    
-            if item_type == "room" and checkin and checkout:
-                room = Room.objects.filter(pk=item_id).first()
-                try:
-                    ci = date.fromisoformat(checkin)
-                    co = date.fromisoformat(checkout)
-                except ValueError:
-                    ci = co = None
-                if room and ci and co and co > ci:
-                    nights = (co - ci).days
-                    cart.append({
-                        "item_type": "room",
-                        "ref_id": room.pk,
-                        "name": f"{room.room_type} room",
-                        "description": f"{room.room_type} room, {room.branch.branch_name}",
-                        "price": float(room.price) * nights,
-                        "check_in": checkin,
-                        "check_out": checkout,
-                        "guests": guests,
-                        "nights": nights,
-                    })
-                    request.session.modified = True
-    
-            elif item_type == "package":
-                package = Packages.objects.filter(pk=item_id).first()
-                if package:
-                    cart.append({
-                        "item_type": "package",
-                        "ref_id": package.pk,
-                        "name": package.p_name,
-                        "description": package.p_name,
-                        "price": float(package.base_price) * guests,
-                        "guests": guests,
-                    })
-                    request.session.modified = True
-    
-            elif item_type == "event":
-                event = Event.objects.filter(pk=item_id).first()
-                if event:
-                    cart.append({
-                        "item_type": "event",
-                        "ref_id": event.pk,
-                        "name": event.title,
-                        "description": event.title,
-                        "price": float(event.price_per_person) * guests,
-                        "guests": guests,
-                    })
-                    request.session.modified = True
-    
-            return redirect("booking")
+
+            request.session["search"] = {
+                "checkin": request.POST.get("checkin", ""),
+                "checkout": request.POST.get("checkout", ""),
+                "guests": guests,
+            }
+            tab = request.POST.get("current_tab")
+            if tab not in ("rooms", "packages", "events"):
+                tab = "rooms"
+
+            item, error = _build_cart_item(
+                item_type, item_id,
+                request.POST.get("checkin"), request.POST.get("checkout"), guests,
+            )
+            if error:
+                messages.error(request, error)
+            else:
+                cart = _get_cart(request)
+                if cart:
+                    if cart[0]["kind"] != item["kind"]:
+                        messages.info(request, "Stays and events are booked separately, "
+                                               "so your previous selection was replaced.")
+                    elif cart[0]["item_type"] != item["item_type"]:
+                        messages.info(request, "A package already includes your stay, "
+                                               "so your previous selection was replaced.")
+                request.session[CART_SESSION_KEY] = [item]
+                request.session.modified = True
+            return redirect(f"{reverse('booking')}?tab={tab}")
+
+        
     
         cart = _get_cart(request)
         context = {
@@ -345,6 +420,7 @@ def booking(request):
             "event_cards": event_cards,
             "cart": cart,
             "cart_total": _cart_total(cart),
+            "search": request.session.get("search", {}),
         }
         return render(request, "hotel/booking.html", context)
 
@@ -410,8 +486,7 @@ def cart_guest_details(request):
         request.session.modified = True
         return redirect("cart_payment")
 
-    room_items = [i for i in cart if i["item_type"] == "room"]
-    default_guests = room_items[0]["guests"] if room_items else 2
+    default_guests = cart[0]["guests"]
 
     context = {
         "cart": cart,
@@ -439,56 +514,53 @@ def cart_payment(request):
             if customer is None:
                 return redirect("login")
 
-            room_items = [i for i in cart if i["item_type"] == "room"]
-            if room_items:
-                first_room = Room.objects.filter(pk=room_items[0]["ref_id"]).first()
-                branch = first_room.branch if first_room else Branch.objects.first()
-                check_in = date.fromisoformat(room_items[0]["check_in"])
-                check_out = date.fromisoformat(room_items[0]["check_out"])
-                total_guests = room_items[0]["guests"]
+            item = cart[0]
+            if item["item_type"] == "room":
+                branch = get_object_or_404(Room, pk=item["ref_id"]).branch
             else:
                 branch = Branch.objects.first()
-                check_in = date.today()
-                check_out = date.today() + timedelta(days=1)
-                total_guests = 1
 
-            booking_obj = Booking.objects.create(
-                no_of_guests=total_guests,
-                check_in=check_in,
-                check_out=check_out,
-                bk_status="confirmed",
-                estimated_sum=_cart_total(cart),
-                customer=customer,
-                branch=branch,
-            )
+            with transaction.atomic():
+                booking_obj = Booking.objects.create(
+                    booking_type=item["kind"],
+                    no_of_guests=item["guests"],
+                    check_in=date.fromisoformat(item["check_in"]),
+                    check_out=date.fromisoformat(item["check_out"]),
+                    bk_status="confirmed",
+                    estimated_sum=_cart_total(cart),
+                    customer=customer,
+                    branch=branch,
+                )
+                common = dict(
+                    bi_type=item["item_type"],
+                    price=item["price"],
+                    payment_method="credit_card",
+                    description=item["description"],
+                    booking=booking_obj,
+                )
 
-            for item in cart:
                 if item["item_type"] == "room":
-                    room = Room.objects.filter(pk=item["ref_id"]).first()
-                    if room:
-                        Room_Item.objects.create(
-                            bi_type="room", price=item["price"],
-                            payment_method="credit_card", description=item["description"],
-                            booking=booking_obj, room=room,
-                            check_in=date.fromisoformat(item["check_in"]),
-                            check_out=date.fromisoformat(item["check_out"]),
-                        )
+                    Room_Item.objects.create(
+                        room=get_object_or_404(Room, pk=item["ref_id"]),
+                        check_in=booking_obj.check_in,
+                        check_out=booking_obj.check_out,
+                        **common,
+                    )
                 elif item["item_type"] == "package":
-                    package = Packages.objects.filter(pk=item["ref_id"]).first()
-                    if package:
-                        Package_Item.objects.create(
-                            bi_type="package", price=item["price"],
-                            payment_method="credit_card", description=item["description"],
-                            booking=booking_obj, package=package, no_of_guests=item["guests"],
-                        )
-                elif item["item_type"] == "event":
-                    event = Event.objects.filter(pk=item["ref_id"]).first()
-                    if event:
-                        Event_Item.objects.create(
-                            bi_type="event", price=item["price"],
-                            payment_method="credit_card", description=item["description"],
-                            booking=booking_obj, event=event, no_of_guests=item["guests"],
-                        )
+                    Package_Item.objects.create(
+                        package=get_object_or_404(Packages, pk=item["ref_id"]),
+                        no_of_guests=item["guests"],
+                        **common,
+                    )
+                else:
+                    Event_Item.objects.create(
+                        event=get_object_or_404(Event, pk=item["ref_id"]),
+                        no_of_guests=item["guests"],
+                        **common,
+                    )
+
+
+
 
             request.session["last_booking_id"] = booking_obj.pk
             request.session[CART_SESSION_KEY] = []

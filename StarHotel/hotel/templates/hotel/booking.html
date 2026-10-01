@@ -16,6 +16,10 @@ Booking
     <form method="post">
         {% csrf_token %}
 
+                <input type="hidden" name="current_tab" id="currentTab" value="rooms">
+
+        
+
         <div class="search-bar">
             <div class="search-field">
                 <label>Hotels</label>
@@ -25,17 +29,22 @@ Booking
             </div>
             <div class="search-field">
                 <label>Guests</label>
-                <input type="number" name="guests" min="1" value="2">
+                <input type="number" name="guests" min="1" value="{{ search.guests|default:2 }}">
             </div>
-            <div class="search-field">
+            <div class="search-field" id="checkinField">
                 <label>Check-In</label>
-                <input type="date" name="checkin">
+                <input type="date" name="checkin" value="{{ search.checkin }}">
             </div>
-            <div class="search-field">
+            <div class="search-field" id="checkoutField">
                 <label>Check-Out</label>
-                <input type="date" name="checkout">
+                <input type="date" name="checkout" value="{{ search.checkout }}">
             </div>
         </div>
+        <p id="dateHint" class="date-hint"></p>
+
+        {% for m in messages %}
+        <div class="booking-message">{{ m }}</div>
+        {% endfor %}
 
         <div class="booking-tabs" id="bookingTabs">
             <div class="tab-highlight" id="tabHighlight"></div>
@@ -71,10 +80,10 @@ Booking
                             <p>{{ card.description }}</p>
                             <hr>
                             <div class="room-footer">
-                                <span class="room-price">Price : Rs {{ room.price }} / night</span>
+                                <span class="room-price">Price : Rs {{ room.price|floatformat:"2g" }} / night</span>
                                 <div class="room-actions">
                                     <button type="button" class="btn-outline-navy">View</button>
-                                    <button type="submit" name="add_item" value="room-{{ room.room_id }}" class="btn-navy btn-book">Book</button>
+                                    <button type="submit" name="add_item" value="room-{{ room.room_id }}" class="btn-navy btn-book">Select</button>
                                 </div>
                             </div>
                         </div>
@@ -98,10 +107,10 @@ Booking
                             <p>{{ card.description }}</p>
                             <hr>
                             <div class="room-footer">
-                                <span class="room-price">Price : Rs {{ package.base_price }} / guest</span>
+                                <span class="room-price">Price : Rs {{ package.base_price|floatformat:"2g" }} / guest</span>
                                 <div class="room-actions">
                                     <button type="button" class="btn-outline-navy">View</button>
-                                    <button type="submit" name="add_item" value="package-{{ package.p_id }}" class="btn-navy btn-book">Book</button>
+                                    <button type="submit" name="add_item" value="package-{{ package.p_id }}" class="btn-navy btn-book">Select</button>
                                 </div>
                             </div>
                         </div>
@@ -126,10 +135,10 @@ Booking
                             <p>{{ event.eventdate }}</p>
                             <hr>
                             <div class="room-footer">
-                                <span class="room-price">Price : Rs {{ event.price_per_person }} / guest</span>
+                                <span class="room-price">Price : Rs {{ event.price_per_person|floatformat:"2g" }} / guest</span>
                                 <div class="room-actions">
                                     <button type="button" class="btn-outline-navy">View</button>
-                                    <button type="submit" name="add_item" value="event-{{ event.event_id }}" class="btn-navy btn-book">Book</button>
+                                    <button type="submit" name="add_item" value="event-{{ event.event_id }}" class="btn-navy btn-book">Book event</button>
                                 </div>
                             </div>
                         </div>
@@ -143,20 +152,24 @@ Booking
             </div>
 
             <aside class="cart-box" id="cartBox">
-                <h3>YOUR CART</h3>
+                <h3>{% if cart.0.kind == "event" %}YOUR EVENT{% else %}YOUR STAY{% endif %}</h3>
                 <div class="cart-items" id="cartItems">
                     {% for item in cart %}
                     <div class="cart-item">
                         <p class="cart-item-name">{{ item.name }}</p>
-                        <p class="cart-item-nights">{% if item.nights %}{{ item.nights }} nights{% else %}Rs {{ item.price }}{% endif %}</p>
+                        <p class="cart-item-nights">{{ item.breakdown }}</p>
+                        <p class="cart-item-nights">
+                            {% if item.kind == "stay" %}{{ item.check_in }} &rarr; {{ item.check_out }}{% else %}{{ item.check_in }}{% endif %}
+                        </p>
+                        <p class="cart-item-nights">Rs {{ item.price|floatformat:"2g" }}</p>
                     </div>
                     {% empty %}
-                    <p class="cart-item-nights">Your cart is empty.</p>
+                    <p class="cart-item-nights">Nothing selected yet.</p>
                     {% endfor %}
                 </div>
                 <div class="cart-total">
                     <span>Total :</span>
-                    <span id="cartTotal">Rs {{ cart_total }}</span>
+                    <span id="cartTotal">Rs {{ cart_total|floatformat:"2g" }}</span>
                 </div>
                 {% if cart %}
                 <a href="{% url 'cart_review' %}" class="btn-checkout">Checkout</a>
@@ -171,6 +184,33 @@ Booking
 </div>
 
 <script src="{% static 'js/script.js' %}"></script>
+<script>
+(function () {
+  var tabInput = document.getElementById('currentTab');
+  var checkin = document.getElementById('checkinField');
+  var checkout = document.getElementById('checkoutField');
+  var hint = document.getElementById('dateHint');
+  var today = new Date().toISOString().split('T')[0];
+  document.querySelectorAll('input[type=date]').forEach(function (i) { i.min = today; });
+
+  function applyTab(tab) {
+    tabInput.value = tab;
+    checkin.style.display = (tab === 'events') ? 'none' : '';
+    checkout.style.display = (tab === 'rooms') ? '' : 'none';
+    hint.textContent =
+      tab === 'packages' ? 'Packages have a fixed length, so just choose your check-in date.' :
+      tab === 'events' ? 'Events run on a fixed date, so you only need to set the number of guests.' : '';
+  }
+
+  document.querySelectorAll('.tab-item').forEach(function (t) {
+    t.addEventListener('click', function () { applyTab(t.dataset.tab); });
+  });
+
+  var wanted = new URLSearchParams(location.search).get('tab');
+  var btn = wanted && document.querySelector('.tab-item[data-tab="' + wanted + '"]');
+  if (btn) { btn.click(); } else { applyTab('rooms'); }
+})();
+</script>
 
 {% endblock %}
 

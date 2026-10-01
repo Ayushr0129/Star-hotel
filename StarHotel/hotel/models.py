@@ -93,6 +93,9 @@ class Room(models.Model):
         return f"{self.room_type} - {self.branch.branch_name}"
 
 class Booking(models.Model):
+    TYPE_CHOICES = [('stay', 'Stay'), ('event', 'Event')] 
+    booking_type = models.CharField(max_length=10, choices=TYPE_CHOICES, default='stay')   # <-- NEW
+             
     bk_id = models.AutoField(primary_key=True)
     no_of_guests = models.PositiveIntegerField()
     check_in = models.DateField()
@@ -177,6 +180,7 @@ class Packages(models.Model):
     is_active = models.BooleanField(default=True)
     valid_from = models.DateField()
     valid_to = models.DateField()
+    nights = models.PositiveSmallIntegerField(default=2)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
