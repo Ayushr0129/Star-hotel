@@ -1,0 +1,114 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}
+Deluxe Room | Star Hotel
+{% endblock %}
+
+{% block content %}
+
+<div class="room-details-page">
+    <div class="room-header">
+        <h1 class="room-name">Deluxe Room</h1>
+        <span class="room-rating">★★★★★</span>
+    </div>
+
+    <div class="room-details-layout">
+        <div class="room-gallery">
+            <div class="room-main-image">
+                <img src="{% static 'images/deluxe-thumb-1.jpg' %}" alt="Deluxe Room">
+            </div>
+
+            <div class="room-thumbnails">
+                <img src="{% static 'images/deluxe-thumb-1.jpg' %}" alt="Deluxe Room thumbnail 1">
+                <img src="{% static 'images/deluxe-thumb-2.jpg' %}" alt="Deluxe Room thumbnail 2">
+                <img src="{% static 'images/deluxe-thumb-3.jpg' %}" alt="Deluxe Room thumbnail 3">
+                <img src="{% static 'images/deluxe-thumb-4.jpg' %}" alt="Deluxe Room thumbnail 4">
+            </div>
+
+            <div class="room-description">
+                <h3>Description</h3>
+                <p>Experience comfort and luxury in our Deluxe Room, featuring a king-size bed, complimentary breakfast, air conditioning, free Wi-Fi and panoramic garden views.</p>
+            </div>
+        </div>
+
+        <div class="room-right-column">
+            <div class="room-info-panel">
+                <div class="room-price-block">
+                    <span class="price-label">Price</span>
+                    <p class="room-price">Rs 15,000 <span class="price-per">/ night</span></p>
+                </div>
+
+                <div class="room-spec-block">
+                    <h4>Capacity</h4>
+                    <p>2 Guests</p>
+                </div>
+
+                <div class="room-spec-block">
+                    <h4>Bed Type</h4>
+                    <p>King Bed</p>
+                </div>
+
+                <div class="room-spec-block">
+                    <h4>Room Size</h4>
+                    <p>35 m²</p>
+                </div>
+
+                <div class="room-spec-block">
+                    <h4>Amenities</h4>
+                    <ul class="room-amenities-list">
+                        <li>Free Wi-Fi</li>
+                        <li>Air Conditioning</li>
+                        <li>Smart TV</li>
+                        <li>Mini Bar</li>
+                        <li>Breakfast Included</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="room-booking-widget">
+                <h3>Book This Room</h3>
+
+                <div class="booking-widget-row">
+                    <div class="booking-widget-field">
+                        <label>Check-in</label>
+                        <input type="date" name="checkin">
+                    </div>
+                    <div class="booking-widget-field">
+                        <label>Check-out</label>
+                        <input type="date" name="checkout">
+                    </div>
+                </div>
+
+                <div class="booking-widget-row">
+                    <div class="booking-widget-field">
+                        <label>Guests</label>
+                        <select name="guests">
+                            <option>2 Guests</option>
+                            <option>1 Guest</option>
+                            <option>3 Guests</option>
+                            <option>4 Guests</option>
+                        </select>
+                    </div>
+                    <div class="booking-widget-field">
+                        <label>Package</label>
+                        <select name="package">
+                            <option>Standard</option>
+                            <option>Breakfast Package</option>
+                            <option>Half Board</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="booking-widget-total">
+                    <span>Estimated Total</span>
+                    <p>Rs 15,000</p>
+                </div>
+
+                <button type="button" class="btn-navy btn-book-now">Book Now</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}

@@ -1,0 +1,66 @@
+{% extends "base.html" %}
+{% load static %}
+{% block title %}Guest Details - Star Hotel{% endblock %}
+{% block content %}
+ 
+<div class="checkout-container">
+ 
+    <div class="checkout-layout">
+        <div class="checkout-main">
+ 
+            <div class="form-section">
+                <h2>Guest Details</h2>
+ 
+                <form method="post">
+                    {% csrf_token %}
+ 
+                    <div class="form-field" style="max-width:140px; margin-bottom:20px;">
+                        <label for="guests">Number of guests</label>
+                        <input type="number" id="guests" name="guests" value="2" min="1">
+                    </div>
+ 
+                    <h3 style="font-size:15px; margin-bottom:12px;">Guest 1</h3>
+ 
+                    <div class="form-row">
+                        <div class="form-field">
+                            <label for="first_name">First Name</label>
+                            <input type="text" id="first_name" name="first_name">
+                        </div>
+                        <div class="form-field">
+                            <label for="last_name">Last Name</label>
+                            <input type="text" id="last_name" name="last_name">
+                        </div>
+                    </div>
+ 
+                    <div class="form-row">
+                        <div class="form-field">
+                            <label for="phone">Phone</label>
+                            <input type="tel" id="phone" name="phone">
+                        </div>
+                        <div class="form-field">
+                            <label for="email">Email</label>
+                            <input type="email" id="email" name="email">
+                        </div>
+                    </div>
+                </form>
+            </div>
+ 
+        </div>
+ 
+        <div class="order-summary">
+            <h3>ORDER SUMMARY</h3>
+            <div class="order-row"><span>Room</span><span>Rs 15 000</span></div>
+            <hr class="order-divider">
+            <div class="order-row"><span>Subtotal</span><span>Rs 15 000</span></div>
+            <div class="order-row"><span>Taxes</span><span>Rs 1 000</span></div>
+            <div class="order-total"><span>Total</span><span>Rs 16 000</span></div>
+        </div>
+    </div>
+ 
+    <div class="checkout-actions">
+        <a href="{% url 'cart_review' %}" class="btn-outline-navy">Back</a>
+        <a href="{% url 'cart_payment' %}" class="btn-navy btn-continue">Continue to payment</a>
+    </div>
+</div>
+ 
+{% endblock %}

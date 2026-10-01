@@ -1,189 +1,201 @@
-{% extends "base.html" %}
+{% extends 'base.html' %}
+{% load static %}
 
-{% block title %}
-
-Home| Star Hotel
-
-{% endblock %}
+{% block title %}Star Hotel - Home{% endblock %}
 
 {% block content %}
-
-<!-- HERO -->
+<!-- Hero Section -->
 <section class="hero">
+    <h1>Experience Luxury and Comfort</h1>
+    <p>Find the perfect room for your next stay.</p>
 
-       <div class="hero-overlay">
+    <form class="booking-bar" action="#" method="GET">
+        <div class="booking-field">
+            <label>Hotel Branch</label>
+            <select name="branch">
+                <option>Select Branch</option>
+                <option>Mont Choisy</option>
+                <option>Surinam</option>
+                <option>Belle Mare</option>
+                <option>Flic en Flac</option>
+            </select>
+        </div>
+        <div class="booking-field">
+            <label>Check-in</label>
+            <input type="date" name="check_in" value="2026-09-20">
+        </div>
+        <div class="booking-field">
+            <label>Check-out</label>
+            <input type="date" name="check_out" value="2026-09-28">
+        </div>
+        <div class="booking-field">
+            <label>Guests</label>
+            <select name="guests">
+                <option>2 Guests</option>
+            </select>
+        </div>
+        <button type="submit" class="btn-search">Search Rooms</button>
+    </form>
+</section>
 
-        <h1>
-            Experience Luxury and Comfort
-        </h1>
+<!-- Featured Rooms -->
+<section class="container featured-rooms">
+    <h2>Featured rooms</h2>
+    
+    <div class="card-grid">
+        {% for room in rooms %}
+        <div class="card">
+            <img src="{% static room.image_path %}" alt="{{ room.name }}" class="card-img">
+            <div class="card-body">
+                <h3 class="card-title">{{ room.name }}</h3>
+                <p class="card-meta"><span style="color:#FFD700;">★ ★ ★ ★ ★</span> &nbsp;•&nbsp; {{ room.details }}</p>
+                <div class="card-footer">
+                    <strong>Rs {{ room.price }} <span style="font-weight:400; font-size:0.75rem;">/ night</span></strong>
+                    <a href="#" class="btn-sm">View Details</a>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</section>
 
-        <p>
-            Find the perfect room for your next stay.
-        </p>
+<!-- Packages & Promotions -->
+<section class="container">
+    <h2>Packages &amp; Promotions</h2>
+    <p class="section-subtitle">Make your stay even more memorable with our exclusive offers.</p>
 
+    <div class="card-grid">
+        <div class="card">
+            <img src="{% static 'images/weekend.jpg' %}" alt="Weekend Getaway" class="card-img">
+            <div class="card-body">
+                <h3 class="card-title">Weekend Getaway</h3>
+                <p class="card-meta">Relax with a two-night stay, complimentary breakfast and selected activities.</p>
+                <div class="card-footer">
+                    <strong>From Rs 9,500</strong>
+                    <a href="#" class="btn-sm">View Package</a>
+                </div>
+            </div>
+        </div>
+
+        <div class="card">
+            <img src="{% static 'images/romantic.jpg' %}" alt="Romantic Escape" class="card-img">
+            <div class="card-body">
+                <h3 class="card-title">Romantic Escape</h3>
+                <p class="card-meta">Enjoy a romantic stay with breakfast, spa access and a special dinner.</p>
+                <div class="card-footer">
+                    <strong>From Rs 12,000</strong>
+                    <a href="#" class="btn-sm">View Package</a>
+                </div>
+            </div>
+        </div>
+
+        <div class="card">
+            <img src="{% static 'images/package-family.jpg' %}" alt="Family Fun Package" class="card-img">
+            <div class="card-body">
+                <h3 class="card-title">Family Fun Package</h3>
+                <p class="card-meta">Perfect for families with breakfast, children's activities and late checkout.</p>
+                <div class="card-footer">
+                    <strong>From Rs 15,500</strong>
+                    <a href="#" class="btn-sm">View Package</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Why Choose Our Packages -->
+<section class="container">
+    <h2>Why Choose Our Packages?</h2>
+    <p class="section-subtitle">Enjoy more value, convenience and memorable experiences during your stay.</p>
+
+    <div class="feature-grid">
+        <div class="feature-box">
+            <h4>Breakfast Included</h4>
+            <p>Start your day with a complimentary breakfast during selected package stays.</p>
+        </div>
+
+        <div class="feature-box">
+            <h4>Exclusive Savings</h4>
+            <p>Enjoy special package rates compared with booking services separately.</p>
+        </div>
+
+        <div class="feature-box">
+            <h4>Flexible Experiences</h4>
+            <p>Choose packages that combine accommodation with activities and services.</p>
+        </div>
+
+        <div class="feature-box">
+            <h4>Added Convenience</h4>
+            <p>Plan more of your stay within a single booking.</p>
+        </div>
     </div>
 
+    <div class="section-action">
+        <a href="#" class="btn-navy">View All Packages &gt;</a>
+    </div>
 </section>
 
-<!-- SEARCH BAR -->
-<section class="booking-search">
+<!-- Activities -->
+<section class="container">
+    <h2>Activities</h2>
+    <p class="section-subtitle">Discover exciting experiences during your stay.</p>
 
-<form>
+    <div class="card-grid">
+        <div class="card">
+            <img src="{% static 'images/spa.jpg' %}" alt="Spa & Wellness" class="card-img">
+            <div class="card-body">
+                <h3 class="card-title">Spa &amp; Wellness</h3>
+                <p class="card-meta">60 minutes</p>
+                <p class="card-meta">Relax with one of our rejuvenating spa treatments.</p>
+                <div class="card-footer">
+                    <strong>Rs 2,500 <span style="font-weight:400; font-size:0.75rem;">/ person</span></strong>
+                    <a href="#" class="btn-sm">View Details</a>
+                </div>
+            </div>
+        </div>
 
-<div class="search-field">
+        <div class="card">
+            <img src="{% static 'images/golf.jpg' %}" alt="Golf Experience" class="card-img">
+            <div class="card-body">
+                <h3 class="card-title">Golf Experience</h3>
+                <p class="card-meta">90 minutes</p>
+                <p class="card-meta">Enjoy a relaxing golf session within the hotel grounds.</p>
+                <div class="card-footer">
+                    <strong>Rs 1,800 <span style="font-weight:400; font-size:0.75rem;">/ person</span></strong>
+                    <a href="#" class="btn-sm">View Details</a>
+                </div>
+            </div>
+        </div>
 
-<label>Hotel Branch</label>
+        <div class="card">
+            <img src="{% static 'images/tennis.jpg' %}" alt="Tennis session" class="card-img">
+            <div class="card-body">
+                <h3 class="card-title">Tennis session</h3>
+                <p class="card-meta">60 minutes</p>
+                <p class="card-meta">Book a court and enjoy a fun tennis session.</p>
+                <div class="card-footer">
+                    <strong>Rs 1,200 <span style="font-weight:400; font-size:0.75rem;">/ person</span></strong>
+                    <a href="#" class="btn-sm">View Details</a>
+                </div>
+            </div>
+        </div>
 
-<select>
+        <div class="card">
+            <img src="{% static 'images/swimming.jpg' %}" alt="Swimming & Leisure" class="card-img">
+            <div class="card-body">
+                <h3 class="card-title">Swimming &amp; Leisure</h3>
+                <p class="card-meta">Flexible duration</p>
+                <p class="card-meta">Enjoy access to our pool and leisure facilities.</p>
+                <div class="card-footer">
+                    <strong>Complimentary</strong>
+                    <a href="#" class="btn-sm">View Details</a>
+                </div>
+            </div>
+        </div>
+    </div>
 
-<option>Select branch</option>
-
-</select>
-
-</div>
-
-<div class="search-field">
-
-<label>Check In</label>
-
-<input type="date">
-
-</div>
-
-<div class="search-field">
-
-<label>Check Out</label>
-
-<input type="date">
-
-</div>
-
-<div class="search-field">
-
-<label>Guests</label>
-
-<select>
-
-<option>2 Guests</option>
-
-</select>
-
-</div>
-
-<button>
-
-Search Rooms
-
-</button>
-
-</form>
-
-
+    <div class="section-action">
+        <a href="#" class="btn-navy">View All Activities &gt;</a>
+    </div>
 </section>
-
-<!-- FEATURED ROOMS -->
-<section class="featured-rooms">
-
-<h2>
-
-Featured Rooms
-
-</h2>
-
-<div class="room-container">
-
-<div class="room-card">
-
-    <img>
-
-<h3>Deluxe Room</h3>
-
-<p>★★★★★</p>
-
-<p>2 Guests • King Bed</p>
-
-<h4>Rs 15,000 / night</h4>
-
-<button>
-
-View Details
-
-</button>
-
-</div>
-
-<div class="room-card">
-
-    <img>
-
-<h3>Standard Room</h3>
-
-<p>★★★★★</p>
-
-<p>2 Guests • Queen Bed</p>
-
-<h4>Rs 9,500 / night</h4>
-
-<button>
-
-View Details
-
-</button>
-
-</div>
-
-<div class="room-card">
-
-    <img>
-
-<h3>Studio Room</h3>
-
-<p>★★★★★</p>
-
-<p>2 Guests • King Bed • Terrace</p>
-
-<h4>Rs 12,500 / night</h4>
-
-<button>
-
-View Details
-
-</button>
-
-</div>
-
-<div class="room-card">
-
-    <img>
-
-<h3>Executive Room</h3>
-
-<p>★★★★★</p>
-
-<p>2 Guests • King Bed • Fire heating</p>
-
-<h4>Rs 18,000 / night</h4>
-
-<button>
-
-View Details
-
-</button>
-
-</div>
-
-</div>
-
-</section>
-
-<!-- PACKAGES -->
-<section class="packages">
-
-</section>
-
-<!-- ACTIVITIES -->
-<section class="activities">
-
-</section>
-
 {% endblock %}

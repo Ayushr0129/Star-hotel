@@ -25,8 +25,7 @@ class SidebarNav {
 
         this.items.forEach(item => {
             item.addEventListener('click', (e) => {
-                e.preventDefault();
-                this.item.forEach(i => i.classList.remove('active'));
+                this.items.forEach(i => i.classList.remove('active'));
                 item.classList.add('active');
                 this.moveHighlight(item);
             
@@ -76,15 +75,25 @@ new SiteNavPill('siteNav', 'navPill', 'registerLink');
 
 const tabs = document.querySelectorAll('.tab-item');
 const tabHighlight = document.getElementById('tabHighlight');
+const heroImg = document.getElementById('heroImg');
+const panels = document.querySelectorAll('.tab-panel');
 
 function moveTabHighlight(activeTab) {
     tabHighlight.style.left = activeTab.offsetLeft + 'px';
     tabHighlight.style.width = activeTab.offsetWidth + 'px';
 }
 
-// position on load
-if (document.querySelector('.tab-item.active')) {
-    moveTabHighlight(document.querySelector('.tab-item.active'));
+function showPanel(tabName) {
+    panels.forEach(panel => {
+        panel.hidden = panel.dataset.tab !== tabName;
+    });
+}
+
+// position highlight + show correct panel on load
+const initialTab = document.querySelector('.tab-item.active') || tabs[0];
+if (initialTab && tabHighlight) {
+    moveTabHighlight(initialTab);
+    showPanel(initialTab.dataset.tab);
 }
 
 tabs.forEach(tab => {
@@ -92,5 +101,26 @@ tabs.forEach(tab => {
         tabs.forEach(t => t.classList.remove('active'));
         this.classList.add('active');
         moveTabHighlight(this);
+        showPanel(this.dataset.tab);
+
+        if (heroImg && this.dataset.hero) {
+            heroImg.src = this.dataset.hero;
+        }
+    });
+});
+
+document.querySelectorAll('.btn-book').forEach(btn => {
+    btn.addEventListener('click', () => {
+        const card = btn.closest('.room-card');
+        const name = card.dataset.name;
+        const price = Number(card.dataset.price);
+
+        document.getElementById('cartItems').innerHTML = `
+            <div class="cart-item">
+                <p class="cart-item-name">${name}</p>
+                <p class="cart-item-nights">1 night</p>
+            </div>
+        `;
+        document.getElementById('cartTotal').textContent = `Rs ${price.toLocaleString('en-IN')}`;
     });
 });
