@@ -9,7 +9,7 @@
     <h1>Experience Luxury and Comfort</h1>
     <p>Find the perfect room for your next stay.</p>
 
-    <form class="booking-bar" action="#" method="GET">
+    <form class="booking-bar" action="{% url 'search_results' %}" method="GET">
         <div class="booking-field">
             <label>Hotel Branch</label>
             <select name="branch">
@@ -31,7 +31,10 @@
         <div class="booking-field">
             <label>Guests</label>
             <select name="guests">
+                <option>1 Guest</option>
                 <option>2 Guests</option>
+                <option>3 Guests</option>
+                <option>4 Guests</option>
             </select>
         </div>
         <button type="submit" class="btn-search">Search Rooms</button>
