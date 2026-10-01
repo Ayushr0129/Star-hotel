@@ -1,0 +1,48 @@
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: Arial, sans-serif; }
+
+.layout { display: flex; min-height: 100vh; }
+
+.sidebar {
+  width: 200px;
+  background: #b8bfe8;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 20px 10px;
+}
+.logo { width: 24px; height: 24px; border-radius: 50%; background: #0b2a5b; align-self: flex-start; margin-bottom: 40px; }
+
+.sidebar nav { display: flex; flex-direction: column; gap: 10px; text-align: center; flex-grow: 1; }
+.sidebar a { color: #0b2a5b; text-decoration: none; padding: 6px 12px; border-radius: 4px; }
+.sidebar a.active { border: 1px solid #0b2a5b; }
+
+.sidebar-bottom { display: flex; flex-direction: column; gap: 10px; }
+.content { flex: 1; padding: 30px; }
+
+.content > *:not(.bookings) { max-width: 900px; margin-left: auto; margin-right: auto; }
+
+.cards { display: flex; gap: 30px; margin-bottom: 30px; }
+.card { flex: 1; background: #b4bdfc; border: 1px solid #0b2a5b; overflow: hidden; }
+.card-top { display: flex; justify-content: space-between; padding: 12px; font-size: 13px; }
+.card-amount { font-family: monospace; font-size: 20px; margin-top: 6px; }
+.card-meta { display: flex; flex-direction: column; align-items: flex-end; font-size: 11px; }
+.card-meta small { color: #555; }
+.card svg { display: block; width: 100%; height: 60px; }
+.card svg path { fill: #8793d9; stroke: #0b2a5b; stroke-width: 4; }
+
+.revenue-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
+.revenue-row h2 { font-size: 18px; }
+.revenue-row h2 span { font-weight: normal; margin-left: 12px; }
+.week-btn { background: #0b2a5b; color: #fff; border: none; padding: 8px 20px; font-weight: bold; }
+
+.chart { display: flex; gap: 25px; padding: 0 20px; border-bottom: 1px solid #ccc; margin-bottom: 40px; }
+.bar-col { flex: 1; display: flex; flex-direction: column; align-items: center; font-size: 11px; }
+.bar-area { height: 240px; width: 100%; display: flex; align-items: flex-end; justify-content: center; }
+.bar { width: 50px; background: #34506f; }
+
+.bookings { width: 100%; border-collapse: collapse; font-size: 11px; }
+.bookings th { background: #a3acd9; text-align: left; padding: 8px; }
+.bookings td { padding: 8px; border-bottom: 1px solid #999; }
+
+.bar-col span { margin-top: 6px; }

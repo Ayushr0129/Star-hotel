@@ -34,6 +34,11 @@ def staff_dashboard(request):
 def admin_dashboard(request):
     return render(request, "hotel/admin_dashboard.html")
 
+def admin_profile(request):
+    return render(request, 'hotel/admin_profile.html')
+
+def admin_action(request):
+    return render(request, 'hotel/admin_action.html')
 
 def manage_rooms(request):
     return render(request, "hotel/manage_rooms.html")

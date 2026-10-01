@@ -20,6 +20,10 @@ urlpatterns = [
 
     path("admin-dashboard/", views.admin_dashboard, name="admin_dashboard"),
 
+    path("admin-profile/", views.admin_profile, name="admin_profile"),
+
+    path("admin-action/", views.admin_action, name="admin_action"),
+
     path("manage-rooms/", views.manage_rooms, name="manage_rooms"),
 
     path("reports/", views.reports, name="reports"),
