@@ -50,6 +50,11 @@ def home(request):
 
 
 def search_results(request):
+    branch = request.GET.get('branch', '')
+    check_in = request.GET.get('check_in', '')
+    check_out = request.GET.get('check_out', '')
+    guests = request.GET.get('guests', '')
+
     rooms = [
         {
             'name': 'Deluxe Room',
@@ -73,7 +78,14 @@ def search_results(request):
             'image_path': 'images/family-thumb-1.jpg'
         },
     ]
-    return render(request, "hotel/search_results.html", {"rooms": rooms})
+    context = {
+        'rooms': rooms,
+        'branch': branch,
+        'check_in': check_in,
+        'check_out': check_out,
+        'guests': guests,
+    }
+    return render(request, "hotel/search_results.html", context)
 
 
 def room_details_deluxe(request):
