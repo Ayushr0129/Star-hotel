@@ -7,21 +7,25 @@
 <div class="search-results-page">
     <div class="search-results-heading">
         <h1>Available Rooms</h1>
-        <p class="results-count">12 rooms found for your selected dates</p>
+        <p class="results-count">{{ rooms|length }} rooms found for your selected dates</p>
     </div>
 
     <div class="search-summary-bar">
+         <div class="summary-box">
+            <span class="summary-label">Hotel Branch</span>
+            <span class="summary-value">{{ branch|default:"All branches" }}</span>
+        </div>
         <div class="summary-box">
             <span class="summary-label">Check-in</span>
-            <span class="summary-value">25 Sep 2026</span>
+            <span class="summary-value">{{ check_in|default:"Any date" }}</span>
         </div>
         <div class="summary-box">
             <span class="summary-label">Check-out</span>
-            <span class="summary-value">28 Sep 2026</span>
+            <span class="summary-value">{{ check_out|default:"Any date" }}</span>
         </div>
         <div class="summary-box">
             <span class="summary-label">Guests</span>
-            <span class="summary-value">2 Guests</span>
+            <span class="summary-value">{{ guests|default:"Any" }}</span>
         </div>
         <div class="summary-box sort-box">
             <span class="summary-label">Sort by</span>
