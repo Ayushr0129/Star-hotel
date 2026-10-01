@@ -8,7 +8,45 @@ Login
 
 {% block content %}
 
-<h1>Login Page</h1>
-<h3>Login to your account here please</h3>
+<link rel="stylesheet" href="{% static 'css/auth.css' %}">
 
+<section class="auth-page login=page">
+    <img class="torn torn--tr" src="{% static 'images/torn-corner.svg' %}" alt="">
+    <img class="torn torn--bl" src="{% static 'images/torn-corner.svg' %}" alt="">
+    <img class="stars stars--br" src="{% static 'images/stars-cluster.svg' %}" alt="">
+
+    <div class="login-form-col">
+        <div class="title-wrap">
+            <img class="stars stars--title" src="{% static 'images/stars-cluster.svg' %}" alt="">
+            <h1 class="auth-title"><span>Welcome</span> Back</h1>
+        </div>
+        <p class="auth-sub">Please enter your account details</p>
+
+        <a class="pill pill-outline" href="#">
+            Continue with Google
+            <img src="{% static 'images/google.svg' %}" alt="" width="18" height="18">
+        </a>
+
+        <div class="or-divider"><span>Or</span></div>
+
+        <form method="post" class="login-form">
+            {% csrf_token %}
+            <input class="pill pill--input" type="email" name="email" placeholder="Email" autocomplete="email" required>
+            <input class="pill pill--input" type="password" name="password" placeholder="Password" autocomplete="current-password" required>
+
+            <label class="remember">
+                <input type="checkbox" name="remember"> <span>Remember me</span>
+            </label>
+
+            <button type="submit" class="pill pill--primary">Log In</button>
+        </form>
+
+        <a class="forgot" href="#">Forgot Password?</a>
+        <p class="switch">Don't have an account? <a href="#">Sign Up</a></p>
+    </div>
+
+    <div class="login-photo">
+        <img src="{% static 'images/beach.jpg' %}" alt="Waves crashing onto a sandy beach">
+    </div>
+</section>
 {% endblock %}
