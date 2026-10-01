@@ -27,11 +27,11 @@
 
         <nav class="site-nav">
             <a href="{% url 'home' %}" class="site-nav-item">Home</a>
-            <a href="#" class="site-nav-item">Rooms</a>
+            <a href="{% url 'search_results' %}" class="site-nav-item">Rooms</a>
             <a href="#" class="site-nav-item">Packages</a>
             <a href="#" class="site-nav-item">Activities</a>
-            <a href="#" class="site-nav-item">Login</a>
-            <a href="#" class="site-nav-item" id="registerLink">Register</a>
+            <a href="{% url 'login' %}" class="site-nav-item">Login</a>
+            <a href="{% url 'register' %}" class="site-nav-item" id="registerLink">Register</a>
         </nav>
     </header>
     {% endblock %} 

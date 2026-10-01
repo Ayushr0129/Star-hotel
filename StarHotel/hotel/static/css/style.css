@@ -39,8 +39,8 @@ main{
 /*customer-dashboard formatting*/
 
 :root{
-    --navy: #1d39c4;
-    --navy-light: #2a48df;
+    --navy: #1E3A8A;
+    --navy-light: #1d2f52;
     --accent-red: #d62828;
     --text-light: #f4f4f4;
     --text-muted: #9fb0cc;
@@ -397,7 +397,7 @@ header:has(~ main .layout) {
     bottom: 2px;
     left: 0;
     width: 0;
-    background: #2952e3;
+    background: var(--navy);
     border-radius: 0px;
     box-shadow: 0 2px 6px rgba(41, 82, 227, 0.35);
     transition: left 0.25s ease, width 0.25s ease;
@@ -410,7 +410,7 @@ header:has(~ main .layout) {
     padding: 8px 18px;
     font-size: 14px;
     font-weight: 600;
-    color: #1f2937;
+    color: var(--navy);
     text-decoration: none;
     white-space: nowrap;
     transition: color 0.2s ease;
