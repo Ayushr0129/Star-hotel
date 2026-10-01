@@ -915,7 +915,7 @@ header:has(~ main .layout) {
         position: static;
     }
     .room-card {
-        flex-direction: column;
+        margin-bottom: 20px;
     }
     .room-img {
         width: 100%;
@@ -1601,6 +1601,7 @@ header:has(~ main .layout) {
     border: 1px solid #e2e2e2;
     border-radius: 8px;
     padding: 1rem;
+    margin-bottom: 20px;
 }
 
 .room-card-image {

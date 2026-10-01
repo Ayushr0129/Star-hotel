@@ -54,21 +54,24 @@ Booking
             <div class="room-list">
 
                 <div class="tab-panel" data-tab="rooms">
-                    {% for room in rooms %}
-                    <div class="booking-room-card" data-name="{{ room.room_type }}" data-price="{{ room.price }}">
+                    {% for card in room_cards %}
+                    {% with room=card.room %}
+                    <div class="room-card" data-name="{{ room.room_type }}" data-price="{{ room.price }}">
                         <div class="room-media">
-                            <img src="{% static 'images/deluxe-thumb-1.jpg' %}" alt="{{ room.room_type }}" class="room-img">
+                            <img src="{% static card.image %}" alt="{{ room.room_type }}" class="room-img">
                             <div class="room-specs">
-                                <span>{{ room.branch.branch_name }}</span>
+                                <span>{{ card.specs }}</span>
                             </div>
                         </div>
                         <div class="room-info">
                             <div class="room-title-row">
-                                <h3>{{ room.room_type }} room</h3>
+                                <h3>{{ room.room_type }}</h3>
                             </div>
+                            <h4>Description</h4>
+                            <p>{{ card.description }}</p>
                             <hr>
                             <div class="room-footer">
-                                <span class="booking-room-price">Price : Rs {{ room.price }} / night</span>
+                                <span class="room-price">Price : Rs {{ room.price }} / night</span>
                                 <div class="room-actions">
                                     <button type="button" class="btn-outline-navy">View</button>
                                     <button type="submit" name="add_item" value="room-{{ room.room_id }}" class="btn-navy btn-book">Book</button>
@@ -76,22 +79,26 @@ Booking
                             </div>
                         </div>
                     </div>
+                    {% endwith %}
                     {% empty %}
                     <p>No rooms available right now.</p>
                     {% endfor %}
                 </div>
 
                 <div class="tab-panel" data-tab="packages" hidden>
-                    {% for package in packages %}
-                    <div class="booking-room-card" data-name="{{ package.p_name }}" data-price="{{ package.base_price }}">
+                    {% for card in package_cards %}
+                    {% with package=card.package %}
+                    <div class="room-card" data-name="{{ package.p_name }}" data-price="{{ package.base_price }}">
                         <div class="room-media">
-                            <img src="{% static 'images/Weekend.jpg' %}" alt="{{ package.p_name }}" class="room-img">
+                            <img src="{% static card.image %}" alt="{{ package.p_name }}" class="room-img">
                         </div>
                         <div class="room-info">
                             <div class="room-title-row"><h3>{{ package.p_name }}</h3></div>
+                            <h4>Description</h4>
+                            <p>{{ card.description }}</p>
                             <hr>
                             <div class="room-footer">
-                                <span class="booking-room-price">Price : Rs {{ package.base_price }} / guest</span>
+                                <span class="room-price">Price : Rs {{ package.base_price }} / guest</span>
                                 <div class="room-actions">
                                     <button type="button" class="btn-outline-navy">View</button>
                                     <button type="submit" name="add_item" value="package-{{ package.p_id }}" class="btn-navy btn-book">Book</button>
@@ -99,23 +106,27 @@ Booking
                             </div>
                         </div>
                     </div>
+                    {% endwith %}
                     {% empty %}
                     <p>No packages available right now.</p>
                     {% endfor %}
                 </div>
 
                 <div class="tab-panel" data-tab="events" hidden>
-                    {% for event in events %}
-                    <div class="booking-room-card" data-name="{{ event.title }}" data-price="{{ event.price_per_person }}">
+                    {% for card in event_cards %}
+                    {% with event=card.event %}
+                    <div class="room-card" data-name="{{ event.title }}" data-price="{{ event.price_per_person }}">
                         <div class="room-media">
-                            <img src="{% static 'images/wedding.webp' %}" alt="{{ event.title }}" class="room-img">
+                            <img src="{% static card.image %}" alt="{{ event.title }}" class="room-img">
                         </div>
                         <div class="room-info">
                             <div class="room-title-row"><h3>{{ event.title }}</h3></div>
-                            <p>{{ event.eventdate }} &middot; {{ event.location }}</p>
+                            <h4>Description</h4>
+                            <p>{{ card.description }}</p>
+                            <p>{{ event.eventdate }}</p>
                             <hr>
                             <div class="room-footer">
-                                <span class="boooking-room-price">Price : Rs {{ event.price_per_person }} / guest</span>
+                                <span class="room-price">Price : Rs {{ event.price_per_person }} / guest</span>
                                 <div class="room-actions">
                                     <button type="button" class="btn-outline-navy">View</button>
                                     <button type="submit" name="add_item" value="event-{{ event.event_id }}" class="btn-navy btn-book">Book</button>
@@ -123,6 +134,7 @@ Booking
                             </div>
                         </div>
                     </div>
+                    {% endwith %}
                     {% empty %}
                     <p>No events available right now.</p>
                     {% endfor %}
