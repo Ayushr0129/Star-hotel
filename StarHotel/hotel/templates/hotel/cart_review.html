@@ -2,60 +2,63 @@
 {% load static %}
 {% block title %}Review Your Order - Star Hotel{% endblock %}
 {% block content %}
- 
+
 <div class="checkout-container">
-    <h1>Review your order</h1>
- 
+    <h1>Review your {% if cart.0.kind == "event" %}event{% else %}stay{% endif %}</h1>
+
     <div class="checkout-layout">
         <div class="checkout-main">
- 
-            {% for item in cart %}
 
+            {% for item in cart %}
             <div class="room-card">
-                <img src="{% static 'images/2BDDF7B0-9FE3-4B62-AB2A-B6CEE2FB6361_4_5005_c.jpeg' %}" alt="Deluxe king room" class="room-img" style="width:180px; height:140px;">
+                <img src="{% static item.image %}" alt="{{ item.name }}" class="room-img" style="width:180px; height:140px;">
                 <div class="room-info">
                     <h3>{{ item.name }}</h3>
 
-                    {% if item.item_type == "room" %}
-                    <p>{{ item.check_in }} &middot; {{ item.check_out }} &middot; {{ item.nights }} nights &middot; {{ item.guests }} guests</p>
+                    {% if item.kind == "stay" %}
+                    <p>{{ item.check_in }} &rarr; {{ item.check_out }} &middot; {{ item.nights }} night{{ item.nights|pluralize }} &middot; {{ item.guests }} guest{{ item.guests|pluralize }}</p>
                     {% else %}
-                    <p>{{ item.description }} &middot; {{ item.guests }} guests</p>
+                    <p>{{ item.check_in }} &middot; {{ item.guests }} guest{{ item.guests|pluralize }}</p>
                     {% endif %}
-
+                    <p class="cart-item-nights">{{ item.breakdown }}</p>
 
                     <hr>
                     <div class="room-footer">
-                        <span class="room-price">Price:{{ item.price }}</span>
+                        <span class="room-price">Price : Rs {{ item.price|floatformat:"2g" }}</span>
                         <form method="post" style="margin:0;">
                             {% csrf_token %}
                             <input type="hidden" name="remove_index" value="{{ forloop.counter0 }}">
                             <button type="submit" class="btn-remove">Remove</button>
                         </form>
-                        
                     </div>
                 </div>
             </div>
             {% empty %}
             <div class="room-card">
                 <div class="room-info">
-                    <h3>Your cart is empty</h3>
-                    <p>Add a room, package or event to get started.</p>
+                    <h3>Nothing selected</h3>
+                    <p>Choose a room, package or event to get started.</p>
                 </div>
             </div>
             {% endfor %}
 
-            <a href="{% url 'booking' %}" class="add-another">+ Add another room, package or event</a>
+            <a href="{% url 'booking' %}" class="add-another">&larr; {% if cart %}Change selection{% else %}Back to booking{% endif %}</a>
         </div>
- 
+
         <div class="order-summary">
             <h3>Order Summary</h3>
             {% for item in cart %}
-            <div class="order-row"><span>{{ item.name }}</span><span>Rs {{ item.price }}</span></div>
+            <div class="order-row"><span>{{ item.name }}</span><span>Rs {{ item.price|floatformat:"2g" }}</span></div>
             {% endfor %}
             <hr class="order-divider">
-            <div class="order-total"><span>Total</span><span>Rs {{ cart_total }}</span></div>
+            <div class="order-total"><span>Total</span><span>Rs {{ cart_total|floatformat:"2g" }}</span></div>
+            {% if cart %}
+            <div style="margin-top:20px;">
+                <a href="{% url 'cart_guest_details' %}" class="btn-checkout" style="display:block; position:static; margin:0; text-align:center; text-decoration:none;">Continue</a>
+            </div>
+            {% endif %}
         </div>
     </div>
- 
+</div>
+
 {% endblock %}
- 
