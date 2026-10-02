@@ -17,11 +17,11 @@
         </div>
         <div class="summary-box">
             <span class="summary-label">Check-in</span>
-            <span class="summary-value">{{ check_in|default:"Any date" }}</span>
+            <span class="summary-value">{{ check_in|date:"d M Y"|default:"Any date" }}</span>
         </div>
         <div class="summary-box">
             <span class="summary-label">Check-out</span>
-            <span class="summary-value">{{ check_out|default:"Any date" }}</span>
+            <span class="summary-value">{{ check_out|date:"d M Y"|default:"Any date" }}</span>
         </div>
         <div class="summary-box">
             <span class="summary-label">Guests</span>

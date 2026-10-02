@@ -10,6 +10,7 @@ from .models import (
     Customer, Room, Packages, Event, Branch,
     Booking, Room_Item, Package_Item, Event_Item,
 )
+from datetime import datetime
 
 CART_SESSION_KEY = "cart"
 
@@ -152,9 +153,16 @@ def home(request):
 
 def search_results(request):
     branch = request.GET.get('branch', '')
-    check_in = request.GET.get('check_in', '')
-    check_out = request.GET.get('check_out', '')
+    check_in_raw = request.GET.get('check_in', '')
+    check_out_raw = request.GET.get('check_out', '')
     guests = request.GET.get('guests', '')
+
+    check_in = ''
+    check_out = ''
+    if check_in_raw:
+        check_in = datetime.strptime(check_in_raw, '%Y-%m-%d')
+    if check_out_raw:
+        check_out = datetime.strptime(check_out_raw, '%Y-%m-%d')
 
     rooms = [
         {
