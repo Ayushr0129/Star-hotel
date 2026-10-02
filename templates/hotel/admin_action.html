@@ -1,1 +1,603 @@
-<h1>Administrative action</h1>
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Administrative action</title>
+  <link rel="stylesheet" href="{% static 'css/admin.css' %}">
+  <style>
+    .content.action-page > .project-box { max-width: 1000px; width: 100%; margin: 0 auto; position: relative; }
+    .pb-body { display: flex; min-height: 300px; }
+    .pb-list { width: 100px; flex-shrink: 0; }
+    .pb-main { flex: 1; min-width: 0; }
+    .pb-item { background: none; cursor: pointer; margin-bottom: 4px; }
+    .pb-item.active { background: #eee; font-weight: bold; }
+    #projectPopup { top: 52px; left: 12px; right: auto; }
+
+    .gantt { position: relative; min-width: 0; }
+    .gantt-grid { display: flex; min-height: 200px; border-top: 1px solid #eee; }
+    .gantt-phases { width: 100px; flex-shrink: 0; display: flex; flex-direction: column; justify-content: flex-start; padding: 0 8px 8px; border-right: 1px solid #eee; }
+    .gh-spacer { height: 24px; flex-shrink: 0; }
+    .phase { display: flex; align-items: center; height: 26px; margin-bottom: 4px; padding: 0 6px; background: #eee; border-radius: 6px; cursor: pointer; }
+    .new-phase { margin-top: auto; white-space: nowrap; }
+
+    .gantt-right { flex: 1; min-width: 0; overflow-x: auto; }
+    .gantt-days { display: flex; height: 24px; align-items: center; justify-content: flex-start; padding: 0; min-width: 620px; font-size: 9px; color: #888; border-bottom: 1px solid #eee; }
+    .gantt-days span { flex: 1; text-align: center; }
+    .gantt-days .day-now { color: #0b72e7; font-weight: bold; }
+
+    .gantt-rows { min-width: 620px; }
+    .g-row { position: relative; height: 30px; border-bottom: 1px dashed #f0f0f0; }
+    .bar-s { position: absolute; top: 3px; height: 20px; padding: 0 6px; border-radius: 5px; font-size: 9px; font-weight: bold; line-height: 20px; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; }
+
+    .calendar td { padding: 0; height: 30px; text-align: center; vertical-align: middle; }
+    .calendar td.today span { display: inline-flex; align-items: center; justify-content: center; width: 24px; height: 24px; line-height: 1; }
+    .cal-head select { border: none; background: none; font: inherit; font-weight: bold; font-size: 11px; cursor: pointer; outline: none; }
+  </style>
+</head>
+<body>
+  <div class="layout">
+    <aside class="sidebar">
+      <div class="logo"></div>
+      <nav>
+        <a href="{% url 'admin_dashboard' %}">Dashboard</a>
+        <a href="{% url 'admin_profile' %}">Profile</a>
+        <a href="{% url 'admin_action' %}" class="active">Administrative action</a>
+      </nav>
+      <div class="sidebar-bottom">
+        <a href="#">Logout</a>
+      </div>
+    </aside>
+
+    <main class="content action-page">
+
+      <!-- Calendar + staff table -->
+      <section class="action-top">
+        <div class="calendar">
+          <div class="cal-head">
+            <select id="calMonth"></select>
+            <select id="calYear"></select>
+          </div>
+          <table>
+            <thead>
+              <tr><th>Sun</th><th>Mon</th><th>Tue</th><th>Wed</th><th>Thu</th><th>Fri</th><th>Sat</th></tr>
+            </thead>
+            <tbody id="calBody"></tbody>
+          </table>
+        </div>
+
+        <table class="staff-table">
+          <thead>
+            <tr><th>Name</th><th>Email</th><th>Last Login</th><th>Hours Worked</th><th>Shift</th><th>Action</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>David Brown</td><td>david.h@email.com</td><td>2025-09-20</td><td>350.25 hrs</td><td>Night</td><td>≡</td></tr>
+            <tr><td>Olivia Davis</td><td>olivia.d@email.com</td><td>2025-09-19</td><td>350.25 hrs</td><td>Day</td><td>≡</td></tr>
+            <tr><td>Daniel Wilson</td><td>david.w@email.com</td><td>2025-09-18</td><td>1,300.00 hrs</td><td>Night</td><td>≡</td></tr>
+            <tr><td>Robert Chen</td><td>robert.c@email.com</td><td>2025-09-17</td><td>1,100.00 hrs</td><td>Afternoon</td><td>≡</td></tr>
+            <tr><td>Sophia Rossi</td><td>sophia.r@email.com</td><td>2025-09-16</td><td>675.80 hrs</td><td>Night</td><td>≡</td></tr>
+            <tr><td>Alex Wong</td><td>Alex.W@gmail.com</td><td>2025-09-16</td><td>1,920.80 hrs</td><td>Day</td><td>≡</td></tr>
+            <tr><td>Orlendo Michael</td><td>Orlendo.Mic@gmail.com</td><td>2025-09-15</td><td>1,150.00 hrs</td><td>Day</td><td>≡</td></tr>
+          </tbody>
+        </table>
+      </section>
+
+      <!-- Project panel -->
+      <section class="project-box">
+
+        <!-- New Project popup -->
+        <div class="side-popup" id="projectPopup">
+          <div class="sp-head">
+            <strong>New Project</strong>
+            <button class="pp-close" id="projClose">✕</button>
+          </div>
+          <input type="text" id="projName" class="sp-title" placeholder="Project name">
+          <div class="sp-foot"><button class="btn-gray" id="projRegister">Register</button></div>
+        </div>
+
+        <div class="pb-toolbar">
+          <div class="pb-tabs">
+            <button class="btn-blue" id="newProjectBtn">New Project</button>
+            <button class="tab active" id="tabGantt">Gantt Chart</button>
+            <button class="tab" id="tabBoard">Board</button>
+          </div>
+          <div class="pb-lang">
+            <button class="btn-gray">EN</button>
+          </div>
+        </div>
+
+        <div class="pb-body">
+          <div class="pb-list" id="projectList"></div>
+
+          <div class="pb-main">
+
+            <!-- Gantt view -->
+            <div class="pb-header" id="ganttHeader">
+              <strong class="proj-title"></strong>
+              <div>
+                <button class="btn-gray" id="makeScheduleBtn">Make Schedule</button>
+                <button class="btn-gray del-project">Delete Project</button>
+              </div>
+            </div>
+
+            <div class="gantt" id="ganttPanel">
+              <div class="gantt-top">
+                <div class="gantt-nav">
+                  <button class="btn-gray" id="prevMonth">←</button>
+                  <button class="btn-gray" id="nextMonth">→</button>
+                </div>
+                <div class="gantt-month" id="ganttMonth"></div>
+                <div class="gantt-actions">
+                  <button class="btn-gray" id="todayBtn">Today</button>
+                  <button class="btn-gray" id="resetBtn">Reset</button>
+                </div>
+              </div>
+
+              <div class="gantt-grid">
+                <div class="gantt-phases">
+                  <div class="gh-spacer"></div>
+                  <div id="phaseList"></div>
+                  <button class="new-phase" id="newPhaseBtn">+ new phase</button>
+                </div>
+
+                <div class="gantt-right">
+                  <div class="gantt-days" id="ganttDays"></div>
+                  <div class="gantt-rows" id="ganttRows"></div>
+                </div>
+              </div>
+
+              <!-- Register Phase popup -->
+              <div class="phase-popup" id="phasePopup">
+                <div class="pp-head">
+                  <strong>Register Phase</strong>
+                  <button class="pp-close" id="ppClose">✕</button>
+                </div>
+                <div class="pp-title">
+                  <i class="dot" id="ppDot" style="background:#ff3b30"></i>
+                  <input type="text" id="ppTitle" placeholder="Title">
+                </div>
+                <div class="pp-foot">
+                  <div class="swatches" id="swatches"></div>
+                  <button class="btn-gray" id="ppRegister">Register</button>
+                </div>
+              </div>
+
+              <!-- Make Schedule popup -->
+              <div class="side-popup" id="schedulePopup">
+                <div class="sp-head">
+                  <select id="schedType"><option>Timeline</option></select>
+                  <button class="pp-close" id="schedClose">✕</button>
+                </div>
+                <input type="text" id="schedTitle" class="sp-title" placeholder="Text schedule title">
+                <select id="schedPhase" class="sp-select"></select>
+                <div class="sp-dates">
+                  <span>◷</span>
+                  <label>Start Date<input type="date" id="schedStart"></label>
+                  <label>End Date<input type="date" id="schedEnd"></label>
+                </div>
+                <div class="sp-foot"><button class="btn-gray" id="schedRegister">Register</button></div>
+              </div>
+            </div>
+
+            <!-- Board view -->
+            <div class="pb-header" id="boardHeader" style="display:none">
+              <strong class="proj-title"></strong>
+              <div>
+                <button class="btn-gray">←</button>
+                <button class="btn-gray">→</button>
+                <button class="btn-gray" id="makeBoardBtn">Make Board</button>
+                <button class="btn-gray del-project">Delete Project</button>
+              </div>
+            </div>
+
+            <div class="board-panel" id="boardPanel" style="display:none">
+              <div class="board-cols" id="boardCols"></div>
+
+              <div class="side-popup" id="boardPopup">
+                <div class="sp-head">
+                  <strong>Register board</strong>
+                  <button class="pp-close" id="boardClose">✕</button>
+                </div>
+                <input type="text" id="boardTitle" class="sp-title" placeholder="Text schedule title">
+                <div class="sp-foot"><button class="btn-gray" id="boardRegister">Register</button></div>
+              </div>
+            </div>
+
+          </div>
+        </div>
+      </section>
+
+    </main>
+  </div>
+
+  <div class="toast" id="toast"></div>
+
+  <script>
+  (function () {
+    const $ = id => document.getElementById(id);
+
+    /* ---------- Toast ---------- */
+    const toast = $('toast');
+    function showToast(msg) {
+      toast.textContent = msg;
+      toast.classList.add('show');
+      clearTimeout(showToast.t);
+      showToast.t = setTimeout(() => toast.classList.remove('show'), 2500);
+    }
+
+    /* ---------- Elements ---------- */
+    const ganttHeader = $('ganttHeader'), ganttPanel = $('ganttPanel');
+    const boardHeader = $('boardHeader'), boardPanel = $('boardPanel');
+    const tabGantt = $('tabGantt'), tabBoard = $('tabBoard');
+    const schedPopup = $('schedulePopup'), boardPopup = $('boardPopup');
+    const phasePopup = $('phasePopup'), projPopup = $('projectPopup');
+    const list = $('phaseList');
+
+    /* ---------- State ---------- */
+    const today = new Date();
+    let viewY = today.getFullYear(), viewM = today.getMonth();
+    let seq = 1;
+    let editing = null;
+    const uid = p => p + (++seq);
+    const projects = [{
+      id: 'proj1', name: 'Project 1',
+      phases: [{ id: 'p1', name: 'Phase 01', color: '#007aff' }],
+      schedules: [], boards: []
+    }];
+    let currentId = 'proj1';
+    const cur = () => projects.find(p => p.id === currentId);
+
+    const parse = s => { const [y, m, d] = s.split('-').map(Number); return new Date(y, m - 1, d); };
+    const fmt = d => d.toLocaleDateString('en', { month: 'short', day: 'numeric' });
+    const isLight = c => { const n = parseInt(c.slice(1), 16); return (((n >> 16) * 299) + (((n >> 8) & 255) * 587) + ((n & 255) * 114)) / 1000 > 160; };
+
+    function closePopups() {
+      schedPopup.classList.remove('open');
+      boardPopup.classList.remove('open');
+      phasePopup.classList.remove('open');
+      projPopup.classList.remove('open');
+      editing = null;
+    }
+
+    /* ---------- Render ---------- */
+    function renderProjects() {
+      const box = $('projectList');
+      box.innerHTML = '';
+      projects.forEach(p => {
+        const el = document.createElement('div');
+        el.className = 'pb-item' + (p.id === currentId ? ' active' : '');
+        el.textContent = p.name;
+        el.onclick = () => { currentId = p.id; closePopups(); renderAll(); };
+        box.appendChild(el);
+      });
+      document.querySelectorAll('.proj-title').forEach(t => { t.textContent = cur().name; });
+    }
+
+    function renderPhases() {
+      list.innerHTML = '';
+      cur().phases.forEach(ph => {
+        const el = document.createElement('div');
+        el.className = 'phase';
+        el.dataset.id = ph.id;
+        const d = document.createElement('i');
+        d.className = 'dot';
+        d.style.background = ph.color;
+        const s = document.createElement('span');
+        s.textContent = ph.name;
+        el.appendChild(d);
+        el.appendChild(s);
+        list.appendChild(el);
+      });
+    }
+
+    function renderGantt() {
+      const proj = cur();
+      const days = new Date(viewY, viewM + 1, 0).getDate();
+      $('ganttMonth').textContent = new Date(viewY, viewM, 1).toLocaleDateString('en', { month: 'short' }).toUpperCase() + ' ' + viewY;
+
+      const head = $('ganttDays');
+      head.innerHTML = '';
+      for (let d = 1; d <= days; d++) {
+        const s = document.createElement('span');
+        s.textContent = String(d).padStart(2, '0');
+        if (viewY === today.getFullYear() && viewM === today.getMonth() && d === today.getDate()) s.className = 'day-now';
+        head.appendChild(s);
+      }
+
+      const rows = $('ganttRows');
+      rows.innerHTML = '';
+      proj.phases.forEach(ph => {
+        const row = document.createElement('div');
+        row.className = 'g-row';
+        row.dataset.id = ph.id;
+        rows.appendChild(row);
+      });
+
+      const mStart = new Date(viewY, viewM, 1), mEnd = new Date(viewY, viewM, days);
+      proj.schedules.forEach(sc => {
+        const ph = proj.phases.find(p => p.id === sc.phaseId);
+        const row = rows.querySelector('.g-row[data-id="' + sc.phaseId + '"]');
+        if (!ph || !row) return;
+        const s = sc.start < mStart ? mStart : sc.start;
+        const e = sc.end > mEnd ? mEnd : sc.end;
+        if (s > e) return;
+        const bar = document.createElement('div');
+        bar.className = 'bar-s';
+        bar.style.left = ((s.getDate() - 1) / days * 100) + '%';
+        bar.style.width = ((e.getDate() - s.getDate() + 1) / days * 100) + '%';
+        bar.style.background = ph.color;
+        bar.style.color = isLight(ph.color) ? '#222' : '#fff';
+        bar.textContent = sc.title;
+        bar.title = sc.title + ' (' + fmt(sc.start) + ' – ' + fmt(sc.end) + ')';
+        row.appendChild(bar);
+      });
+    }
+
+    function makeCol(name) {
+      const col = document.createElement('div');
+      col.className = 'board-col';
+      const h = document.createElement('h4');
+      h.textContent = name;
+      col.appendChild(h);
+      return col;
+    }
+
+    function renderBoard() {
+      const proj = cur();
+      const cols = $('boardCols');
+      cols.innerHTML = '';
+
+      const sCol = makeCol('Schedules');
+      proj.schedules.forEach(sc => {
+        const ph = proj.phases.find(p => p.id === sc.phaseId);
+        const card = document.createElement('div');
+        card.className = 'board-card';
+        card.style.borderLeftColor = ph ? ph.color : '#999';
+        const t = document.createElement('strong');
+        t.textContent = sc.title;
+        const d = document.createElement('small');
+        d.textContent = fmt(sc.start) + ' – ' + fmt(sc.end);
+        card.appendChild(t);
+        card.appendChild(d);
+        sCol.appendChild(card);
+      });
+      cols.appendChild(sCol);
+
+      proj.boards.forEach(b => cols.appendChild(makeCol(b.name)));
+    }
+
+    function renderAll() { renderProjects(); renderPhases(); renderGantt(); renderBoard(); }
+
+    /* ---------- Tabs ---------- */
+    function showView(view) {
+      const board = view === 'board';
+      ganttHeader.style.display = board ? 'none' : '';
+      ganttPanel.style.display = board ? 'none' : '';
+      boardHeader.style.display = board ? '' : 'none';
+      boardPanel.style.display = board ? '' : 'none';
+      tabBoard.classList.toggle('active', board);
+      tabGantt.classList.toggle('active', !board);
+      closePopups();
+    }
+    tabGantt.onclick = () => showView('gantt');
+    tabBoard.onclick = () => showView('board');
+
+    /* ---------- Month navigation ---------- */
+    $('prevMonth').onclick = () => { viewM--; if (viewM < 0) { viewM = 11; viewY--; } renderGantt(); };
+    $('nextMonth').onclick = () => { viewM++; if (viewM > 11) { viewM = 0; viewY++; } renderGantt(); };
+    $('todayBtn').onclick = () => { viewY = today.getFullYear(); viewM = today.getMonth(); renderGantt(); };
+
+    /* ---------- New Project / Delete Project ---------- */
+    $('newProjectBtn').onclick = () => {
+      const wasOpen = projPopup.classList.contains('open');
+      closePopups();
+      if (!wasOpen) { projPopup.classList.add('open'); $('projName').focus(); }
+    };
+    $('projClose').onclick = () => projPopup.classList.remove('open');
+    $('projRegister').onclick = () => {
+      const name = $('projName').value.trim();
+      if (!name) { showToast('Please enter a project name.'); return; }
+      const proj = {
+        id: uid('proj'), name: name,
+        phases: [{ id: uid('p'), name: 'Phase 01', color: '#007aff' }],
+        schedules: [], boards: []
+      };
+      projects.push(proj);
+      currentId = proj.id;
+      $('projName').value = '';
+      closePopups();
+      renderAll();
+      showToast('Project created.');
+    };
+
+    function deleteProject() {
+      if (projects.length === 1) { showToast('At least one project is required.'); return; }
+      if (!confirm('Delete "' + cur().name + '"?')) return;
+      const i = projects.findIndex(p => p.id === currentId);
+      projects.splice(i, 1);
+      currentId = projects[Math.max(0, i - 1)].id;
+      closePopups();
+      renderAll();
+      showToast('Project deleted.');
+    }
+    document.querySelectorAll('.del-project').forEach(b => { b.onclick = deleteProject; });
+
+    /* ---------- Phases ---------- */
+    const dot = $('ppDot'), title = $('ppTitle'), regBtn = $('ppRegister');
+    const colors = ['#ff3b30','#ff9500','#ffcc00','#34c759','#00c7be','#30b0c7','#32ade6','#007aff','#5856d6','#af52de','#ff2d55','#a2845e',
+                    '#e5e5ea','#d1d1d6','#c7c7cc','#aeaeb2','#8e8e93','#636366','#48484a','#3a3a3c','#2c2c2e','#1c1c1e','#111111','#000000'];
+    let chosen = colors[0];
+
+    function setColor(c) { chosen = c; dot.style.background = c; }
+
+    const swatchBox = $('swatches');
+    colors.forEach(c => {
+      const s = document.createElement('span');
+      s.style.background = c;
+      s.onclick = () => setColor(c);
+      swatchBox.appendChild(s);
+    });
+
+    function openPhasePopup(ph) {
+      closePopups();
+      editing = ph;
+      if (ph) {
+        title.value = ph.name;
+        setColor(ph.color);
+        regBtn.textContent = 'Save';
+      } else {
+        title.value = '';
+        setColor(colors[0]);
+        regBtn.textContent = 'Register';
+      }
+      phasePopup.classList.add('open');
+      title.focus();
+    }
+
+    $('newPhaseBtn').onclick = () => openPhasePopup(null);
+    $('ppClose').onclick = closePopups;
+
+    list.addEventListener('click', e => {
+      const el = e.target.closest('.phase');
+      if (!el) return;
+      const ph = cur().phases.find(p => p.id === el.dataset.id);
+      if (ph) openPhasePopup(ph);
+    });
+
+    regBtn.onclick = () => {
+      const name = title.value.trim();
+      if (!name) return;
+      if (editing) {
+        editing.name = name;
+        editing.color = chosen;
+      } else {
+        cur().phases.push({ id: uid('p'), name: name, color: chosen });
+      }
+      closePopups();
+      renderAll();
+    };
+
+    /* ---------- Make Schedule ---------- */
+    function fillPhaseOptions() {
+      const sel = $('schedPhase');
+      sel.innerHTML = '';
+      cur().phases.forEach(ph => {
+        const o = document.createElement('option');
+        o.value = ph.id;
+        o.textContent = ph.name;
+        sel.appendChild(o);
+      });
+    }
+
+    $('makeScheduleBtn').onclick = () => {
+      const wasOpen = schedPopup.classList.contains('open');
+      closePopups();
+      if (!wasOpen) { fillPhaseOptions(); schedPopup.classList.add('open'); }
+    };
+    $('schedClose').onclick = () => schedPopup.classList.remove('open');
+
+    $('schedRegister').onclick = () => {
+      const s = $('schedStart').value, e = $('schedEnd').value;
+      if (!s || !e || e < s) { showToast('Please select a valid date.'); return; }
+      const name = $('schedTitle').value.trim();
+      if (!name) { showToast('Please enter a schedule title.'); return; }
+
+      const start = parse(s);
+      cur().schedules.push({ title: name, start: start, end: parse(e), phaseId: $('schedPhase').value });
+      viewY = start.getFullYear();
+      viewM = start.getMonth();
+
+      $('schedTitle').value = ''; $('schedStart').value = ''; $('schedEnd').value = '';
+      closePopups();
+      renderAll();
+      showToast('Schedule registered.');
+    };
+
+    /* ---------- Make Board ---------- */
+    $('makeBoardBtn').onclick = () => {
+      const wasOpen = boardPopup.classList.contains('open');
+      closePopups();
+      if (!wasOpen) boardPopup.classList.add('open');
+    };
+    $('boardClose').onclick = () => boardPopup.classList.remove('open');
+    $('boardRegister').onclick = () => {
+      const name = $('boardTitle').value.trim();
+      if (!name) { showToast('Please enter a board title.'); return; }
+      cur().boards.push({ name: name });
+      $('boardTitle').value = '';
+      closePopups();
+      renderBoard();
+      showToast('Board registered.');
+    };
+
+    /* ---------- Reset ---------- */
+    $('resetBtn').onclick = () => {
+      if (!cur().schedules.length) { showToast('Nothing to reset.'); return; }
+      if (!confirm('Remove all schedules from "' + cur().name + '"?')) return;
+      cur().schedules = [];
+      viewY = today.getFullYear();
+      viewM = today.getMonth();
+      closePopups();
+      renderAll();
+      showToast('Schedules reset.');
+    };
+
+    renderAll();
+  })();
+  </script>
+
+  <script>
+  (function () {
+    const monthSel = document.getElementById('calMonth');
+    const yearSel = document.getElementById('calYear');
+    const body = document.getElementById('calBody');
+    const now = new Date();
+    const names = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+
+    names.forEach((n, i) => {
+      const o = document.createElement('option');
+      o.value = i;
+      o.textContent = n;
+      monthSel.appendChild(o);
+    });
+    for (let y = now.getFullYear() - 50; y <= now.getFullYear() + 50; y++) {
+      const o = document.createElement('option');
+      o.value = y;
+      o.textContent = y;
+      yearSel.appendChild(o);
+    }
+    monthSel.value = now.getMonth();
+    yearSel.value = now.getFullYear();
+
+    function render() {
+      const y = +yearSel.value, m = +monthSel.value;
+      const first = new Date(y, m, 1).getDay();
+      const days = new Date(y, m + 1, 0).getDate();
+      body.innerHTML = '';
+      let d = 1;
+      for (let r = 0; r < 6; r++) {
+        const tr = document.createElement('tr');
+        for (let c = 0; c < 7; c++) {
+          const td = document.createElement('td');
+          if ((r > 0 || c >= first) && d <= days) {
+            if (y === now.getFullYear() && m === now.getMonth() && d === now.getDate()) {
+              td.className = 'today';
+              td.innerHTML = '<span>' + d + '</span>';
+            } else {
+              td.textContent = d;
+            }
+            d++;
+          }
+          tr.appendChild(td);
+        }
+        body.appendChild(tr);
+      }
+    }
+
+    monthSel.onchange = render;
+    yearSel.onchange = render;
+    render();
+  })();
+  </script>
+</body>
+</html>
