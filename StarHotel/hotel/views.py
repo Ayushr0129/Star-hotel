@@ -18,7 +18,7 @@ ROOM_IMAGES = {
     "Deluxe Room": "images/deluxe.jpg",
     "Standard Room": "images/standard.jpg",
     "Studio Room": "images/studio.jpg",
-    "Executive Room": "images/executive.jpg",
+    "Executive Room": "images/executive-thumb-1.jpg",
 }
 PACKAGE_IMAGES = {
     "Weekend Getaway": "images/Weekend.jpg",
@@ -147,7 +147,7 @@ def home(request):
             'name': 'Executive Room',
             'details': '3 Guests • King Bed • Pool Building',
             'price': '18,000',
-            'image_path': 'images/executive.jpg',
+            'image_path': 'images/executive-thumb-1.jpg',
             'url_name': 'room_details_executive'
         },
     ]
@@ -181,7 +181,7 @@ def search_results(request):
             'price': '18,000',
             'guests': 2,
             'features': ['Queen Bed', 'Sea View', 'Breakfast Included'],
-            'image_path': 'images/executive.jpg'
+            'image_path': 'images/executive-thumb-1.jpg'
         },
         {
             'name': 'Family Suite',
@@ -327,7 +327,7 @@ def booking(request):
             "Deluxe Room": "images/deluxe.jpg",
             "Standard Room": "images/standard.jpg",
             "Studio Room": "images/studio.jpg",
-            "Executive Room": "images/executive.jpg",
+            "Executive Room": "images/executive-thumb-1.jpg",
         }
         ROOM_DESCRIPTIONS = {
             "Deluxe Room": "Experience comfort and luxury in our Deluxe Room, featuring a king-size bed, complimentary breakfast, air conditioning, free Wi-Fi and panoramic garden views.",
