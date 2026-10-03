@@ -1569,7 +1569,8 @@ header:has(~ main .layout) {
 
 .amenities-checkboxes {
     display: flex;
-    gap: 1rem;
+    flex-direction: column;
+    gap: 0.6rem;
 }
 
 .amenity-item {
