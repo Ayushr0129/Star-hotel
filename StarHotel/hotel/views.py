@@ -446,6 +446,15 @@ def admin_dashboard(request):
     return render(request, "hotel/admin_dashboard.html")
 
 
+def render_admin_page(request, template_name, context=None):
+    from .admin import hotel_admin_site
+
+    page_context = hotel_admin_site.each_context(request)
+    if context:
+        page_context.update(context)
+    return render(request, template_name, page_context)
+
+
 def manage_rooms(request):
     room_sort_number = Cast(
         Coalesce(
@@ -477,14 +486,15 @@ def manage_rooms(request):
         "occupied_count": all_rooms.filter(room_status="occupied").count(),
         "maintenance_count": all_rooms.filter(room_status="maintenance").count(),
     }
-    return render(request, "hotel/manage_rooms.html", context)
+    context["title"] = "Manage Rooms"
+    return render_admin_page(request, "hotel/manage_rooms.html", context)
 
 def reports(request):
-    return render(request, "hotel/reports.html")
+    return render_admin_page(request, "hotel/reports.html", {"title": "Reports & Analytics"})
 
 def room_create(request):
     if request.method != "POST":
-        return redirect("manage_rooms")
+        return redirect("admin:hotel_manage_rooms")
 
     room_number = request.POST.get("room_number", "").strip()
     room_type = request.POST.get("room_type", "")
@@ -495,10 +505,10 @@ def room_create(request):
 
     if not room_number.isdigit() or len(room_number) > 10:
         messages.error(request, "Enter a numeric room number with no more than 10 digits.")
-        return redirect("manage_rooms")
+        return redirect("admin:hotel_manage_rooms")
     if room_type not in valid_room_types or status not in valid_statuses:
         messages.error(request, "Choose a valid room type and status.")
-        return redirect("manage_rooms")
+        return redirect("admin:hotel_manage_rooms")
 
     try:
         price = Decimal(price_text)
@@ -506,15 +516,15 @@ def room_create(request):
             raise ValueError
     except (InvalidOperation, ValueError):
         messages.error(request, "Enter a valid, non-negative room price.")
-        return redirect("manage_rooms")
+        return redirect("admin:hotel_manage_rooms")
 
     branch = Branch.objects.order_by("branch_id").first()
     if branch is None:
         messages.error(request, "Create a hotel branch before adding rooms.")
-        return redirect("manage_rooms")
+        return redirect("admin:hotel_manage_rooms")
     if Room.objects.filter(branch=branch, room_number=room_number).exists():
         messages.error(request, f"Room {room_number} already exists at {branch.branch_name}.")
-        return redirect("manage_rooms")
+        return redirect("admin:hotel_manage_rooms")
 
     Room.objects.create(
         room_number=room_number,
@@ -524,13 +534,13 @@ def room_create(request):
         branch=branch,
     )
     messages.success(request, f"Room {room_number} was added.")
-    return redirect("manage_rooms")
+    return redirect("admin:hotel_manage_rooms")
 
 
 def room_update(request, room_id):
     room = get_object_or_404(Room, room_id=room_id)
     if request.method != "POST":
-        return redirect("manage_rooms")
+        return redirect("admin:hotel_manage_rooms")
 
     room_number = request.POST.get("room_number", "").strip()
     room_type = request.POST.get("room_type", "")
@@ -547,11 +557,7 @@ def room_update(request, room_id):
         room.room_status = status
         room.save(update_fields=["room_number", "room_type", "room_status"])
         messages.success(request, f"Room {room_number} was updated.")
-    return redirect("manage_rooms")
-
-
-def reports(request):
-    return render(request, "hotel/reports.html")
+    return redirect("admin:hotel_manage_rooms")
 
 
 def cart_review(request):

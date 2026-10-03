@@ -18,13 +18,13 @@
 
         <!-- Dedicated Admin Navigation Links -->
         <nav class="flex items-center space-x-4">
-            <a href="#" class="bg-[#0b2bba] text-white px-4 py-2 rounded font-medium text-sm">
+            <a href="{% url 'admin:index' %}" class="bg-[#0b2bba] text-white px-4 py-2 rounded font-medium text-sm">
                 Admin Section
             </a>
-            <a href="{% url 'manage_rooms' %}" class="text-gray-800 hover:text-blue-700 px-3 py-2 text-sm font-medium">
+            <a href="{% url 'admin:hotel_manage_rooms' %}" class="text-gray-800 hover:text-blue-700 px-3 py-2 text-sm font-medium">
                 Manage rooms
             </a>
-            <a href="{% url 'reports' %}" class="text-gray-800 hover:text-blue-700 px-3 py-2 text-sm font-medium">
+            <a href="{% url 'admin:hotel_reports' %}" class="text-gray-800 hover:text-blue-700 px-3 py-2 text-sm font-medium">
                  Reports
             </a>
         </nav>

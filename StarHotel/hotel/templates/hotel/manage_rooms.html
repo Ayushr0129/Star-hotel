@@ -1,19 +1,13 @@
-{% extends "base_admin.html" %}
+{% extends "admin/base_site.html" %}
 
 {% block title %}
 Manage Rooms - STAR HOTEL
 {% endblock %}
 
+{% block content_title %}{% endblock %}
+
 {% block content %}
 <div class="max-w-6xl mx-auto px-6 py-8">
-
-  {% if messages %}
-  <div class="mb-5 space-y-2">
-    {% for message in messages %}
-    <p class="rounded border px-4 py-2 {% if message.tags == 'error' %}border-red-300 bg-red-50 text-red-700{% else %}border-green-300 bg-green-50 text-green-700{% endif %}">{{ message }}</p>
-    {% endfor %}
-  </div>
-  {% endif %}
 
   <!-- Page Title & Subtitle -->
   <div class="mb-8">
@@ -114,7 +108,7 @@ Manage Rooms - STAR HOTEL
           </td>
           <td class="py-4 px-6 text-center space-x-2">
             <!-- Edit Button Trigger -->
-            <button type="button" onclick="openEditModal('{% url 'room_update' room.room_id %}', '{{ room.room_number }}', '{{ room.management_type }}', '{{ room.room_status }}')" class="bg-[#0b2bba] text-white text-xs font-semibold px-4 py-1.5 rounded hover:bg-blue-800 transition">
+            <button type="button" onclick="openEditModal('{% url 'admin:hotel_room_update' room.room_id %}', '{{ room.room_number }}', '{{ room.management_type }}', '{{ room.room_status }}')" class="bg-[#0b2bba] text-white text-xs font-semibold px-4 py-1.5 rounded hover:bg-blue-800 transition">
               Edit
             </button>
           </td>
@@ -139,7 +133,7 @@ Manage Rooms - STAR HOTEL
       <h3 class="text-xl font-bold text-black">Add New Room</h3>
       <button type="button" onclick="toggleModal('add-modal', false)" class="text-gray-400 hover:text-black font-bold text-lg">&times;</button>
     </div>
-    <form method="POST" action="{% url 'room_create' %}">
+    <form method="POST" action="{% url 'admin:hotel_room_create' %}">
       {% csrf_token %}
       <div class="mb-4">
         <label class="block text-sm font-semibold text-gray-700 mb-1">Room Number</label>
