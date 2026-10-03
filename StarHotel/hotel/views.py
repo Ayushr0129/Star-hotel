@@ -122,29 +122,33 @@ def _build_cart_item(item_type, item_id, checkin, checkout, guests):
 
 def home(request):
     rooms = [
-        {
+       {
             'name': 'Deluxe Room',
             'details': '2 Guests • King Bed',
-            'price': '15,000',
-            'image_path': 'images/deluxe.jpg'
+            'price': '10,000',
+            'image_path': 'images/deluxe.jpg',
+            'url_name': 'room_details_deluxe'
         },
         {
             'name': 'Standard Room',
             'details': '2 Guests • Queen Bed',
-            'price': '9,500',
-            'image_path': 'images/standard.jpg'
+            'price': '8,000',
+            'image_path': 'images/standard.jpg',
+            'url_name': 'room_details_deluxe'
         },
         {
             'name': 'Studio Room',
             'details': '2 Guests • King Bed • Terrace',
-            'price': '12,500',
-            'image_path': 'images/studio.jpg'
+            'price': '12,000',
+            'image_path': 'images/studio.jpg',
+            'url_name': 'room_details_deluxe'
         },
         {
             'name': 'Executive Room',
-            'details': '3 Guests • King Bed • Fire heating',
+            'details': '3 Guests • King Bed • Pool Building',
             'price': '18,000',
-            'image_path': 'images/executive.jpg'
+            'image_path': 'images/executive.jpg',
+            'url_name': 'room_details_executive'
         },
     ]
 

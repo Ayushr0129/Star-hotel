@@ -54,7 +54,7 @@
                 <p class="card-meta"><span style="color:#FFD700;">★ ★ ★ ★ ★</span> &nbsp;•&nbsp; {{ room.details }}</p>
                 <div class="card-footer">
                     <strong>Rs {{ room.price }} <span style="font-weight:400; font-size:0.75rem;">/ night</span></strong>
-                    <a href="#" class="btn-sm">View Details</a>
+                    <a href="{% url room.url_name %}" class="btn-sm">View Details</a>
                 </div>
             </div>
         </div>
