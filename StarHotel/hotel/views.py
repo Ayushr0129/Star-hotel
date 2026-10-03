@@ -1,8 +1,10 @@
-from decimal import Decimal
+from decimal import Decimal, InvalidOperation
 from datetime import date, timedelta
 
 from django.contrib import messages
 from django.db import transaction
+from django.db.models import CharField, IntegerField, Q, Value
+from django.db.models.functions import Cast, Coalesce, NullIf
 from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse
 
@@ -445,19 +447,106 @@ def admin_dashboard(request):
 
 
 def manage_rooms(request):
-    return render(request, "hotel/manage_rooms.html")
+    room_sort_number = Cast(
+        Coalesce(
+            NullIf("room_number", Value("")),
+            Cast("room_id", output_field=CharField()),
+        ),
+        output_field=IntegerField(),
+    )
+    rooms = Room.objects.select_related("branch").order_by(room_sort_number, "room_id")
+    search_query = request.GET.get("search", "").strip()
+    if search_query:
+        rooms = rooms.filter(
+            Q(room_number__icontains=search_query)
+            | Q(room_type__icontains=search_query)
+            | Q(room_status__icontains=search_query)
+        )
+
+    for room in rooms:
+        if room.room_type in {"Suit Room", "Studio Room", "Executive Room"}:
+            room.management_type = "Suit Room"
+        else:
+            room.management_type = "Deluxe"
+
+    all_rooms = Room.objects.all()
+    context = {
+        "rooms": rooms,
+        "search_query": search_query,
+        "available_count": all_rooms.filter(room_status="available").count(),
+        "occupied_count": all_rooms.filter(room_status="occupied").count(),
+        "maintenance_count": all_rooms.filter(room_status="maintenance").count(),
+    }
+    return render(request, "hotel/manage_rooms.html", context)
 
 def reports(request):
     return render(request, "hotel/reports.html")
 
 def room_create(request):
-    if request.method == "POST":
-        room_number = request.POST.get("room_number")
-        room_type = request.POST.get("room_type")
-        status = request.POST.get("status")
+    if request.method != "POST":
+        return redirect("manage_rooms")
 
-        # create room here
+    room_number = request.POST.get("room_number", "").strip()
+    room_type = request.POST.get("room_type", "")
+    status = request.POST.get("status", "")
+    price_text = request.POST.get("price", "").strip()
+    valid_room_types = {"Deluxe", "Suit Room"}
+    valid_statuses = {"available", "occupied", "maintenance"}
 
+    if not room_number.isdigit() or len(room_number) > 10:
+        messages.error(request, "Enter a numeric room number with no more than 10 digits.")
+        return redirect("manage_rooms")
+    if room_type not in valid_room_types or status not in valid_statuses:
+        messages.error(request, "Choose a valid room type and status.")
+        return redirect("manage_rooms")
+
+    try:
+        price = Decimal(price_text)
+        if price < 0:
+            raise ValueError
+    except (InvalidOperation, ValueError):
+        messages.error(request, "Enter a valid, non-negative room price.")
+        return redirect("manage_rooms")
+
+    branch = Branch.objects.order_by("branch_id").first()
+    if branch is None:
+        messages.error(request, "Create a hotel branch before adding rooms.")
+        return redirect("manage_rooms")
+    if Room.objects.filter(branch=branch, room_number=room_number).exists():
+        messages.error(request, f"Room {room_number} already exists at {branch.branch_name}.")
+        return redirect("manage_rooms")
+
+    Room.objects.create(
+        room_number=room_number,
+        room_type=room_type,
+        room_status=status,
+        price=price,
+        branch=branch,
+    )
+    messages.success(request, f"Room {room_number} was added.")
+    return redirect("manage_rooms")
+
+
+def room_update(request, room_id):
+    room = get_object_or_404(Room, room_id=room_id)
+    if request.method != "POST":
+        return redirect("manage_rooms")
+
+    room_number = request.POST.get("room_number", "").strip()
+    room_type = request.POST.get("room_type", "")
+    status = request.POST.get("status", "")
+    if not room_number.isdigit() or len(room_number) > 10:
+        messages.error(request, "Enter a numeric room number with no more than 10 digits.")
+    elif room_type not in {"Deluxe", "Suit Room"} or status not in {"available", "occupied", "maintenance"}:
+        messages.error(request, "Choose a valid room type and status.")
+    elif Room.objects.filter(branch=room.branch, room_number=room_number).exclude(room_id=room.room_id).exists():
+        messages.error(request, f"Room {room_number} already exists at {room.branch.branch_name}.")
+    else:
+        room.room_number = room_number
+        room.room_type = room_type
+        room.room_status = status
+        room.save(update_fields=["room_number", "room_type", "room_status"])
+        messages.success(request, f"Room {room_number} was updated.")
     return redirect("manage_rooms")
 
 
@@ -592,4 +681,4 @@ def booking_confirmation(request):
             "customer"
         ).prefetch_related("booking_items").first()
 
-    return render(request, "hotel/booking_confirmation.html", {"booking": booking_obj}) 
+    return render(request, "hotel/booking_confirmation.html", {"booking": booking_obj})

@@ -19,6 +19,7 @@ urlpatterns = [
     path("admin-dashboard/", views.admin_dashboard, name="admin_dashboard"),
     path("manage-rooms/", views.manage_rooms, name="manage_rooms"),
     path("rooms/create/", views.room_create, name="room_create"),
+    path("rooms/<int:room_id>/edit/", views.room_update, name="room_update"),
     path("reports/", views.reports, name="reports"),
     path("cart/review/", views.cart_review, name="cart_review"),
     path("cart/guest-details/", views.cart_guest_details, name="cart_guest_details"),
