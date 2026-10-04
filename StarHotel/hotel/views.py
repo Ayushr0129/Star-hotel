@@ -7,6 +7,10 @@ from django.db.models import CharField, IntegerField, Q, Value
 from django.db.models.functions import Cast, Coalesce, NullIf
 from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse
+from .models import (
+    Customer, Room, Packages, Event, Activity, Branch,
+    Booking, Room_Item, Package_Item, Event_Item, Activity_Item,
+)
 
 from .models import (
     Customer, Room, Packages, Event, Branch,
@@ -33,6 +37,7 @@ EVENT_IMAGES = {
     "Corporate Retreat Package": "images/worker.jpg",
 }
 
+ACTIVITY_IMAGE = "images/Event-booking.jpg"
 
 def _get_cart(request):
     return request.session.setdefault(CART_SESSION_KEY, [])
@@ -118,6 +123,27 @@ def _build_cart_item(item_type, item_id, checkin, checkout, guests):
             "check_out": event.eventdate.isoformat(),
             "guests": guests, "nights": 0,
         }, None
+
+    if item_type == "activity":
+        act = Activity.objects.filter(pk=item_id).first()
+        if not act:
+            return None, "That activity is no longer available."
+        if act.act_date < date.today():
+            return None, "That activity has already taken place."
+        if guests > act.capacity:
+            return None, f"This activity holds a maximum of {act.capacity} guests."
+        return {
+            "kind": "activity", "item_type": "activity", "ref_id": act.pk,
+            "name": act.act_name,
+            "description": f"{act.act_name}, {act.location}",
+            "image": ACTIVITY_IMAGE,
+            "price": str(act.price_per_person * guests),
+            "breakdown": f"{guests} guest(s) × Rs {act.price_per_person:,.2f}",
+            "check_in": act.act_date.isoformat(),
+            "check_out": act.act_date.isoformat(),
+            "guests": guests, "nights": 0,
+        }, None
+
 
     return None, "Unknown item."
 
@@ -322,7 +348,7 @@ def booking(request):
 
         # Room has no guests/bed-type fields in the model, so this just
         # mirrors the same spec text already shown on the home page cards.
-                ROOM_SPECS = {
+        ROOM_SPECS = {
             "Deluxe Room": "2 Guests • King Bed",
             "Standard Room": "2 Guests • Queen Bed",
             "Studio Room": "2 Guests • King Bed • Terrace",
@@ -388,6 +414,11 @@ def booking(request):
             for e in Event.objects.all()
         ]
 
+        activity_cards = [
+            {"activity": a, "image": ACTIVITY_IMAGE}
+            for a in Activity.objects.filter(act_date__gte=date.today()).order_by("act_date")
+        ]
+
         packages = Packages.objects.filter(is_active=True)
         events = Event.objects.all()
 
@@ -406,7 +437,7 @@ def booking(request):
                 "guests": guests,
             }
             tab = request.POST.get("current_tab")
-            if tab not in ("rooms", "packages", "events"):
+            if tab not in ("rooms", "packages", "events", "activities"):
                 tab = "rooms"
 
             item, error = _build_cart_item(
@@ -439,7 +470,9 @@ def booking(request):
             c["selected"] = bool(sel and sel["item_type"] == "package" and sel["ref_id"] == c["package"].pk)
         for c in event_cards:
             c["selected"] = bool(sel and sel["item_type"] == "event" and sel["ref_id"] == c["event"].pk)
-        for cards in (room_cards, package_cards, event_cards):
+        for c in activity_cards:
+            c["selected"] = bool(sel and sel["item_type"] == "activity" and sel["ref_id"] == c["activity"].pk)
+        for cards in (room_cards, package_cards, event_cards, activity_cards):
             cards.sort(key=lambda c: not c["selected"])   # selected first, others keep their order
 
         
@@ -450,8 +483,12 @@ def booking(request):
             "cart": cart,
             "cart_total": _cart_total(cart),
             "search": request.session.get("search", {}),
+            "activity_cards": activity_cards,
         }
         return render(request, "hotel/booking.html", context)
+
+
+
 
 def staff_dashboard(request):
     return render(request, "hotel/staff_dashboard.html")
@@ -687,9 +724,15 @@ def cart_payment(request):
                         no_of_guests=item["guests"],
                         **common,
                     )
-                else:
+                elif item["item_type"] == "event":
                     Event_Item.objects.create(
                         event=get_object_or_404(Event, pk=item["ref_id"]),
+                        no_of_guests=item["guests"],
+                        **common,
+                    )
+                else:
+                    Activity_Item.objects.create(
+                        activity=get_object_or_404(Activity, pk=item["ref_id"]),
                         no_of_guests=item["guests"],
                         **common,
                     )

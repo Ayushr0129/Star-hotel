@@ -109,18 +109,15 @@ tabs.forEach(tab => {
     });
 });
 
-document.querySelectorAll('.btn-book').forEach(btn => {
-    btn.addEventListener('click', () => {
-        const card = btn.closest('.room-card');
-        const name = card.dataset.name;
-        const price = Number(card.dataset.price);
+tabs.forEach(tab => {
+    tab.addEventListener('click', function () {
+        tabs.forEach(t => t.classList.remove('active'));
+        this.classList.add('active');
+        moveTabHighlight(this);
+        showPanel(this.dataset.tab);
 
-        document.getElementById('cartItems').innerHTML = `
-            <div class="cart-item">
-                <p class="cart-item-name">${name}</p>
-                <p class="cart-item-nights">1 night</p>
-            </div>
-        `;
-        document.getElementById('cartTotal').textContent = `Rs ${price.toLocaleString('en-IN')}`;
+        if (heroImg && this.dataset.hero) {
+            heroImg.src = this.dataset.hero;
+        }
     });
 });
