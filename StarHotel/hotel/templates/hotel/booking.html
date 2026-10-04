@@ -49,6 +49,7 @@ Booking
         <div class="booking-tabs" id="bookingTabs">
             <div class="tab-highlight" id="tabHighlight"></div>
             <button type="button" class="tab-item active" data-tab="rooms" data-hero="{% static 'images/Receptionist-Booking.jpg' %}">Room</button>
+            <button type="button" class="tab-item" data-tab="activities" data-hero="{% static 'images/Event-booking.jpg' %}">Activities</button>
             <button type="button" class="tab-item" data-tab="packages" data-hero="{% static 'images/packages-booking.jpg' %}">Packages</button>
             <button type="button" class="tab-item" data-tab="events" data-hero="{% static 'images/Event-booking.jpg' %}">Events</button>
         </div>
@@ -98,6 +99,38 @@ Booking
                     <p>No rooms available right now.</p>
                     {% endfor %}
                 </div>
+
+                <div class="tab-panel" data-tab="activities" hidden>
+                    {% for card in activity_cards %}
+                    {% with act=card.activity %}
+                    <div class="room-card{% if card.selected %} is-selected{% endif %}">
+                        <div class="room-media">
+                            <img src="{% static card.image %}" alt="{{ act.act_name }}" class="room-img">
+                        </div>
+                        <div class="room-info">
+                            <div class="room-title-row"><h3>{{ act.act_name }}</h3></div>
+                            <h4>Details</h4>
+                            <p>{{ act.location }} &middot; {{ act.duration }} min &middot; up to {{ act.capacity }} guests</p>
+                            <p>{{ act.act_date }}</p>
+                            <hr>
+                            <div class="room-footer">
+                                <span class="room-price">Price : Rs {{ act.price_per_person|floatformat:"2g" }} / guest</span>
+                                <div class="room-actions">
+                                    {% if card.selected %}
+                                    <span class="selected-badge">&#10003; Selected</span>
+                                    {% else %}
+                                    <button type="submit" name="add_item" value="activity-{{ act.act_id }}" class="btn-navy btn-book">{% if activity_cards.0.selected %}Switch{% else %}Book activity{% endif %}</button>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    {% endwith %}
+                    {% empty %}
+                    <p>No activities available right now.</p>
+                    {% endfor %}
+                </div>               
+
 
                 <div class="tab-panel" data-tab="packages" hidden>
                     {% for card in package_cards %}
@@ -165,7 +198,7 @@ Booking
             </div>
 
             <aside class="cart-box" id="cartBox">
-                <h3>{% if cart.0.kind == "event" %}YOUR EVENT{% else %}YOUR STAY{% endif %}</h3>
+                <h3>{% if cart.0.kind == "event" %}YOUR EVENT{% elif cart.0.kind == "activity" %}YOUR ACTIVITY{% else %}YOUR STAY{% endif %}</h3>
                 <div class="cart-items" id="cartItems">
                     {% for item in cart %}
                     <div class="cart-item">

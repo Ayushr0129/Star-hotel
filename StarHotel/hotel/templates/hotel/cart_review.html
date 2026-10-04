@@ -4,7 +4,7 @@
 {% block content %}
 
 <div class="checkout-container">
-    <h1>Review your {% if cart.0.kind == "event" %}event{% else %}stay{% endif %}</h1>
+    <h1>Review your {% if cart.0.kind == "event" %}event{% elif cart.0.kind == "activity" %}activity{% else %}stay{% endif %}</h1>
 
     <div class="checkout-layout">
         <div class="checkout-main">

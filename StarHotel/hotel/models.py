@@ -94,7 +94,11 @@ class Room(models.Model):
         return f"{self.room_type} - {self.branch.branch_name}"
 
 class Booking(models.Model):
-    TYPE_CHOICES = [('stay', 'Stay'), ('event', 'Event')] 
+    TYPE_CHOICES = [
+        ('stay', 'Stay'),
+        ('event', 'Event'),
+        ('activity', 'Activity'),
+    ]    
     booking_type = models.CharField(max_length=10, choices=TYPE_CHOICES, default='stay')   # <-- NEW
              
     bk_id = models.AutoField(primary_key=True)
@@ -210,3 +214,14 @@ class Event_Item(Booking_Item):
 
     def __str__(self):
         return f"Event Item - {self.event.title}"
+
+class Activity_Item(Booking_Item):
+    activity = models.ForeignKey(
+        Activity,
+        on_delete=models.PROTECT,
+        related_name='activity_items'
+    )
+    no_of_guests = models.PositiveIntegerField()
+
+    def __str__(self):
+        return f"Activity Item - {self.activity.act_name}"
