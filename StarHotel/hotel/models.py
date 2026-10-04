@@ -80,6 +80,7 @@ class Administrator(Employee):
 
 class Room(models.Model):
     room_id = models.AutoField(primary_key=True)
+    room_number = models.CharField(max_length=10, blank=True, default='')
     room_type = models.CharField(max_length=50)
     room_status = models.CharField(max_length=20, default='available')
     price = models.DecimalField(max_digits=10, decimal_places=2)
