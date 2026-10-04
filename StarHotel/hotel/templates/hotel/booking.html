@@ -67,8 +67,11 @@ Booking
                     {% for card in room_cards %}
                     {% with room=card.room %}
                     {% if forloop.counter0 == 1 and room_cards.0.selected %}<p class="other-label">Other rooms</p>{% endif %}
-                    <div class="room-card{% if card.selected %} is-selected{% endif %}" data-name="{{ room.room_type }}" data-price="{{ room.price }}">
-                        <div class="room-media">
+                    <div class="booking-room-card{% if card.selected %} is-selected{% endif %}" data-name="{{ room.room_type }}" data-price="{{ room.price }}">
+                    {% if card.selected %}
+                    <button type="submit" name="remove_item" value="room-{{ room.room_id }}" class="card-remove-corner" aria-label="Remove">&times;</button>
+                    {% endif %}
+                    <div class="room-media">
                             <img src="{% static card.image %}" alt="{{ room.room_type }}" class="room-img">
                             <div class="room-specs">
                                 <span>{{ card.specs }}</span>
@@ -82,7 +85,7 @@ Booking
                             <p>{{ card.description }}</p>
                             <hr>
                             <div class="room-footer">
-                                <span class="room-price">Price : Rs {{ room.price|floatformat:"2g" }} / night</span>
+                                <span class="booking-room-price">Price : Rs {{ room.price|floatformat:"2g" }} / night</span>
                                 <div class="room-actions">
                                     <button type="button" class="btn-outline-navy">View</button>
                                     {% if card.selected %}
@@ -103,8 +106,11 @@ Booking
                 <div class="tab-panel" data-tab="activities" hidden>
                     {% for card in activity_cards %}
                     {% with act=card.activity %}
-                    <div class="room-card{% if card.selected %} is-selected{% endif %}">
-                        <div class="room-media">
+                    <div class="booking-room-card{% if card.selected %} is-selected{% endif %}">
+                    {% if card.selected %}
+                    <button type="submit" name="remove_item" value="activity-{{ act.act_id }}" class="card-remove-corner" aria-label="Remove">&times;</button>
+                    {% endif %}
+                    <div class="room-media">
                             <img src="{% static card.image %}" alt="{{ act.act_name }}" class="room-img">
                         </div>
                         <div class="room-info">
@@ -114,7 +120,7 @@ Booking
                             <p>{% if act.duration %}{{ act.duration }} minutes{% else %}Flexible duration{% endif %} &middot; up to {{ act.capacity }} guests</p>
                             <hr>
                             <div class="room-footer">
-                                <span class="room-price">{% if act.price_per_person == 0 %}Complimentary{% else %}Price : Rs {{ act.price_per_person|floatformat:"2g" }} / guest{% endif %}</span>
+                                <span class="booking-room-price">{% if act.price_per_person == 0 %}Complimentary{% else %}Price : Rs {{ act.price_per_person|floatformat:"2g" }} / guest{% endif %}</span>
                                 <div class="room-actions">
                                     {% if card.selected %}<span class="selected-badge">&#10003; Added</span>{% endif %}
                                     <button type="submit" name="add_item" value="activity-{{ act.act_id }}" class="btn-navy btn-book">{% if card.selected %}Add another date{% else %}Add activity{% endif %}</button>
@@ -133,8 +139,11 @@ Booking
                     {% for card in package_cards %}
                     {% with package=card.package %}
                     {% if forloop.counter0 == 1 and package_cards.0.selected %}<p class="other-label">Other packages</p>{% endif %}
-                    <div class="room-card{% if card.selected %} is-selected{% endif %}" data-name="{{ package.p_name }}" data-price="{{ package.base_price }}">                     
-                        <div class="room-media">
+                    <div class="booking-room-card{% if card.selected %} is-selected{% endif %}" data-name="{{ package.p_name }}" data-price="{{ package.base_price }}">
+                    {% if card.selected %}
+                    <button type="submit" name="remove_item" value="package-{{ package.p_id }}" class="card-remove-corner" aria-label="Remove">&times;</button>
+                    {% endif %}
+                    <div class="room-media">
                             <img src="{% static card.image %}" alt="{{ package.p_name }}" class="room-img">
                         </div>
                         <div class="room-info">
@@ -143,7 +152,7 @@ Booking
                             <p>{{ card.description }}</p>
                             <hr>
                             <div class="room-footer">
-                                <span class="room-price">Price : Rs {{ package.base_price|floatformat:"2g" }} / guest</span>
+                                <span class="booking-room-price">Price : Rs {{ package.base_price|floatformat:"2g" }} / guest</span>
                                 <div class="room-actions">
                                     <button type="button" class="btn-outline-navy">View</button>                 
                                     {% if card.selected %}
@@ -165,8 +174,11 @@ Booking
                     {% for card in event_cards %}
                     {% with event=card.event %}
                     {% if forloop.counter0 == 1 and event_cards.0.selected %}<p class="other-label">Other events</p>{% endif %}
-                    <div class="room-card{% if card.selected %} is-selected{% endif %}" data-name="{{ event.title }}" data-price="{{ event.price_per_person }}">                        
-                        <div class="room-media">
+                    <div class="booking-room-card{% if card.selected %} is-selected{% endif %}" data-name="{{ event.title }}" data-price="{{ event.price_per_person }}">
+                    {% if card.selected %}
+                    <button type="submit" name="remove_item" value="event-{{ event.event_id }}" class="card-remove-corner" aria-label="Remove">&times;</button>
+                    {% endif %}
+                    <div class="room-media">
                             <img src="{% static card.image %}" alt="{{ event.title }}" class="room-img">
                         </div>
                         <div class="room-info">
@@ -176,7 +188,7 @@ Booking
                             <p>{{ event.eventdate }}</p>
                             <hr>
                             <div class="room-footer">
-                                <span class="room-price">Price : Rs {{ event.price_per_person|floatformat:"2g" }} / guest</span>
+                                <span class="booking-room-price">Price : Rs {{ event.price_per_person|floatformat:"2g" }} / guest</span>
                                 <div class="room-actions">
                                     <button type="button" class="btn-outline-navy">View</button>
                                     {% if card.selected %}
@@ -260,5 +272,3 @@ function applyTab(tab) {
 </script>
 
 {% endblock %}
-
-

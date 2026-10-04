@@ -163,6 +163,18 @@ class Activity(models.Model):
     def __str__(self):
         return self.act_name
 
+class Activity_Item(Booking_Item):
+    activity = models.ForeignKey(
+        Activity,
+        on_delete=models.PROTECT,
+        related_name='activity_items'
+    )
+    activity_date = models.DateField()
+    no_of_guests = models.PositiveIntegerField()
+
+    def __str__(self):
+        return f"Activity Item - {self.activity.act_name}"
+
 class Event(models.Model):
     event_id = models.AutoField(primary_key=True)
     title = models.CharField(max_length=150)
