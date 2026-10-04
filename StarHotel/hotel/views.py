@@ -174,21 +174,24 @@ def search_results(request):
             'price': '15,000',
             'guests': 2,
             'features': ['King Bed', 'Free Wi-Fi', 'Breakfast Included'],
-            'image_path': 'images/deluxe.jpg'
+            'image_path': 'images/deluxe.jpg',
+            'url_name': 'room_details_deluxe'
         },
         {
             'name': 'Executive Room',
             'price': '18,000',
             'guests': 2,
             'features': ['Queen Bed', 'Sea View', 'Breakfast Included'],
-            'image_path': 'images/executive-thumb-1.jpg'
+            'image_path': 'images/executive-thumb-1.jpg',
+            'url_name': 'room_details_executive'
         },
         {
             'name': 'Family Suite',
             'price': '21,000',
             'guests': 4,
             'features': ['2 Double Beds', 'Sea View', 'Breakfast Included'],
-            'image_path': 'images/family-thumb-1.jpg'
+            'image_path': 'images/family-thumb-1.jpg',
+            'url_name': 'room_details_family'
         },
     ]
     context = {
