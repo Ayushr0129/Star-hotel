@@ -28,6 +28,7 @@ from datetime import timedelta, date
 
 from django.core.management.base import BaseCommand
 from django.db import transaction
+from ...models import Loyalty, Branch, Room, Packages, Event, Activity  # noqa
 
 try:
     from faker import Faker
@@ -80,6 +81,16 @@ EVENT_TITLES = [
     ("Corporate Retreat Package", "corporate", 4000),
 ]
 
+# (name, location, capacity, duration in minutes, price per person)
+# duration 0 = "Flexible duration", price 0 = "Complimentary" on the booking page.
+# Names must match the home page exactly, since the booking page uses them
+# to find each activity's image and description.
+ACTIVITY_DEFS = [
+    ("Spa & Wellness",     "Hotel Spa",     4, 60, 2500),
+    ("Golf Experience",    "Hotel Grounds", 4, 90, 1800),
+    ("Tennis session",     "Tennis Courts", 4, 60, 1200),
+    ("Swimming & Leisure", "Pool Area",    20,  0,    0),
+]
 
 class Command(BaseCommand):
     help = "Seed reference data: Loyalty, Branch, Room, Packages, Event"
@@ -104,10 +115,12 @@ class Command(BaseCommand):
             rooms = self._create_rooms(branches)
             packages = self._create_packages()
             events = self._create_events()
+            activities = self._create_activities()
 
         self.stdout.write(self.style.SUCCESS(
             f"Done. {len(loyalties)} loyalty tiers, {len(branches)} branches, "
             f"{len(rooms)} rooms, {len(packages)} packages, {len(events)} events."
+            f"{len(activities)} activities."
         ))
 
     def _clear(self):
@@ -198,3 +211,19 @@ class Command(BaseCommand):
             events.append(obj)
         self.stdout.write(f"  Events: {len(events)}")
         return events
+
+    def _create_activities(self):
+        activities = []
+        for name, loc, cap, mins, price in ACTIVITY_DEFS:
+            obj, _ = Activity.objects.get_or_create(
+                act_name=name,
+                defaults={
+                    "location": loc,
+                    "capacity": cap,
+                    "duration": mins,
+                    "price_per_person": price,
+                },
+            )
+            activities.append(obj)
+        self.stdout.write(f"  Activities: {len(activities)}")
+        return activities

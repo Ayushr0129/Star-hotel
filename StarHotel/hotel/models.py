@@ -154,7 +154,7 @@ class Room_Item(Booking_Item):
 class Activity(models.Model):
     act_id = models.AutoField(primary_key=True)
     act_name = models.CharField(max_length=100)
-    act_date = models.DateField()
+    act_date = models.DateField(null=True, blank=True)
     location = models.CharField(max_length=150)
     capacity = models.PositiveIntegerField()
     duration = models.PositiveIntegerField(help_text="Duration in minutes")
