@@ -487,7 +487,10 @@ def booking(request):
         
     
         if request.method == "POST":
-            item_type, _, item_id = request.POST.get("add_item", "").partition("-")
+            tab = request.POST.get("current_tab")
+            if tab not in ("rooms", "packages", "events", "activities"):
+                tab = "rooms"
+
             try:
                 guests = int(request.POST.get("guests") or 1)
             except ValueError:
@@ -498,11 +501,25 @@ def booking(request):
                 "checkout": request.POST.get("checkout", ""),
                 "guests": guests,
             }
-            tab = request.POST.get("current_tab")
-            if tab not in ("rooms", "packages", "events", "activities"):
-                tab = "rooms"
 
             cart = _get_cart(request)
+
+            remove_value = request.POST.get("remove_item", "")
+            if remove_value:
+                r_type, _, r_id = remove_value.partition("-")
+                if r_type == "activity":
+                    try:
+                        r_id = int(r_id)
+                    except ValueError:
+                        r_id = None
+                    cart = [i for i in cart if not (i["kind"] == "activity" and i["ref_id"] == r_id)]
+                else:
+                    cart = [i for i in cart if not (i["kind"] in ("stay", "event") and i["item_type"] == r_type)]
+                request.session[CART_SESSION_KEY] = cart
+                request.session.modified = True
+                return redirect(f"{reverse('booking')}?tab={tab}")
+
+            item_type, _, item_id = request.POST.get("add_item", "").partition("-")
             item, error = _build_cart_item(
                 item_type, item_id,
                 request.POST.get("checkin"), request.POST.get("checkout"), guests, cart,

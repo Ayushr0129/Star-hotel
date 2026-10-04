@@ -151,12 +151,50 @@ main:has(.layout) {
     text-align: center;
 }
 
-.room-card.is-selected { border: 2px solid #1e3a8a; background: #f4f7ff; }
+.booking-room-card.is-selected { border: 2px solid #1e3a8a; background: #f4f7ff; }
 .selected-badge { display: inline-block; padding: 8px 16px; border-radius: 6px; background: #e6f4ea; color: #1e6b3a; font-weight: 600; }
 .other-label { margin: 18px 0 8px; font-weight: 600; color: #555; }
 
 .hero h1 { font-size: 2.5rem; margin-bottom: 0.5rem; }
-.hero p { margin-bottom: 2rem; opacity: 0.9; }
+
+
+/* ── Corner remove button on selected cards ── */
+
+.booking-room-card {
+    position: relative; /* needed so the corner button can anchor to this card */
+}
+
+.booking-room-card {
+    margin-bottom: 20px;
+}
+
+.card-remove-corner {
+    position: absolute;
+    top: 12px;
+    right: 12px;
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    border: 1.5px solid var(--navy);
+    background: white;
+    color: var(--navy);
+    font-size: 15px;
+    line-height: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    padding: 0;
+    transition: background 0.15s ease, color 0.15s ease, border-color 0.15s ease;
+}
+
+.card-remove-corner:hover {
+    background: #b91c1c;
+    border-color: #b91c1c;
+    color: white;
+}
+
+
 
 .booking-bar {
     background: rgba(255, 255, 255, 0.25);
