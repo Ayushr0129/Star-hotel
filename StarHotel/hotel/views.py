@@ -37,7 +37,20 @@ EVENT_IMAGES = {
     "Corporate Retreat Package": "images/worker.jpg",
 }
 
-ACTIVITY_IMAGE = "images/Event-booking.jpg"
+#BACKGROUND NEEDS TO BE CHANGED--CURRENTLY USING EVENT
+ACTIVITY_FALLBACK = "images/Event-booking.jpg"
+ACTIVITY_IMAGES = {
+    "Spa & Wellness": "images/spa.jpg",
+    "Golf Experience": "images/golf.jpg",
+    "Tennis session": "images/tennis.jpg",
+    "Swimming & Leisure": "images/swimming.jpg",
+}
+ACTIVITY_DESCRIPTIONS = {
+    "Spa & Wellness": "Relax with one of our rejuvenating spa treatments.",
+    "Golf Experience": "Enjoy a relaxing golf session within the hotel grounds.",
+    "Tennis session": "Book a court and enjoy a fun tennis session.",
+    "Swimming & Leisure": "Enjoy access to our pool and leisure facilities.",
+}
 
 def _get_cart(request):
     return request.session.setdefault(CART_SESSION_KEY, [])
@@ -54,7 +67,7 @@ def _parse_date(value):
         return None
 
 
-def _build_cart_item(item_type, item_id, checkin, checkout, guests):
+def _build_cart_item(item_type, item_id, checkin, checkout, guests, cart=()):
     """Return (item, error). Exactly one of the two is None."""
     if guests < 1:
         return None, "Please enter at least 1 guest."
@@ -128,24 +141,69 @@ def _build_cart_item(item_type, item_id, checkin, checkout, guests):
         act = Activity.objects.filter(pk=item_id).first()
         if not act:
             return None, "That activity is no longer available."
-        if act.act_date < date.today():
-            return None, "That activity has already taken place."
+        ci = _parse_date(checkin)
+        if not ci:
+            return None, "Choose the date you'd like to do this activity."
+        if ci < date.today():
+            return None, "The date cannot be in the past."
         if guests > act.capacity:
             return None, f"This activity holds a maximum of {act.capacity} guests."
+        if any(i["kind"] == "event" for i in cart):
+            return None, "Events are booked separately. Activities can be added to a room or package stay."
+        stay = next((i for i in cart if i["kind"] == "stay"), None)
+        if stay:
+            s_in = date.fromisoformat(stay["check_in"])
+            s_out = date.fromisoformat(stay["check_out"])
+            if not (s_in <= ci <= s_out):
+                return None, (f"Your stay runs from {s_in:%d %b} to {s_out:%d %b}, "
+                              f"so choose a date in that range.")
+        total = act.price_per_person * guests
         return {
             "kind": "activity", "item_type": "activity", "ref_id": act.pk,
             "name": act.act_name,
             "description": f"{act.act_name}, {act.location}",
-            "image": ACTIVITY_IMAGE,
-            "price": str(act.price_per_person * guests),
-            "breakdown": f"{guests} guest(s) × Rs {act.price_per_person:,.2f}",
-            "check_in": act.act_date.isoformat(),
-            "check_out": act.act_date.isoformat(),
+            "image": ACTIVITY_IMAGES.get(act.act_name, ACTIVITY_FALLBACK),
+            "price": str(total),
+            "breakdown": ("Complimentary" if total == 0
+                          else f"{guests} guest(s) × Rs {act.price_per_person:,.2f}"),
+            "check_in": ci.isoformat(), "check_out": ci.isoformat(),
             "guests": guests, "nights": 0,
         }, None
 
+    return None, "Unknown item."
 
     return None, "Unknown item."
+
+
+def _add_item(cart, item):
+    """Return (new_cart, notes). One stay-or-event; activities pile up."""
+    notes = []
+
+    if item["kind"] == "activity":
+        # same activity on the same date updates that line; a different date adds a new one
+        cart = [i for i in cart if not (i["kind"] == "activity"
+                                        and i["ref_id"] == item["ref_id"]
+                                        and i["check_in"] == item["check_in"])]
+        return cart + [item], notes
+
+    if item["kind"] == "event":
+        if cart:
+            notes.append("Events are booked separately, so your previous selection was replaced.")
+        return [item], notes
+
+    # a stay (room or package)
+    old_stay = next((i for i in cart if i["kind"] == "stay"), None)
+    if any(i["kind"] == "event" for i in cart):
+        notes.append("Events are booked separately, so your event was replaced.")
+    if old_stay and (old_stay["item_type"], old_stay["ref_id"]) != (item["item_type"], item["ref_id"]):
+        notes.append("Your previous room or package was replaced.")
+
+    activities = [i for i in cart if i["kind"] == "activity"]
+    kept = [a for a in activities if item["check_in"] <= a["check_in"] <= item["check_out"]]
+    if len(kept) < len(activities):
+        notes.append("Some activities fell outside your new dates and were removed.")
+    return [item] + kept, notes
+
 
 
 def home(request):
@@ -415,8 +473,12 @@ def booking(request):
         ]
 
         activity_cards = [
-            {"activity": a, "image": ACTIVITY_IMAGE}
-            for a in Activity.objects.filter(act_date__gte=date.today()).order_by("act_date")
+            {
+                "activity": a,
+                "image": ACTIVITY_IMAGES.get(a.act_name, ACTIVITY_FALLBACK),
+                "description": ACTIVITY_DESCRIPTIONS.get(a.act_name, ""),
+            }
+            for a in Activity.objects.order_by("act_id")
         ]
 
         packages = Packages.objects.filter(is_active=True)
@@ -440,22 +502,18 @@ def booking(request):
             if tab not in ("rooms", "packages", "events", "activities"):
                 tab = "rooms"
 
+            cart = _get_cart(request)
             item, error = _build_cart_item(
                 item_type, item_id,
-                request.POST.get("checkin"), request.POST.get("checkout"), guests,
+                request.POST.get("checkin"), request.POST.get("checkout"), guests, cart,
             )
             if error:
                 messages.error(request, error)
             else:
-                cart = _get_cart(request)
-                if cart:
-                    if cart[0]["kind"] != item["kind"]:
-                        messages.info(request, "Stays and events are booked separately, "
-                                               "so your previous selection was replaced.")
-                    elif cart[0]["item_type"] != item["item_type"]:
-                        messages.info(request, "A package already includes your stay, "
-                                               "so your previous selection was replaced.")
-                request.session[CART_SESSION_KEY] = [item]
+                new_cart, notes = _add_item(cart, item)
+                for n in notes:
+                    messages.info(request, n)
+                request.session[CART_SESSION_KEY] = new_cart
                 request.session.modified = True
             return redirect(f"{reverse('booking')}?tab={tab}")
 
@@ -463,15 +521,18 @@ def booking(request):
     
         cart = _get_cart(request)
 
-        sel = cart[0] if cart else None
+        sel = next((i for i in cart if i["kind"] != "activity"), None)
         for c in room_cards:
             c["selected"] = bool(sel and sel["item_type"] == "room" and sel["name"] == c["room"].room_type)
         for c in package_cards:
             c["selected"] = bool(sel and sel["item_type"] == "package" and sel["ref_id"] == c["package"].pk)
         for c in event_cards:
             c["selected"] = bool(sel and sel["item_type"] == "event" and sel["ref_id"] == c["event"].pk)
+            
+        added_activity_ids = {i["ref_id"] for i in cart if i["kind"] == "activity"}
         for c in activity_cards:
-            c["selected"] = bool(sel and sel["item_type"] == "activity" and sel["ref_id"] == c["activity"].pk)
+            c["selected"] = c["activity"].pk in added_activity_ids
+            
         for cards in (room_cards, package_cards, event_cards, activity_cards):
             cards.sort(key=lambda c: not c["selected"])   # selected first, others keep their order
 
@@ -630,11 +691,11 @@ def cart_review(request):
  
 def _get_cart(request):
     cart = request.session.get(CART_SESSION_KEY, [])
-    # Old-format or multi-item carts (from before the booking fix) get reset
     valid = (
         isinstance(cart, list)
-        and len(cart) <= 1
         and all(isinstance(i, dict) and "kind" in i and "breakdown" in i for i in cart)
+        and len([i for i in cart if i["kind"] != "activity"]) <= 1
+        and not (any(i["kind"] == "event" for i in cart) and len(cart) > 1)
     )
     if not valid:
         cart = []
@@ -686,56 +747,61 @@ def cart_payment(request):
             if customer is None:
                 return redirect("login")
 
-            item = cart[0]
-            if item["item_type"] == "room":
-                branch = get_object_or_404(Room, pk=item["ref_id"]).branch
+
+
+            stay = next((i for i in cart if i["kind"] == "stay"), None)
+            main = stay or cart[0]
+            if main["item_type"] == "room":
+                branch = get_object_or_404(Room, pk=main["ref_id"]).branch
             else:
                 branch = Branch.objects.first()
 
             with transaction.atomic():
                 booking_obj = Booking.objects.create(
-                    booking_type=item["kind"],
-                    no_of_guests=item["guests"],
-                    check_in=date.fromisoformat(item["check_in"]),
-                    check_out=date.fromisoformat(item["check_out"]),
+                    booking_type=main["kind"],
+                    no_of_guests=main["guests"],
+                    check_in=date.fromisoformat(main["check_in"]),
+                    check_out=date.fromisoformat(main["check_out"]),
                     bk_status="confirmed",
                     estimated_sum=_cart_total(cart),
                     customer=customer,
                     branch=branch,
                 )
-                common = dict(
-                    bi_type=item["item_type"],
-                    price=item["price"],
-                    payment_method="credit_card",
-                    description=item["description"],
-                    booking=booking_obj,
-                )
+                for item in cart:
+                    common = dict(
+                        bi_type=item["item_type"],
+                        price=item["price"],
+                        payment_method="credit_card",
+                        description=item["description"],
+                        booking=booking_obj,
+                    )
+                    if item["item_type"] == "room":
+                        Room_Item.objects.create(
+                            room=get_object_or_404(Room, pk=item["ref_id"]),
+                            check_in=booking_obj.check_in,
+                            check_out=booking_obj.check_out,
+                            **common,
+                        )
+                    elif item["item_type"] == "package":
+                        Package_Item.objects.create(
+                            package=get_object_or_404(Packages, pk=item["ref_id"]),
+                            no_of_guests=item["guests"],
+                            **common,
+                        )
+                    elif item["item_type"] == "event":
+                        Event_Item.objects.create(
+                            event=get_object_or_404(Event, pk=item["ref_id"]),
+                            no_of_guests=item["guests"],
+                            **common,
+                        )
+                    else:
+                        Activity_Item.objects.create(
+                            activity=get_object_or_404(Activity, pk=item["ref_id"]),
+                            activity_date=date.fromisoformat(item["check_in"]),
+                            no_of_guests=item["guests"],
+                            **common,
+                        )
 
-                if item["item_type"] == "room":
-                    Room_Item.objects.create(
-                        room=get_object_or_404(Room, pk=item["ref_id"]),
-                        check_in=booking_obj.check_in,
-                        check_out=booking_obj.check_out,
-                        **common,
-                    )
-                elif item["item_type"] == "package":
-                    Package_Item.objects.create(
-                        package=get_object_or_404(Packages, pk=item["ref_id"]),
-                        no_of_guests=item["guests"],
-                        **common,
-                    )
-                elif item["item_type"] == "event":
-                    Event_Item.objects.create(
-                        event=get_object_or_404(Event, pk=item["ref_id"]),
-                        no_of_guests=item["guests"],
-                        **common,
-                    )
-                else:
-                    Activity_Item.objects.create(
-                        activity=get_object_or_404(Activity, pk=item["ref_id"]),
-                        no_of_guests=item["guests"],
-                        **common,
-                    )
 
 
 
