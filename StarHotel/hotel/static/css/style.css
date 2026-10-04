@@ -151,6 +151,10 @@ main:has(.layout) {
     text-align: center;
 }
 
+.room-card.is-selected { border: 2px solid #1e3a8a; background: #f4f7ff; }
+.selected-badge { display: inline-block; padding: 8px 16px; border-radius: 6px; background: #e6f4ea; color: #1e6b3a; font-weight: 600; }
+.other-label { margin: 18px 0 8px; font-weight: 600; color: #555; }
+
 .hero h1 { font-size: 2.5rem; margin-bottom: 0.5rem; }
 .hero p { margin-bottom: 2rem; opacity: 0.9; }
 

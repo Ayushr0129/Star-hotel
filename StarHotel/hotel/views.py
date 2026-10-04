@@ -431,6 +431,18 @@ def booking(request):
         
     
         cart = _get_cart(request)
+
+        sel = cart[0] if cart else None
+        for c in room_cards:
+            c["selected"] = bool(sel and sel["item_type"] == "room" and sel["name"] == c["room"].room_type)
+        for c in package_cards:
+            c["selected"] = bool(sel and sel["item_type"] == "package" and sel["ref_id"] == c["package"].pk)
+        for c in event_cards:
+            c["selected"] = bool(sel and sel["item_type"] == "event" and sel["ref_id"] == c["event"].pk)
+        for cards in (room_cards, package_cards, event_cards):
+            cards.sort(key=lambda c: not c["selected"])   # selected first, others keep their order
+
+        
         context = {
             "room_cards": room_cards,
             "package_cards": package_cards,
@@ -579,7 +591,20 @@ def cart_review(request):
     context = {"cart": cart, "cart_total": _cart_total(cart)}
     return render(request, "hotel/cart_review.html", context)
  
- 
+def _get_cart(request):
+    cart = request.session.get(CART_SESSION_KEY, [])
+    # Old-format or multi-item carts (from before the booking fix) get reset
+    valid = (
+        isinstance(cart, list)
+        and len(cart) <= 1
+        and all(isinstance(i, dict) and "kind" in i and "breakdown" in i for i in cart)
+    )
+    if not valid:
+        cart = []
+        request.session[CART_SESSION_KEY] = cart
+        request.session.modified = True
+    return cart
+
 def cart_guest_details(request):
     cart = _get_cart(request)
     if not cart:
