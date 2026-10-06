@@ -1,8 +1,10 @@
 from decimal import Decimal, InvalidOperation
 from datetime import date, timedelta
 
+from django.conf import settings
 from django.contrib import messages
 from django.db import transaction
+
 from django.db.models import CharField, IntegerField, Q, Value
 from django.db.models.functions import Cast, Coalesce, NullIf
 from django.shortcuts import get_object_or_404, redirect, render
@@ -19,6 +21,10 @@ from .models import (
 from datetime import datetime
 
 CART_SESSION_KEY = "cart"
+
+# While developing, keep this False so you can click through the cart without
+# filling in guest details. Set it to True before your demo / submission.
+REQUIRE_GUEST_DETAILS = False
 
 ROOM_IMAGES = {
     "Deluxe Room": "images/deluxe.jpg",
@@ -719,28 +725,66 @@ def _get_cart(request):
         request.session.modified = True
     return cart
 
+MAX_GUESTS = 6          # no capacity field on Room, so a global cap for now
+TAX_RATE = Decimal("0") # set your real tax rate, e.g. Decimal("0.15")
+
+TAX_RATE = Decimal("0") 
+
 def cart_guest_details(request):
     cart = _get_cart(request)
     if not cart:
         return redirect("booking")
 
-    if request.method == "POST":
-        request.session["guest_details"] = {
-            "guests": request.POST.get("guests"),
-            "first_name": request.POST.get("first_name"),
-            "last_name": request.POST.get("last_name"),
-            "phone": request.POST.get("phone"),
-            "email": request.POST.get("email"),
-        }
-        request.session.modified = True
-        return redirect("cart_payment")
+    # party size comes from the stay/event, never from this page
+    main = next((i for i in cart if i["kind"] != "activity"), cart[0])
+    guest_count = main["guests"]
+    customer = get_current_customer(request)
+    saved = request.session.get("guest_details", {}).get("people", [])
 
-    default_guests = cart[0]["guests"]
+    people = []
+    for n in range(guest_count):
+        #Very important do not remove this comment-devloper skip + user view / to be edited
+        if n < len(saved) and any(saved[n].values()):
+            person = dict(saved[n])
+        elif n == 0 and customer:
+            person = {
+                "first_name": customer.first_name, "last_name": customer.last_name,
+                "phone": customer.phone, "email": customer.email,
+            }
+        else:
+            person = {"first_name": "", "last_name": "", "phone": "", "email": ""}
+        people.append(person)
+
+    errors = []
+    if request.method == "POST":
+        people = []
+        for n in range(guest_count):
+            p = {k: request.POST.get(f"{k}_{n}", "").strip()
+                 for k in ("first_name", "last_name", "phone", "email")}
+            people.append(p)
+            if REQUIRE_GUEST_DETAILS:
+                label = "Primary guest" if n == 0 else f"Companion {n}"
+                if not p["first_name"] or not p["last_name"]:
+                    errors.append(f"{label}: first and last name are required.")
+        if REQUIRE_GUEST_DETAILS and (not people[0]["phone"] or not people[0]["email"]):
+            errors.append("Primary guest: phone and email are required.")
+
+        if not errors:
+            request.session["guest_details"] = {
+                "guests": guest_count,
+                **people[0],
+                "people": people,
+            }
+            request.session.modified = True
+            return redirect("cart_payment")
 
     context = {
         "cart": cart,
         "cart_total": _cart_total(cart),
-        "default_guests": default_guests,
+        "guest_count": guest_count,
+        "guests": [{"primary": n == 0, **p} for n, p in enumerate(people)],
+        "errors": errors,
+        "require": REQUIRE_GUEST_DETAILS,
     }
     return render(request, "hotel/cart_guest_details.html", context)
  
