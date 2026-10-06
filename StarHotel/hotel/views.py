@@ -52,10 +52,6 @@ ACTIVITY_DESCRIPTIONS = {
     "Swimming & Leisure": "Enjoy access to our pool and leisure facilities.",
 }
 
-def _get_cart(request):
-    return request.session.setdefault(CART_SESSION_KEY, [])
-
-
 def _cart_total(cart):
     return sum((Decimal(i["price"]) for i in cart), Decimal("0"))
 
@@ -291,7 +287,10 @@ def search_results(request):
 
 
 def room_details_deluxe(request):
-    return render(request, "hotel/room_details_deluxe.html")
+    room = Room.objects.filter(
+        room_type="Deluxe Room", room_status="available"
+    ).order_by("room_id").first()
+    return render(request, "hotel/room_details_deluxe.html", {"room": room})
 
 
 def room_details_executive(request):

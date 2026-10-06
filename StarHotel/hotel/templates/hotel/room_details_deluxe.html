@@ -69,17 +69,20 @@ Deluxe Room | Star Hotel
             <div class="room-booking-widget">
                 <h3>Book This Room</h3>
 
-                 <form method="GET" action="{% url 'booking' %}">
-                    <input type="hidden" name="room" value="deluxe">
+                {% if room %}
+                <form method="post" action="{% url 'booking' %}">
+                    {% csrf_token %}
+                    <input type="hidden" name="current_tab" value="rooms">
+                    <input type="hidden" name="add_item" value="room-{{ room.room_id }}">
 
                     <div class="booking-widget-row">
                         <div class="booking-widget-field">
                             <label>Check-in</label>
-                            <input type="date" name="checkin">
+                            <input type="date" name="checkin" required>
                         </div>
                         <div class="booking-widget-field">
                             <label>Check-out</label>
-                            <input type="date" name="checkout">
+                            <input type="date" name="checkout" required>
                         </div>
                     </div>
 
@@ -87,10 +90,10 @@ Deluxe Room | Star Hotel
                         <div class="booking-widget-field">
                             <label>Guests</label>
                             <select name="guests">
-                                <option>2 Guests</option>
-                                <option>1 Guest</option>
-                                <option>3 Guests</option>
-                                <option>4 Guests</option>
+                                <option value="2">2 Guests</option>
+                                <option value="1">1 Guest</option>
+                                <option value="3">3 Guests</option>
+                                <option value="4">4 Guests</option>
                             </select>
                         </div>
                         <div class="booking-widget-field">
@@ -105,11 +108,14 @@ Deluxe Room | Star Hotel
 
                     <div class="booking-widget-total">
                         <span>Estimated Total</span>
-                        <p>Rs 15,000</p>
+                        <p>Rs {{ room.price }} <span class="price-per">/ night (plus nights selected)</span></p>
                     </div>
 
                     <button type="submit" class="btn-navy btn-book-now">Book Now</button>
                 </form>
+                {% else %}
+                <p>Sorry, no Deluxe Rooms are currently available.</p>
+                {% endif %}
             </div>
         </div>
     </div>
