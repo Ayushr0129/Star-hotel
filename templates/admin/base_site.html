@@ -1,0 +1,21 @@
+{% extends "admin/base.html" %}
+
+{% block title %}{% if title %}{{ title }} | {% endif %}{{ site_title }}{% endblock %}
+
+{% block branding %}
+<h1 id="site-name"><a href="{% url 'admin:index' %}">STAR HOTEL Administration</a></h1>
+{% endblock %}
+
+{% block nav-global %}
+<div class="flex items-center gap-4 px-4 pb-2 text-sm font-semibold">
+    <a href="{% url 'admin:index' %}">Admin home</a>
+    <a href="{% url 'admin:hotel_manage_rooms' %}">Manage rooms</a>
+    <a href="{% url 'admin:hotel_reports' %}">Reports</a>
+</div>
+{% endblock %}
+
+{% block extrahead %}
+{{ block.super }}
+<script>window.tailwind = { config: { corePlugins: { preflight: false } } };</script>
+<script src="https://cdn.tailwindcss.com"></script>
+{% endblock %}

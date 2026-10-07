@@ -1,0 +1,135 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Search Results - Star Hotel{% endblock %}
+
+{% block content %}
+<div class="search-results-page">
+    <div class="search-results-heading">
+        <h1>Available Rooms</h1>
+        <p class="results-count">{{ rooms|length }} rooms found for your selected dates</p>
+    </div>
+
+    <div class="search-summary-bar">
+         <div class="summary-box">
+            <span class="summary-label">Hotel Branch</span>
+            <span class="summary-value">{{ branch|default:"All branches" }}</span>
+        </div>
+        <div class="summary-box">
+            <span class="summary-label">Check-in</span>
+            <span class="summary-value">{{ check_in|date:"d M Y"|default:"Any date" }}</span>
+        </div>
+        <div class="summary-box">
+            <span class="summary-label">Check-out</span>
+            <span class="summary-value">{{ check_out|date:"d M Y"|default:"Any date" }}</span>
+        </div>
+        <div class="summary-box">
+            <span class="summary-label">Guests</span>
+            <span class="summary-value">{{ guests|default:"Any" }}</span>
+        </div>
+        <div class="summary-box sort-box">
+            <span class="summary-label">Sort by</span>
+            <select class="sort-select">
+                <option>Price: Low to High</option>
+                <option>Price: High to Low</option>
+                <option>Rating</option>
+            </select>
+        </div>
+    </div>
+
+    <div class="search-results-body">
+        <aside class="filter-sidebar">
+            <h2>Filter Rooms</h2>
+
+            <div class="filter-group">
+                <label for="hotelBranch">Hotel Branch</label>
+                <select id="hotelBranch" name="hotel_branch">
+                    <option>All branches</option>
+                </select>
+            </div>
+
+            <div class="filter-group">
+                <label for="roomType">Room Type</label>
+                <select id="roomType" name="room_type">
+                    <option>All room types</option>
+                    <option>Standard</option>
+                    <option>Studio</option>
+                    <option>Deluxe</option>
+                    <option>Family Suite</option>
+                    <option>Executive</option>
+                </select>
+            </div>
+
+            <div class="filter-group">
+                <label for="priceRange">Price Range</label>
+                <select id="priceRange" name="price_range">
+                    <option>Rs 5,000 - Rs 10,000</option>
+                    <option>Rs 10,000 - Rs 15,000</option>
+                    <option>Rs 15,000 - Rs 20,000</option>
+                    <option>Rs 20,000 - Rs 25,000</option>
+                    <option>All price range</option>
+                </select>
+            </div>
+
+            <div class="filter-group">
+                <label for="numGuests">Number of Guests</label>
+                <select id="numGuests" name="num_guests">
+                    <option>1 Guest</option>
+                    <option>2 Guests</option>
+                    <option>3 Guests</option>
+                    <option>4 Guests</option>
+                </select>
+            </div>
+
+            <div class="filter-group">
+                <label>Amenities</label>
+                <div class="amenities-checkboxes">
+                    <label class="amenity-item">
+                        <input type="checkbox" name="amenities" value="wifi">
+                        Wi-Fi
+                    </label>
+                    <label class="amenity-item">
+                        <input type="checkbox" name="amenities" value="breakfast">
+                        Breakfast
+                    </label>
+                    <label class="amenity-item">
+                        <input type="checkbox" name="amenities" value="sea_view">
+                        Sea View
+                    </label>
+                </div>
+            </div>
+
+            <button type="button" class="apply-filters-btn">Apply Filters</button>
+        </aside>
+
+        <div class="room-listings">
+            {% for room in rooms %}
+            <div class="room-card">
+                <div class="room-card-image">
+                    <img src="{% static room.image_path %}" alt="{{ room.name }}">
+                </div>
+
+                <div class="room-card-info">
+                    <h3 class="room-card-name">{{ room.name }}</h3>
+                    <p class="room-card-guests">{{ room.guests }} Guests</p>
+
+                    <ul class="room-card-features">
+                        {% for feature in room.features %}
+                        <li>{{ feature }}</li>
+                        {% endfor %}
+                    </ul>
+                </div>
+
+                <div class="room-card-action">
+                    <p class="room-card-price">
+                        <span class="price-amount">Rs {{ room.price }}</span>
+                        <span class="price-period">per night</span>
+                    </p>
+                    <a href="{% url room.url_name %}" class="view-details-btn">View Details</a>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+{% endblock %}

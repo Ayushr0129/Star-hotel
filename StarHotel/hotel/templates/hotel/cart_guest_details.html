@@ -1,0 +1,92 @@
+{% extends "base.html" %}
+{% load static %}
+{% block title %}Guest Details - Star Hotel{% endblock %}
+{% block content %}
+
+<style>
+  .guest-card { display:block; padding:20px; margin-bottom:16px; }
+  .guest-grid { display:grid; grid-template-columns:1fr 1fr; gap:14px 16px; margin-top:12px; }
+  .guest-field label { display:block; font-size:12px; font-weight:600; color:#475569; margin-bottom:5px; }
+  .guest-field input {
+    width:100%; box-sizing:border-box; padding:10px 12px;
+    border:1px solid #cbd5e1; border-radius:8px; background:#f8fafc;
+    font-size:14px; color:#0f172a; outline:none;
+    transition:border-color .15s, box-shadow .15s, background .15s;
+  }
+  .guest-field input:focus {
+    border-color:#1e3a8a; background:#fff;
+    box-shadow:0 0 0 3px rgba(30,58,138,.15);
+  }
+  .guest-field input::placeholder { color:#94a3b8; }
+  .guest-actions { display:flex; gap:12px; margin-top:6px; }
+  .btn-back {
+    display:flex; align-items:center; justify-content:center;
+    padding:0 22px; border:1.5px solid #1e3a8a; border-radius:8px;
+    color:#1e3a8a; background:#fff; font-weight:600; text-decoration:none;
+  }
+  .btn-back:hover { background:#eef2ff; }
+  .guest-actions .btn-checkout { flex:1; display:block; position:static; margin:0; text-align:center; }
+  @media (max-width:640px) { .guest-grid { grid-template-columns:1fr; } }
+</style>
+
+<div class="checkout-container">
+    <h1>Guest details</h1>
+
+    <div class="checkout-layout">
+        <div class="checkout-main">
+            <form method="post">
+                {% csrf_token %}
+
+                {% if errors %}
+                <div class="booking-message">
+                    {% for e in errors %}<div>{{ e }}</div>{% endfor %}
+                </div>
+                {% endif %}
+
+                <p><strong>Guests: {{ guest_count }}</strong></p>
+
+                {% for g in guests %}
+                {% with i=forloop.counter0 %}
+                <div class="room-card guest-card">
+                    <h3>{% if g.primary %}Primary guest{% else %}Companion {{ i }}{% endif %}</h3>
+                    <div class="guest-grid">
+                        <div class="guest-field">
+                            <label for="first_name_{{ i }}">First name</label>
+                            <input type="text" id="first_name_{{ i }}" name="first_name_{{ i }}" value="{{ g.first_name }}" placeholder="First name" {% if require %}required{% endif %}>
+                        </div>
+                        <div class="guest-field">
+                            <label for="last_name_{{ i }}">Last name</label>
+                            <input type="text" id="last_name_{{ i }}" name="last_name_{{ i }}" value="{{ g.last_name }}" placeholder="Last name" {% if require %}required{% endif %}>
+                        </div>
+                        <div class="guest-field">
+                            <label for="phone_{{ i }}">Phone{% if not g.primary or not require %} (optional){% endif %}</label>
+                            <input type="tel" id="phone_{{ i }}" name="phone_{{ i }}" value="{{ g.phone }}" placeholder="Phone number" {% if g.primary and require %}required{% endif %}>
+                        </div>
+                        <div class="guest-field">
+                            <label for="email_{{ i }}">Email{% if not g.primary or not require %} (optional){% endif %}</label>
+                            <input type="email" id="email_{{ i }}" name="email_{{ i }}" value="{{ g.email }}" placeholder="Email address" {% if g.primary and require %}required{% endif %}>
+                        </div>
+                    </div>
+                </div>
+                {% endwith %}
+                {% endfor %}
+
+                <div class="guest-actions">
+                    <a href="{% url 'cart_review' %}" class="btn-back">&larr; Back</a>
+                    <button type="submit" class="btn-checkout">Continue to payment</button>
+                </div>
+            </form>
+        </div>
+
+        <div class="order-summary">
+            <h3>Order Summary</h3>
+            {% for item in cart %}
+            <div class="order-row"><span>{{ item.name }}</span><span>Rs {{ item.price|floatformat:"2g" }}</span></div>
+            {% endfor %}
+            <hr class="order-divider">
+            <div class="order-total"><span>Total</span><span>Rs {{ cart_total|floatformat:"2g" }}</span></div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}

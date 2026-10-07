@@ -1,0 +1,104 @@
+{% extends "base.html" %}
+{% load static %}
+{% block title %}Customer Dashboard - Star Hotel{% endblock %}
+{% block content %}
+
+
+    <div class="layout">
+
+        <aside class="sidebar">
+            <div class="profile">
+                <div class="avatar"></div>
+                <div class="profile-info">
+                    <div class="name">{{ customer.first_name|default:customer.username }}</div>
+                    <div class="member">{{ customer.loyalty.tier|default:"No tier" }} member</div>
+                </div>
+            </div>
+        
+            <nav id="nav">
+                <div class="nav-highlight" id="navHighlight"></div>
+                <a href="{% url 'customer_dashboard' %}" class="nav-item {% if request.resolver_match.url_name == 'customer_dashboard' %}active{% endif %}">Dashboard</a>
+                <a href="{% url 'customer_profile' %}" class="nav-item {% if request.resolver_match.url_name == 'customer_profile' %}active{% endif %}">Profile</a>
+                <a href="{% url 'customer_rewards' %}" class="nav-item {% if request.resolver_match.url_name == 'customer_rewards' %}active{% endif %}">Rewards</a>
+                <a href="{% url 'customer_support' %}" class="nav-item {% if request.resolver_match.url_name == 'customer_support' %}active{% endif %}">Support</a>
+            </nav>
+
+            <hr class = "divider">
+
+            <a href="#" class="logout">Logout</a>
+        </aside>
+
+        <div class="dashboard-content">
+            <div class="content-header">
+                <h1>Welcome Back, {{ customer.first_name|default:customer.username }}</h1>
+                <a href="{% url 'home' %}" class="btn-home">HOME</a>
+            </div>
+      
+        <h2 class="section-title">Your Bookings</h2>
+
+        {% for booking in current_bookings %}
+        <div class="booking-card">
+            {% with first_item=booking.booking_items.first %}
+            <img src="{% static 'images/deluxe.jpg' %}" alt="{{ first_item.description|default:'Booking' }}" class="booking-image">
+        <div class="booking-details">
+                    <div class="booking-title-row">
+                        <h3>{{ first_item.description|default:"Booking" }}</h3>
+                        <span class="booking-status">{{ booking.bk_status|title }}</span>
+                    </div>
+                    <p>{{ booking.check_in }} &ndash; {{ booking.check_out }} &middot; {{ booking.branch.branch_name }}</p>
+                    <div class="booking-meta">
+                        <span>{{ booking.no_of_guests }} Guests</span>
+                        <span>Rs {{ booking.estimated_sum }}</span>
+                
+                    </div>
+                    <div class="booking-actions">
+                        <a href="#" class="btn-action btn-modify">Modify</a>
+                        <a href="#" class="btn-action btn-cancel">Cancel</a>
+                        <a href="#" class="btn-action btn-checkin">Check-In</a>
+                    </div>
+                </div>
+                {% endwith %}
+
+            </div>
+            {% empty %}
+            <p>You have no upcoming bookings.</p>
+            {% endfor %}
+
+            <div class="stats-row">
+                <div class="stat-box">
+                    <div class="stat-label">Stays</div>
+                    <div class="stat-value">{{ stays_count }}</div>
+                </div>
+                <div class="stat-box">
+                    <div class="stat-label">Points</div>
+                    <div class="stat-value">{{ points }}</div>
+                </div>
+                <div class="stat-box">
+                    <div class="stat-label">Next Tier</div>
+                    <div class="stat-value">&mdash;</div>
+                </div>
+            </div>
+
+            <h2 class="section-title">Past Bookings</h2>
+            
+            {% for booking in past_bookings %}
+            <div class="past-booking-row">
+                <div>
+                    <div class="past-booking-name">{{ booking.booking_items.first.description|default:"Booking" }}</div>
+                    <div class="past-booking-dates">{{ booking.check_in }} &ndash; {{ booking.check_out }}</div>
+                </div>
+                <a href="#" class="btn-book-again">Book again</a>
+            </div>
+            {% empty %}
+            <p>No past bookings yet.</p>
+            {% endfor %}
+        </div>
+        
+    </div>
+
+
+
+    <script src="{% static 'js/script.js' %}"></script>
+
+
+    {% endblock %}

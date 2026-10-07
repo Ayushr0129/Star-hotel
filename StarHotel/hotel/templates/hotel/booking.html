@@ -1,0 +1,274 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}
+Booking
+{% endblock %}
+
+{% block content %}
+
+<section class ="hero-banner">
+    <img src="{% static 'images/Receptionist-Booking.jpg' %}" alt="Hotel Receptionist" class="hero-img" id="heroImg">
+</section>
+
+<div class="booking-container">
+
+    <form method="post">
+        {% csrf_token %}
+
+                <input type="hidden" name="current_tab" id="currentTab" value="rooms">
+
+        
+
+        <div class="search-bar">
+            <div class="search-field">
+                <label>Hotels</label>
+                <select>
+                    <option>Star Hotel - Main</option>
+                </select>
+            </div>
+            <div class="search-field">
+                <label>Guests</label>
+                <input type="number" name="guests" min="1" value="{{ search.guests|default:2 }}">
+            </div>
+            <div class="search-field" id="checkinField">
+                <label>Check-In</label>
+                <input type="date" name="checkin" value="{{ search.checkin }}">
+            </div>
+            <div class="search-field" id="checkoutField">
+                <label>Check-Out</label>
+                <input type="date" name="checkout" value="{{ search.checkout }}">
+            </div>
+        </div>
+        <p id="dateHint" class="date-hint"></p>
+
+        {% for m in messages %}
+        <div class="booking-message">{{ m }}</div>
+        {% endfor %}
+
+        <div class="booking-tabs" id="bookingTabs">
+            <div class="tab-highlight" id="tabHighlight"></div>
+            <button type="button" class="tab-item active" data-tab="rooms" data-hero="{% static 'images/Receptionist-Booking.jpg' %}">Room</button>
+            <button type="button" class="tab-item" data-tab="activities" data-hero="{% static 'images/Event-booking.jpg' %}">Activities</button>
+            <button type="button" class="tab-item" data-tab="packages" data-hero="{% static 'images/packages-booking.jpg' %}">Packages</button>
+            <button type="button" class="tab-item" data-tab="events" data-hero="{% static 'images/Event-booking.jpg' %}">Events</button>
+        </div>
+
+        <div class="toolbar">
+            <button type="button" class="toolbar-btn">Sort By</button>
+            <button type="button" class="toolbar-btn">Filters</button>
+        </div>
+
+        <div class="booking-layout">
+
+            <div class="room-list">
+
+                <div class="tab-panel" data-tab="rooms">
+                    {% for card in room_cards %}
+                    {% with room=card.room %}
+                    {% if forloop.counter0 == 1 and room_cards.0.selected %}<p class="other-label">Other rooms</p>{% endif %}
+                    <div class="booking-room-card{% if card.selected %} is-selected{% endif %}" data-name="{{ room.room_type }}" data-price="{{ room.price }}">
+                    {% if card.selected %}
+                    <button type="submit" name="remove_item" value="room-{{ room.room_id }}" class="card-remove-corner" aria-label="Remove">&times;</button>
+                    {% endif %}
+                    <div class="room-media">
+                            <img src="{% static card.image %}" alt="{{ room.room_type }}" class="room-img">
+                            <div class="room-specs">
+                                <span>{{ card.specs }}</span>
+                            </div>
+                        </div>
+                        <div class="room-info">
+                            <div class="room-title-row">
+                                <h3>{{ room.room_type }}</h3>
+                            </div>
+                            <h4>Description</h4>
+                            <p>{{ card.description }}</p>
+                            <hr>
+                            <div class="room-footer">
+                                <span class="booking-room-price">Price : Rs {{ room.price|floatformat:"2g" }} / night</span>
+                                <div class="room-actions">
+                                    <button type="button" class="btn-outline-navy">View</button>
+                                    {% if card.selected %}
+                                    <span class="selected-badge">&#10003; Selected</span>
+                                    {% else %}
+                                    <button type="submit" name="add_item" value="room-{{ room.room_id }}" class="btn-navy btn-book">{% if room_cards.0.selected %}Switch{% else %}Select{% endif %}</button>
+                                    {% endif %}                                
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    {% endwith %}
+                    {% empty %}
+                    <p>No rooms available right now.</p>
+                    {% endfor %}
+                </div>
+
+                <div class="tab-panel" data-tab="activities" hidden>
+                    {% for card in activity_cards %}
+                    {% with act=card.activity %}
+                    <div class="booking-room-card{% if card.selected %} is-selected{% endif %}">
+                    {% if card.selected %}
+                    <button type="submit" name="remove_item" value="activity-{{ act.act_id }}" class="card-remove-corner" aria-label="Remove">&times;</button>
+                    {% endif %}
+                    <div class="room-media">
+                            <img src="{% static card.image %}" alt="{{ act.act_name }}" class="room-img">
+                        </div>
+                        <div class="room-info">
+                            <div class="room-title-row"><h3>{{ act.act_name }}</h3></div>
+                            <h4>Description</h4>
+                            <p>{{ card.description }}</p>
+                            <p>{% if act.duration %}{{ act.duration }} minutes{% else %}Flexible duration{% endif %} &middot; up to {{ act.capacity }} guests</p>
+                            <hr>
+                            <div class="room-footer">
+                                <span class="booking-room-price">{% if act.price_per_person == 0 %}Complimentary{% else %}Price : Rs {{ act.price_per_person|floatformat:"2g" }} / guest{% endif %}</span>
+                                <div class="room-actions">
+                                    {% if card.selected %}<span class="selected-badge">&#10003; Added</span>{% endif %}
+                                    <button type="submit" name="add_item" value="activity-{{ act.act_id }}" class="btn-navy btn-book">{% if card.selected %}Add another date{% else %}Add activity{% endif %}</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    {% endwith %}
+                    {% empty %}
+                    <p>No activities available right now.</p>
+                    {% endfor %}
+                </div>               
+
+
+                <div class="tab-panel" data-tab="packages" hidden>
+                    {% for card in package_cards %}
+                    {% with package=card.package %}
+                    {% if forloop.counter0 == 1 and package_cards.0.selected %}<p class="other-label">Other packages</p>{% endif %}
+                    <div class="booking-room-card{% if card.selected %} is-selected{% endif %}" data-name="{{ package.p_name }}" data-price="{{ package.base_price }}">
+                    {% if card.selected %}
+                    <button type="submit" name="remove_item" value="package-{{ package.p_id }}" class="card-remove-corner" aria-label="Remove">&times;</button>
+                    {% endif %}
+                    <div class="room-media">
+                            <img src="{% static card.image %}" alt="{{ package.p_name }}" class="room-img">
+                        </div>
+                        <div class="room-info">
+                            <div class="room-title-row"><h3>{{ package.p_name }}</h3></div>
+                            <h4>Description</h4>
+                            <p>{{ card.description }}</p>
+                            <hr>
+                            <div class="room-footer">
+                                <span class="booking-room-price">Price : Rs {{ package.base_price|floatformat:"2g" }} / guest</span>
+                                <div class="room-actions">
+                                    <button type="button" class="btn-outline-navy">View</button>                 
+                                    {% if card.selected %}
+                                    <span class="selected-badge">&#10003; Selected</span>
+                                    {% else %}
+                                    <button type="submit" name="add_item" value="package-{{ package.p_id }}" class="btn-navy btn-book">{% if package_cards.0.selected %}Switch{% else %}Select{% endif %}</button>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    {% endwith %}
+                    {% empty %}
+                    <p>No packages available right now.</p>
+                    {% endfor %}
+                </div>
+
+                <div class="tab-panel" data-tab="events" hidden>
+                    {% for card in event_cards %}
+                    {% with event=card.event %}
+                    {% if forloop.counter0 == 1 and event_cards.0.selected %}<p class="other-label">Other events</p>{% endif %}
+                    <div class="booking-room-card{% if card.selected %} is-selected{% endif %}" data-name="{{ event.title }}" data-price="{{ event.price_per_person }}">
+                    {% if card.selected %}
+                    <button type="submit" name="remove_item" value="event-{{ event.event_id }}" class="card-remove-corner" aria-label="Remove">&times;</button>
+                    {% endif %}
+                    <div class="room-media">
+                            <img src="{% static card.image %}" alt="{{ event.title }}" class="room-img">
+                        </div>
+                        <div class="room-info">
+                            <div class="room-title-row"><h3>{{ event.title }}</h3></div>
+                            <h4>Description</h4>
+                            <p>{{ card.description }}</p>
+                            <p>{{ event.eventdate }}</p>
+                            <hr>
+                            <div class="room-footer">
+                                <span class="booking-room-price">Price : Rs {{ event.price_per_person|floatformat:"2g" }} / guest</span>
+                                <div class="room-actions">
+                                    <button type="button" class="btn-outline-navy">View</button>
+                                    {% if card.selected %}
+                                    <span class="selected-badge">&#10003; Selected</span>
+                                    {% else %}
+                                    <button type="submit" name="add_item" value="event-{{ event.event_id }}" class="btn-navy btn-book">{% if event_cards.0.selected %}Switch{% else %}Book event{% endif %}</button>
+                                    {% endif %}                                
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    {% endwith %}
+                    {% empty %}
+                    <p>No events available right now.</p>
+                    {% endfor %}
+                </div>
+
+            </div>
+
+            <aside class="cart-box" id="cartBox">
+                <h3>{% if cart.0.kind == "event" %}YOUR EVENT{% elif cart.0.kind == "activity" %}YOUR ACTIVITY{% else %}YOUR STAY{% endif %}</h3>
+                <div class="cart-items" id="cartItems">
+                    {% for item in cart %}
+                    <div class="cart-item">
+                        <p class="cart-item-name">{{ item.name }}</p>
+                        <p class="cart-item-nights">{{ item.breakdown }}</p>
+                        <p class="cart-item-nights">
+                            {% if item.kind == "stay" %}{{ item.check_in }} &rarr; {{ item.check_out }}{% else %}{{ item.check_in }}{% endif %}
+                        </p>
+                        <p class="cart-item-nights">Rs {{ item.price|floatformat:"2g" }}</p>
+                    </div>
+                    {% empty %}
+                    <p class="cart-item-nights">Nothing selected yet.</p>
+                    {% endfor %}
+                </div>
+                <div class="cart-total">
+                    <span>Total :</span>
+                    <span id="cartTotal">Rs {{ cart_total|floatformat:"2g" }}</span>
+                </div>
+                {% if cart %}
+                <a href="{% url 'cart_review' %}" class="btn-checkout">Checkout</a>
+                {% else %}
+                <button type="button" class="btn-checkout" disabled>Checkout</button>
+                {% endif %}
+            </aside>
+
+        </div>
+    </form>
+
+</div>
+
+<script src="{% static 'js/script.js' %}"></script>
+<script>
+(function () {
+  var tabInput = document.getElementById('currentTab');
+  var checkin = document.getElementById('checkinField');
+  var checkout = document.getElementById('checkoutField');
+  var hint = document.getElementById('dateHint');
+  var today = new Date().toISOString().split('T')[0];
+  document.querySelectorAll('input[type=date]').forEach(function (i) { i.min = today; });
+
+function applyTab(tab) {
+    tabInput.value = tab;
+    checkin.style.display = (tab === 'events') ? 'none' : '';
+    checkout.style.display = (tab === 'rooms') ? '' : 'none';
+    checkin.querySelector('label').textContent = (tab === 'activities') ? 'Date' : 'Check-In';
+    hint.textContent =
+      tab === 'packages' ? 'Packages have a fixed length, so just choose your check-in date.' :
+      tab === 'activities' ? 'Choose the date you would like to do the activity.' :
+      tab === 'events' ? 'Events run on a fixed date, so you only need to set the number of guests.' : '';
+  }
+
+  document.querySelectorAll('.tab-item').forEach(function (t) {
+    t.addEventListener('click', function () { applyTab(t.dataset.tab); });
+  });
+
+  var wanted = new URLSearchParams(location.search).get('tab');
+  var btn = wanted && document.querySelector('.tab-item[data-tab="' + wanted + '"]');
+  if (btn) { btn.click(); } else { applyTab('rooms'); }
+})();
+</script>
+
+{% endblock %}
