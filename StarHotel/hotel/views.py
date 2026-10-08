@@ -27,10 +27,10 @@ CART_SESSION_KEY = "cart"
 REQUIRE_GUEST_DETAILS = False
 
 ROOM_IMAGES = {
-    "Deluxe Room": "images/deluxe.jpg",
     "Standard Room": "images/standard.jpg",
-    "Studio Room": "images/studio.jpg",
+    "Deluxe Room": "images/deluxe.jpg",
     "Executive Room": "images/executive-thumb-1.jpg",
+    "Family Suite": "images/family-thumb-1.jpg",
 }
 PACKAGE_IMAGES = {
     "Weekend Getaway": "images/Weekend.jpg",
@@ -414,22 +414,16 @@ def booking(request):
         # Room has no guests/bed-type fields in the model, so this just
         # mirrors the same spec text already shown on the home page cards.
         ROOM_SPECS = {
-            "Deluxe Room": "2 Guests • King Bed",
             "Standard Room": "2 Guests • Queen Bed",
-            "Studio Room": "2 Guests • King Bed • Terrace",
+            "Deluxe Room": "2 Guests • King Bed",
             "Executive Room": "3 Guests • King Bed • Fire heating",
-        }
-        ROOM_IMAGES = {
-            "Deluxe Room": "images/deluxe.jpg",
-            "Standard Room": "images/standard.jpg",
-            "Studio Room": "images/studio.jpg",
-            "Executive Room": "images/executive-thumb-1.jpg",
+            "Family Suite": "4 Guests • 2 Double Beds",
         }
         ROOM_DESCRIPTIONS = {
-            "Deluxe Room": "Experience comfort and luxury in our Deluxe Room, featuring a king-size bed, complimentary breakfast, air conditioning, free Wi-Fi and panoramic garden views.",
             "Standard Room": "A cozy, well-appointed room with a queen-size bed, air conditioning, free Wi-Fi and all the essentials for a comfortable stay.",
-            "Studio Room": "Enjoy extra space in our Studio Room, featuring a king-size bed, private terrace, air conditioning and complimentary Wi-Fi.",
+            "Deluxe Room": "Experience comfort and luxury in our Deluxe Room, featuring a king-size bed, complimentary breakfast, air conditioning, free Wi-Fi and panoramic garden views.",
             "Executive Room": "Designed for comfort and convenience, our Executive Room features a king-size bed, fire heating, a spacious seating area and ocean views.",
+            "Family Suite": "Spacious and welcoming, our Family Suite is designed for comfort and convenience. Featuring two double beds, a seating area, complimentary high-speed Wi-Fi, air conditioning, a pull-out sofa bed and modern amenities, this suite is perfect for families or small groups looking for a relaxing getaway..",
         }
         room_cards = [
             {
@@ -441,11 +435,6 @@ def booking(request):
             for r in rooms
         ]
 
-        PACKAGE_IMAGES = {
-            "Weekend Getaway": "images/Weekend.jpg",
-            "Romantic Escape": "images/romantic.jpg",
-            "Family Fun Package": "images/package-family.jpg",
-        }
         PACKAGE_DESCRIPTIONS = {
             "Weekend Getaway": "Relax with a two-night stay, complimentary breakfast and selected activities.",
             "Romantic Escape": "Enjoy a romantic stay with breakfast, spa access and a special dinner.",
@@ -460,11 +449,6 @@ def booking(request):
             for p in Packages.objects.filter(is_active=True)
         ]
 
-        EVENT_IMAGES = {
-            "Garden Wedding Package": "images/wedding.webp",
-            "Birthday Celebration Package": "images/birthday.png",
-            "Corporate Retreat Package": "images/worker.jpg",
-        }
         EVENT_DESCRIPTIONS = {
             "Garden Wedding Package": "A full wedding venue set among landscaped gardens with ocean views, including ceremony and reception setup, floral arch, seating for guests, a dedicated event coordinator, and a private bridal suite for preparation.",
             "Birthday Celebration Package": "A private poolside or garden setup for milestone birthdays, with decor, a dessert table, and background music/DJ setup included.",
