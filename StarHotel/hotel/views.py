@@ -210,13 +210,6 @@ def _add_item(cart, item):
 
 def home(request):
     rooms = [
-       {
-            'name': 'Deluxe Room',
-            'details': '2 Guests • King Bed',
-            'price': '10,000',
-            'image_path': 'images/deluxe.jpg',
-            'url_name': 'room_details_deluxe'
-        },
         {
             'name': 'Standard Room',
             'details': '2 Guests • Queen Bed',
@@ -225,10 +218,10 @@ def home(request):
             'url_name': 'room_details_deluxe'
         },
         {
-            'name': 'Studio Room',
-            'details': '2 Guests • King Bed • Terrace',
-            'price': '12,000',
-            'image_path': 'images/studio.jpg',
+            'name': 'Deluxe Room',
+            'details': '2 Guests • King Bed',
+            'price': '10,000',
+            'image_path': 'images/deluxe.jpg',
             'url_name': 'room_details_deluxe'
         },
         {
@@ -238,8 +231,14 @@ def home(request):
             'image_path': 'images/executive-thumb-1.jpg',
             'url_name': 'room_details_executive'
         },
+        {
+            'name': 'Family Suite',
+            'details': '4 Guests • 2 Double Beds',
+            'price': '21,000',
+            'image_path': 'images/family-thumb-1.jpg',
+            'url_name': 'room_details_family'
+        },
     ]
-
     return render(request, "hotel/home.html", {"rooms": rooms})
 
 
