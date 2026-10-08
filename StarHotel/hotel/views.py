@@ -403,7 +403,7 @@ def customer_support(request):
 def booking(request):
         rooms_qs = Room.objects.select_related("branch").filter(
             room_status="available"
-        ).order_by("room_id")
+        ).order_by("price", "room_id")
         seen_types = set()
         rooms = []
         for r in rooms_qs:
@@ -525,8 +525,6 @@ def booking(request):
                 request.session.modified = True
             return redirect(f"{reverse('booking')}?tab={tab}")
 
-        
-    
         cart = _get_cart(request)
 
         sel = next((i for i in cart if i["kind"] != "activity"), None)
@@ -555,9 +553,6 @@ def booking(request):
             "activity_cards": activity_cards,
         }
         return render(request, "hotel/booking.html", context)
-
-
-
 
 def staff_dashboard(request):
     return render(request, "hotel/staff_dashboard.html")
