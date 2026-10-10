@@ -257,8 +257,16 @@ def search_results(request):
 
     rooms = [
         {
+            'name': 'Standard Room',
+            'price': '8,000',
+            'guests': 2,
+            'features': ['Queen Bed', 'Free Wi-Fi', 'Air Conditioning'],
+            'image_path': 'images/standard.jpg',
+            'url_name': 'room_details_standard'
+        },
+        {
             'name': 'Deluxe Room',
-            'price': '15,000',
+            'price': '10,000',
             'guests': 2,
             'features': ['King Bed', 'Free Wi-Fi', 'Breakfast Included'],
             'image_path': 'images/deluxe.jpg',
@@ -267,8 +275,8 @@ def search_results(request):
         {
             'name': 'Executive Room',
             'price': '18,000',
-            'guests': 2,
-            'features': ['Queen Bed', 'Sea View', 'Breakfast Included'],
+            'guests': 3,
+            'features': ['King Bed', 'Sea View', 'Breakfast Included'],
             'image_path': 'images/executive-thumb-1.jpg',
             'url_name': 'room_details_executive'
         },
@@ -281,6 +289,7 @@ def search_results(request):
             'url_name': 'room_details_family'
         },
     ]
+
     context = {
         'rooms': rooms,
         'branch': branch,
@@ -290,6 +299,11 @@ def search_results(request):
     }
     return render(request, "hotel/search_results.html", context)
 
+def room_details_standard(request):
+    room = Room.objects.filter(
+        room_type="Standard Room", room_status="available"
+    ).order_by("room_id").first()
+    return render(request, "hotel/room_details_standard.html", {"room": room})
 
 def room_details_deluxe(request):
     room = Room.objects.filter(
@@ -842,10 +856,6 @@ def cart_payment(request):
                             no_of_guests=item["guests"],
                             **common,
                         )
-
-
-
-
 
             request.session["last_booking_id"] = booking_obj.pk
             request.session[CART_SESSION_KEY] = []

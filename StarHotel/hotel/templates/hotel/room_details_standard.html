@@ -1,0 +1,96 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}
+Standard Room | Star Hotel
+{% endblock %}
+
+{% block content %}
+
+<div class="room-details-page">
+    <div class="room-header">
+        <h1 class="room-name">Standard Room</h1>
+        <span class="room-rating">★★★★★</span>
+    </div>
+
+    <div class="room-details-layout">
+        <div class="room-gallery">
+            <div class="room-main-image">
+                <img src="{% static 'images/standard.jpg' %}" alt="Standard Room">
+            </div>
+
+            <div class="room-description">
+                <h3>Description</h3>
+                <p>A cozy, well-appointed room with a queen-size bed, air conditioning, free Wi-Fi and all the essentials for a comfortable stay.</p>
+            </div>
+        </div>
+
+        <div class="room-right-column">
+            <div class="room-info-panel">
+                <div class="room-price-block">
+                    <span class="price-label">Price</span>
+                    {% if room %}
+                    <p class="room-price">Rs {{ room.price|floatformat:"0g" }} <span class="price-per">/ night</span></p>
+                    {% endif %}
+                </div>
+
+                <div class="room-spec-block">
+                    <h4>Capacity</h4>
+                    <p>2 Guests</p>
+                </div>
+
+                <div class="room-spec-block">
+                    <h4>Bed Type</h4>
+                    <p>Queen Bed</p>
+                </div>
+
+                <div class="room-spec-block">
+                    <h4>Amenities</h4>
+                    <ul class="room-amenities-list">
+                        <li>Free Wi-Fi</li>
+                        <li>Air Conditioning</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="room-booking-widget">
+                <h3>Book This Room</h3>
+
+                {% if room %}
+                <form method="post" action="{% url 'booking' %}">
+                    {% csrf_token %}
+                    <input type="hidden" name="current_tab" value="rooms">
+                    <input type="hidden" name="add_item" value="room-{{ room.room_id }}">
+
+                    <div class="booking-widget-row">
+                        <div class="booking-widget-field">
+                            <label>Check-in</label>
+                            <input type="date" name="checkin" required>
+                        </div>
+                        <div class="booking-widget-field">
+                            <label>Check-out</label>
+                            <input type="date" name="checkout" required>
+                        </div>
+                    </div>
+
+                    <div class="booking-widget-row">
+                        <div class="booking-widget-field">
+                            <label>Guests</label>
+                            <select name="guests">
+                                <option value="2">2 Guests</option>
+                                <option value="1">1 Guest</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <button type="submit" class="btn-navy btn-book-now">Book Now</button>
+                </form>
+                {% else %}
+                <p>Sorry, no Standard Rooms are currently available.</p>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}

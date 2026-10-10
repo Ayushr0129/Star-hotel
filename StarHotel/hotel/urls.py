@@ -6,6 +6,7 @@ urlpatterns = [
 
     path("",views.home, name="home"),
     path("search-results/", views.search_results, name="search_results"),
+    path("room-details/standard/", views.room_details_standard, name="room_details_standard"),
     path("room-details/deluxe/", views.room_details_deluxe, name="room_details_deluxe"),
     path("room-details/executive/", views.room_details_executive, name="room_details_executive"),
     path("room-details/family-suite/", views.room_details_family, name="room_details_family"),

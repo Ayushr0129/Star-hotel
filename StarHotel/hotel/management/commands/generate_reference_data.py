@@ -59,7 +59,7 @@ BRANCH_CITIES = [
 # flow too.
 ROOM_TYPES = [
     ("Deluxe Room", 15000),
-    ("Standard Room", 9500),
+    ("Standard Room", 8000),
     ("Studio Room", 12500),
     ("Executive Room", 18000),
 ]
