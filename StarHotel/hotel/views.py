@@ -313,7 +313,10 @@ def room_details_deluxe(request):
 
 
 def room_details_executive(request):
-    return render(request, "hotel/room_details_executive.html")
+    room = Room.objects.filter(
+        room_type="Executive Room", room_status="available"
+    ).order_by("room_id").first()
+    return render(request, "hotel/room_details_executive.html", {"room": room})
 
 
 def room_details_family(request):

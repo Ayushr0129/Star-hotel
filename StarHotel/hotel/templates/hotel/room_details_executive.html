@@ -68,8 +68,10 @@ Executive Room | Star Hotel
 
             <div class="room-booking-widget">
                 <h3>Book This Room</h3>
-                <form method="GET" action="{% url 'booking' %}">
-                    <input type="hidden" name="room" value="executive">
+                <form method="post" action="{% url 'booking' %}">
+                    {% csrf_token %}
+                    <input type="hidden" name="current_tab" value="rooms">
+                    <input type="hidden" name="add_item" value="room-{{ room.room_id }}">
 
                     <div class="booking-widget-row">
                         <div class="booking-widget-field">
