@@ -27,7 +27,7 @@ CART_SESSION_KEY = "cart"
 REQUIRE_GUEST_DETAILS = False
 
 ROOM_IMAGES = {
-    "Standard Room": "images/standard.jpg",
+    "Standard Room": "images/standard-thumb-1.jpg",
     "Deluxe Room": "images/deluxe.jpg",
     "Executive Room": "images/executive-thumb-1.jpg",
     "Family Suite": "images/family-thumb-1.jpg",
@@ -57,6 +57,9 @@ ACTIVITY_DESCRIPTIONS = {
     "Tennis session": "Book a court and enjoy a fun tennis session.",
     "Swimming & Leisure": "Enjoy access to our pool and leisure facilities.",
 }
+
+def packages(request):
+    return render(request, "hotel/packages.html")
 
 def _cart_total(cart):
     return sum((Decimal(i["price"]) for i in cart), Decimal("0"))
@@ -214,7 +217,7 @@ def home(request):
             'name': 'Standard Room',
             'details': '2 Guests • Queen Bed',
             'price': '8,000',
-            'image_path': 'images/standard.jpg',
+            'image_path': 'images/standard-thumb-1.jpg',
             'url_name': 'room_details_deluxe'
         },
         {
@@ -261,7 +264,7 @@ def search_results(request):
             'price': '8,000',
             'guests': 2,
             'features': ['Queen Bed', 'Free Wi-Fi', 'Air Conditioning'],
-            'image_path': 'images/standard.jpg',
+            'image_path': 'images/standard-thumb-1.jpg',
             'url_name': 'room_details_standard'
         },
         {
