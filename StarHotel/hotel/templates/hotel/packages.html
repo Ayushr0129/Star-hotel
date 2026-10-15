@@ -24,6 +24,7 @@
                     <li>{{ item }}</li>
                     {% endfor %}
                 </ul>
+                                <p class="package-card-valid">Valid {{ package.valid_from|date:"d M Y" }} - {{ package.valid_to|date:"d M Y" }}</p>
             </div>
         </div>
         {% endfor %}

@@ -58,31 +58,37 @@ ACTIVITY_DESCRIPTIONS = {
     "Swimming & Leisure": "Enjoy access to our pool and leisure facilities.",
 }
 
+PACKAGE_SLUGS = {
+    "Weekend Getaway": "weekend-getaway",
+    "Romantic Escape": "romantic-escape",
+    "Family Fun Package": "family-fun",
+}
+PACKAGE_DESCRIPTIONS = {
+    "Weekend Getaway": "Relax with a two-night stay, complimentary breakfast and selected activities.",
+    "Romantic Escape": "Enjoy a romantic stay with breakfast, spa access and a special dinner.",
+    "Family Fun Package": "Perfect for families with breakfast, children's activities and late checkout.",
+}
+PACKAGE_INCLUDES = {
+    "Weekend Getaway": ['2-night stay', 'Complimentary breakfast', 'Selected activities'],
+    "Romantic Escape": ['2-night stay', 'Breakfast', 'Spa access', 'Special dinner'],
+    "Family Fun Package": ['2-night stay', 'Breakfast', "Children's activities", 'Late checkout'],
+}
 def packages(request):
-    packages = [
+    cards = [
         {
-            'slug': 'weekend-getaway',
-            'name': 'Weekend Getaway',
-            'description': 'Relax with a two-night stay, complimentary breakfast and selected activities.',
-            'includes': ['2-night stay', 'Complimentary breakfast', 'Selected activities'],
-            'image_path': 'images/weekend.jpg',
-        },
-        {
-            'slug': 'romantic-escape',
-            'name': 'Romantic Escape',
-            'description': 'Enjoy a romantic stay with breakfast, spa access and a special dinner.',
-            'includes': ['2-night stay', 'Breakfast', 'Spa access', 'Special dinner'],
-            'image_path': 'images/romantic.jpg',
-        },
-        {
-            'slug': 'family-fun',
-            'name': 'Family Fun Package',
-            'description': "Perfect for families with breakfast, children's activities and late checkout.",
-            'includes': ['2-night stay', 'Breakfast', "Children's activities", 'Late checkout'],
-            'image_path': 'images/package-family.jpg',
-        },
+            'slug': PACKAGE_SLUGS.get(p.p_name, f"package-{p.p_id}"),
+            'name': p.p_name,
+            'description': PACKAGE_DESCRIPTIONS.get(p.p_name, ""),
+            'includes': PACKAGE_INCLUDES.get(p.p_name, []),
+            'nights': p.nights,
+            'price': p.base_price,
+            'valid_from': p.valid_from,
+            'valid_to': p.valid_to,
+            'image_path': PACKAGE_IMAGES.get(p.p_name, "images/Weekend.jpg"),
+        }
+        for p in Packages.objects.filter(is_active=True).order_by("base_price")
     ]
-    return render(request, "hotel/packages.html", {"packages": packages})
+    return render(request, "hotel/packages.html", {"packages": cards})
 
 def _cart_total(cart):
     return sum((Decimal(i["price"]) for i in cart), Decimal("0"))
