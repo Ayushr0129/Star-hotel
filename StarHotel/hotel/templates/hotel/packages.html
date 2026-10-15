@@ -9,5 +9,19 @@
         <h1>Packages &amp; Promotions</h1>
         <p class="section-subtitle">Make your stay even more memorable with our exclusive offers.</p>
     </div>
+    <div class="package-list">
+        {% for package in packages %}
+        <div class="package-card" id="{{ package.slug }}">
+            <div class="package-card-image">
+                <img src="{% static package.image_path %}" alt="{{ package.name }}">
+            </div>
+
+            <div class="package-card-info">
+                <h3 class="package-card-name">{{ package.name }}</h3>
+                <p class="package-card-description">{{ package.description }}</p>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
 </div>
 {% endblock %}

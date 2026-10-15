@@ -59,7 +59,27 @@ ACTIVITY_DESCRIPTIONS = {
 }
 
 def packages(request):
-    return render(request, "hotel/packages.html")
+    packages = [
+        {
+            'slug': 'weekend-getaway',
+            'name': 'Weekend Getaway',
+            'description': 'Relax with a two-night stay, complimentary breakfast and selected activities.',
+            'image_path': 'images/weekend.jpg',
+        },
+        {
+            'slug': 'romantic-escape',
+            'name': 'Romantic Escape',
+            'description': 'Enjoy a romantic stay with breakfast, spa access and a special dinner.',
+            'image_path': 'images/romantic.jpg',
+        },
+        {
+            'slug': 'family-fun',
+            'name': 'Family Fun Package',
+            'description': "Perfect for families with breakfast, children's activities and late checkout.",
+            'image_path': 'images/package-family.jpg',
+        },
+    ]
+    return render(request, "hotel/packages.html", {"packages": packages})
 
 def _cart_total(cart):
     return sum((Decimal(i["price"]) for i in cart), Decimal("0"))
