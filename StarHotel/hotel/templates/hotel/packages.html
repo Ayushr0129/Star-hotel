@@ -19,6 +19,11 @@
             <div class="package-card-info">
                 <h3 class="package-card-name">{{ package.name }}</h3>
                 <p class="package-card-description">{{ package.description }}</p>
+                <ul class="package-card-includes">
+                    {% for item in package.includes %}
+                    <li>{{ item }}</li>
+                    {% endfor %}
+                </ul>
             </div>
         </div>
         {% endfor %}

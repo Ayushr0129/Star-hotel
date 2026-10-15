@@ -64,18 +64,21 @@ def packages(request):
             'slug': 'weekend-getaway',
             'name': 'Weekend Getaway',
             'description': 'Relax with a two-night stay, complimentary breakfast and selected activities.',
+            'includes': ['2-night stay', 'Complimentary breakfast', 'Selected activities'],
             'image_path': 'images/weekend.jpg',
         },
         {
             'slug': 'romantic-escape',
             'name': 'Romantic Escape',
             'description': 'Enjoy a romantic stay with breakfast, spa access and a special dinner.',
+            'includes': ['2-night stay', 'Breakfast', 'Spa access', 'Special dinner'],
             'image_path': 'images/romantic.jpg',
         },
         {
             'slug': 'family-fun',
             'name': 'Family Fun Package',
             'description': "Perfect for families with breakfast, children's activities and late checkout.",
+            'includes': ['2-night stay', 'Breakfast', "Children's activities", 'Late checkout'],
             'image_path': 'images/package-family.jpg',
         },
     ]
