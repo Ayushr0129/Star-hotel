@@ -2021,3 +2021,46 @@ header:has(~ main .layout) {
     flex-direction: column;
     gap: 1.5rem;
 }
+
+/* Package cards */
+.package-card {
+    display: flex;
+    gap: 1.5rem;
+    background: #fff;
+    border: 1px solid #e2e2e2;
+    border-radius: 8px;
+    padding: 1rem;
+}
+
+.package-card-image {
+    width: 300px;
+    flex-shrink: 0;
+}
+
+.package-card-image img {
+    width: 100%;
+    height: 200px;
+    object-fit: cover;
+    border-radius: 6px;
+}
+
+.package-card-info {
+    flex: 1;
+}
+
+.package-card-name {
+    margin: 0 0 0.5rem 0;
+}
+
+.package-card-description {
+    color: #666;
+    margin: 0 0 0.75rem 0;
+}
+
+.package-card-action {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    justify-content: space-between;
+    text-align: right;
+}
