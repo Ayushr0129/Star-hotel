@@ -24,7 +24,14 @@
                     <li>{{ item }}</li>
                     {% endfor %}
                 </ul>
-                                <p class="package-card-valid">Valid {{ package.valid_from|date:"d M Y" }} - {{ package.valid_to|date:"d M Y" }}</p>
+                    <p class="package-card-valid">Valid {{ package.valid_from|date:"d M Y" }} - {{ package.valid_to|date:"d M Y" }}</p>
+            </div>
+            <div class="package-card-action">
+                <p class="package-card-price">
+                    <span class="price-amount">Rs {{ package.price|floatformat:"0g" }}</span>
+                    <span class="price-period">per guest &middot; {{ package.nights }} nights</span>
+                </p>
+                <a href="#" class="view-details-btn">Book Package</a>
             </div>
         </div>
         {% endfor %}
