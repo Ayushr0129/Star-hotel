@@ -2000,3 +2000,24 @@ header:has(~ main .layout) {
     padding: 40px 24px;
     border-radius: 8px;
 }
+/* ===== Packages Page ===== */
+
+.packages-page {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 2rem 1.5rem;
+}
+
+.packages-heading h1 {
+    margin: 0 0 0.25rem 0;
+}
+
+.packages-heading .section-subtitle {
+    margin: 0 0 2rem 0;
+}
+
+.package-list {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+}
