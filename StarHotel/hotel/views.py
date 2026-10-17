@@ -90,6 +90,9 @@ def packages(request):
     ]
     return render(request, "hotel/packages.html", {"packages": cards})
 
+def activities(request):
+    return render(request, "hotel/activities.html")
+
 def _cart_total(cart):
     return sum((Decimal(i["price"]) for i in cart), Decimal("0"))
 
@@ -206,9 +209,6 @@ def _build_cart_item(item_type, item_id, checkin, checkout, guests, cart=()):
 
     return None, "Unknown item."
 
-    return None, "Unknown item."
-
-
 def _add_item(cart, item):
     """Return (new_cart, notes). One stay-or-event; activities pile up."""
     notes = []
@@ -237,8 +237,6 @@ def _add_item(cart, item):
     if len(kept) < len(activities):
         notes.append("Some activities fell outside your new dates and were removed.")
     return [item] + kept, notes
-
-
 
 def home(request):
     rooms = [
