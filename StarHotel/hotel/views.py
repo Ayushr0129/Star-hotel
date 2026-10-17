@@ -97,6 +97,9 @@ def activities(request):
             'name': a.act_name,
             'description': ACTIVITY_DESCRIPTIONS.get(a.act_name, ""),
             'image_path': ACTIVITY_IMAGES.get(a.act_name, ACTIVITY_FALLBACK),
+            'duration': a.duration,
+            'location': a.location,
+            'capacity': a.capacity,
         }
         for a in Activity.objects.order_by("act_id")
     ]

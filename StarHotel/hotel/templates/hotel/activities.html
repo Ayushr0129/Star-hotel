@@ -19,6 +19,13 @@
             <div class="activity-card-info">
                 <h3 class="activity-card-name">{{ activity.name }}</h3>
                 <p class="activity-card-description">{{ activity.description }}</p>
+                <ul class="activity-card-details">
+                    <li>
+                        {% if activity.duration %}{{ activity.duration }} minutes{% else %}Flexible duration{% endif %}
+                    </li>
+                    <li>{{ activity.location }}</li>
+                    <li>Up to {{ activity.capacity }} guests</li>
+                </ul>
             </div>
         </div>
         {% endfor %}
