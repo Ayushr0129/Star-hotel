@@ -2152,3 +2152,15 @@ header:has(~ main .layout) {
     justify-content: space-between;
     text-align: right;
 }
+
+.activity-card-details {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.activity-card-details li {
+    margin-bottom: 0.4rem;
+    font-size: 0.9rem;
+    color: #555;
+}
