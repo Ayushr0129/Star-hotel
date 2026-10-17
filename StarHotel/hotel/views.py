@@ -91,7 +91,16 @@ def packages(request):
     return render(request, "hotel/packages.html", {"packages": cards})
 
 def activities(request):
-    return render(request, "hotel/activities.html")
+    cards = [
+        {
+            'id': a.act_id,
+            'name': a.act_name,
+            'description': ACTIVITY_DESCRIPTIONS.get(a.act_name, ""),
+            'image_path': ACTIVITY_IMAGES.get(a.act_name, ACTIVITY_FALLBACK),
+        }
+        for a in Activity.objects.order_by("act_id")
+    ]
+    return render(request, "hotel/activities.html", {"activities": cards})
 
 def _cart_total(cart):
     return sum((Decimal(i["price"]) for i in cart), Decimal("0"))

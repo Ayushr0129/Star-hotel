@@ -9,5 +9,19 @@
         <h1>Activities</h1>
         <p class="section-subtitle">Discover exciting experiences during your stay.</p>
     </div>
+    <div class="activity-list">
+        {% for activity in activities %}
+        <div class="activity-card" id="activity-{{ activity.id }}">
+            <div class="activity-card-image">
+                <img src="{% static activity.image_path %}" alt="{{ activity.name }}">
+            </div>
+
+            <div class="activity-card-info">
+                <h3 class="activity-card-name">{{ activity.name }}</h3>
+                <p class="activity-card-description">{{ activity.description }}</p>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
 </div>
 {% endblock %}
