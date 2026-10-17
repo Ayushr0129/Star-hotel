@@ -100,6 +100,7 @@ def activities(request):
             'duration': a.duration,
             'location': a.location,
             'capacity': a.capacity,
+            'price': a.price_per_person,
         }
         for a in Activity.objects.order_by("act_id")
     ]

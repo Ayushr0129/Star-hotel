@@ -27,6 +27,17 @@
                     <li>Up to {{ activity.capacity }} guests</li>
                 </ul>
             </div>
+            <div class="activity-card-action">
+                <p class="activity-card-price">
+                    {% if activity.price == 0 %}
+                    <span class="price-amount">Complimentary</span>
+                    {% else %}
+                    <span class="price-amount">Rs {{ activity.price|floatformat:"0g" }}</span>
+                    <span class="price-period">per person</span>
+                    {% endif %}
+                </p>
+                <a href="#" class="view-details-btn">Book Activity</a>
+            </div>
         </div>
         {% endfor %}
     </div>
