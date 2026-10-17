@@ -30,7 +30,7 @@
             <a href="{% url 'home' %}" class="site-nav-item">Home</a>
             <a href="{% url 'search_results' %}" class="site-nav-item">Rooms</a>
             <a href="{% url 'packages' %}" class="site-nav-item">Packages</a>
-            <a href="#" class="site-nav-item">Activities</a>
+            <a href="{% url 'activities' %}" class="site-nav-item">Activities</a>
             <a href="{% url 'login' %}" class="site-nav-item">Login</a>
             <a href="{% url 'register' %}" class="site-nav-item" id="registerLink">Register</a>
         </nav>
@@ -57,7 +57,7 @@
                 <li><a href="{% url 'home' %}">Home</a></li>
                 <li><a href="#">Rooms</a></li>
                 <li><a href="{% url 'packages' %}">Packages</a></li>
-                <li><a href="#">Activities</a></li>
+                <li><a href="{% url 'activities' %}">Activities</a></li>
                 <li><a href="#">Events</a></li>
                 <li><a href="#">Contact</a></li>
             </ul>
