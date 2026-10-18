@@ -77,6 +77,7 @@ def packages(request):
     cards = [
         {
             'slug': PACKAGE_SLUGS.get(p.p_name, f"package-{p.p_id}"),
+            'id': p.p_id,
             'name': p.p_name,
             'description': PACKAGE_DESCRIPTIONS.get(p.p_name, ""),
             'includes': PACKAGE_INCLUDES.get(p.p_name, []),
@@ -258,7 +259,7 @@ def home(request):
             'details': '2 Guests • Queen Bed',
             'price': '8,000',
             'image_path': 'images/standard-thumb-1.jpg',
-            'url_name': 'room_details_deluxe'
+            'url_name': 'room_details_standard'
         },
         {
             'name': 'Deluxe Room',

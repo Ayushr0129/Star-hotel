@@ -31,7 +31,27 @@
                     <span class="price-amount">Rs {{ package.price|floatformat:"0g" }}</span>
                     <span class="price-period">per guest &middot; {{ package.nights }} nights</span>
                 </p>
-                <a href="#" class="view-details-btn">Book Package</a>
+                    <form method="post" action="{% url 'booking' %}" class="card-book-form">
+                    {% csrf_token %}
+                    <input type="hidden" name="current_tab" value="packages">
+                    <input type="hidden" name="add_item" value="package-{{ package.id }}">
+
+                    <label>Check-in
+                        <input type="date" name="checkin" required>
+                    </label>
+                    <label>Guests
+                        <select name="guests">
+                            <option value="1">1</option>
+                            <option value="2" selected>2</option>
+                            <option value="3">3</option>
+                            <option value="4">4</option>
+                            <option value="5">5</option>
+                            <option value="6">6</option>
+                        </select>
+                    </label>
+
+                    <button type="submit" class="btn-navy">Book Package</button>
+                </form>
             </div>
         </div>
         {% endfor %}
