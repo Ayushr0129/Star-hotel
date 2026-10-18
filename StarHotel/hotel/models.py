@@ -227,13 +227,3 @@ class Event_Item(Booking_Item):
     def __str__(self):
         return f"Event Item - {self.event.title}"
 
-class Activity_Item(Booking_Item):
-    activity = models.ForeignKey(
-        Activity,
-        on_delete=models.PROTECT,
-        related_name='activity_items'
-    )
-    no_of_guests = models.PositiveIntegerField()
-
-    def __str__(self):
-        return f"Activity Item - {self.activity.act_name}"

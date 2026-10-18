@@ -73,6 +73,11 @@ PACKAGE_INCLUDES = {
     "Romantic Escape": ['2-night stay', 'Breakfast', 'Spa access', 'Special dinner'],
     "Family Fun Package": ['2-night stay', 'Breakfast', "Children's activities", 'Late checkout'],
 }
+
+# Dev switch: False lets you click Pay without card details or the policy tick.
+# Set to True before your demo / submission.
+REQUIRE_PAYMENT_DETAILS = False
+
 def packages(request):
     cards = [
         {
@@ -841,7 +846,7 @@ def cart_payment(request):
         card_number = request.POST.get("card_number", "").strip()
         agree = request.POST.get("agree")
 
-        if not card_number or not agree:
+        if REQUIRE_PAYMENT_DETAILS and (not card_number or not agree):
             error = "Please fill in your card details and agree to the cancellation policy."
         else:
             customer = get_current_customer(request)
@@ -909,7 +914,12 @@ def cart_payment(request):
             request.session.modified = True
             return redirect("booking_confirmation")
 
-    context = {"cart": cart, "cart_total": _cart_total(cart), "error": error}
+    context = {
+        "cart": cart,
+        "cart_total": _cart_total(cart),
+        "error": error,
+        "customer": get_current_customer(request),
+    }
     return render(request, "hotel/cart_payment.html", context)
  
 
