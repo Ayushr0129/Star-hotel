@@ -36,7 +36,20 @@
                     <span class="price-period">per person</span>
                     {% endif %}
                 </p>
-                <a href="#" class="view-details-btn">Book Activity</a>
+                    <form method="post" action="{% url 'booking' %}" class="card-book-form">
+                    {% csrf_token %}
+                    <input type="hidden" name="current_tab" value="activities">
+                    <input type="hidden" name="add_item" value="activity-{{ activity.id }}">
+
+                    <label>Date
+                        <input type="date" name="checkin" required>
+                    </label>
+                    <label>Guests
+                        <input type="number" name="guests" min="1" max="{{ activity.capacity }}" value="2" required>
+                    </label>
+
+                    <button type="submit" class="btn-navy">Book Activity</button>
+                </form>
             </div>
         </div>
         {% endfor %}
