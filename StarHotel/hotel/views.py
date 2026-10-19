@@ -112,6 +112,9 @@ def activities(request):
     ]
     return render(request, "hotel/activities.html", {"activities": cards})
 
+def events(request):
+    return render(request, "hotel/events.html")
+
 def _cart_total(cart):
     return sum((Decimal(i["price"]) for i in cart), Decimal("0"))
 

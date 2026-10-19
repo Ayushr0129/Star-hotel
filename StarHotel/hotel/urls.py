@@ -12,6 +12,7 @@ urlpatterns = [
     path("room-details/family-suite/", views.room_details_family, name="room_details_family"),
     path("packages/", views.packages, name="packages"),
     path("activities/", views.activities, name="activities"),
+    path("events/", views.events, name="events"),
     path("login/", views.login, name="login"),
     path("register/", views.register, name="register"),
     path("customer-dashboard/", views.customer_dashboard, name="customer_dashboard"),
