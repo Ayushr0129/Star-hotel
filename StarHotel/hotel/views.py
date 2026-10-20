@@ -43,6 +43,12 @@ EVENT_IMAGES = {
     "Corporate Retreat Package": "images/worker.jpg",
 }
 
+EVENT_DESCRIPTIONS = {
+    "Garden Wedding Package": "A full wedding venue set among landscaped gardens with ocean views, including ceremony and reception setup, floral arch, seating for guests, a dedicated event coordinator, and a private bridal suite for preparation.",
+    "Birthday Celebration Package": "A private poolside or garden setup for milestone birthdays, with decor, a dessert table, and background music/DJ setup included.",
+    "Corporate Retreat Package": "Full-day private venue booking for team offsites, workshops, or strategy sessions. Includes a conference hall with AV equipment, a dedicated coordinator, and a working lunch for the group.",
+}
+
 #BACKGROUND NEEDS TO BE CHANGED--CURRENTLY USING EVENT
 ACTIVITY_FALLBACK = "images/Event-booking.jpg"
 ACTIVITY_IMAGES = {
@@ -113,7 +119,16 @@ def activities(request):
     return render(request, "hotel/activities.html", {"activities": cards})
 
 def events(request):
-    return render(request, "hotel/events.html")
+    cards = [
+        {
+            'id': e.event_id,
+            'title': e.title,
+            'description': EVENT_DESCRIPTIONS.get(e.title, ""),
+            'image_path': EVENT_IMAGES.get(e.title, "images/wedding.webp"),
+        }
+        for e in Event.objects.order_by("event_id")
+    ]
+    return render(request, "hotel/events.html", {"events": cards})
 
 def _cart_total(cart):
     return sum((Decimal(i["price"]) for i in cart), Decimal("0"))
@@ -517,12 +532,6 @@ def booking(request):
             }
             for p in Packages.objects.filter(is_active=True)
         ]
-
-        EVENT_DESCRIPTIONS = {
-            "Garden Wedding Package": "A full wedding venue set among landscaped gardens with ocean views, including ceremony and reception setup, floral arch, seating for guests, a dedicated event coordinator, and a private bridal suite for preparation.",
-            "Birthday Celebration Package": "A private poolside or garden setup for milestone birthdays, with decor, a dessert table, and background music/DJ setup included.",
-            "Corporate Retreat Package": "Full-day private venue booking for team offsites, workshops, or strategy sessions. Includes a conference hall with AV equipment, a dedicated coordinator, and a working lunch for the group.",
-        }
         event_cards = [
             {
                 "event": e,
