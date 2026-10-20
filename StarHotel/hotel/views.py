@@ -125,6 +125,10 @@ def events(request):
             'title': e.title,
             'description': EVENT_DESCRIPTIONS.get(e.title, ""),
             'image_path': EVENT_IMAGES.get(e.title, "images/wedding.webp"),
+            'date': e.eventdate,
+            'start_time': e.start_time,
+            'end_time': e.end_time,
+            'max_attendees': e.max_attendees,
         }
         for e in Event.objects.order_by("event_id")
     ]
