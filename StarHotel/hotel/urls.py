@@ -28,4 +28,6 @@ urlpatterns = [
     path("cart/guest-details/", views.cart_guest_details, name="cart_guest_details"),
     path("cart/payment/", views.cart_payment, name="cart_payment"),
     path("booking-confirmation/", views.booking_confirmation, name="booking_confirmation"),
+    path("booking/<int:booking_id>/cancel/", views.cancel_booking, name="cancel_booking"),
+    path("booking/<int:booking_id>/book-again/", views.book_again, name="book_again"),
 ]
