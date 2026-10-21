@@ -1,255 +1,257 @@
 """
 Django management command: generate_customer_data
 
- 
-This script is READ-ONLY with respect to Loyalty, Branch, Room, Packages
-and Even. It looks up whatever already exists in the database and uses it; it never creates,
-edits, or deletes those rows. If a table is empty, the script tells you
-and skips anything that depends on it.
+Creates DEMO customers and realistic bookings that look like the ones the
+real checkout produces (same item types, same price maths, same descriptions):
+
+  - room stays        (Room_Item, optional Activity_Item add-ons inside the dates)
+  - package stays     (Package_Item, length = package.nights, optional add-ons)
+  - events            (Event_Item, single day = the event's date)
+  - activity-only     (Activity_Item, single day)
+
+READ-ONLY for Loyalty, Branch, Room, Packages, Event and Activity. It only uses
+what already exists, and only creates Customer / Booking / *_Item rows.
+
+Demo customers get the username prefix "demo." so --clear only ever removes
+demo data, never real customers who registered through the site.
+
+PLACE AT:  hotel/management/commands/generate_customer_data.py
+
+RUN
+---
+python manage.py generate_customer_data
+python manage.py generate_customer_data --customers 30 --clear
+python manage.py generate_customer_data --clear-all     (removes EVERY customer)
+
+All demo customers have the password:  TestPass123!
 """
- 
+
 import random
-from datetime import timedelta, date
- 
+import re
+from datetime import date, timedelta
+
 from django.core.management.base import BaseCommand
 from django.db import transaction
-from django.utils import timezone
- 
+
 try:
     from faker import Faker
 except ImportError:
-    raise SystemExit("Missing dependency: run `pip install faker --break-system-packages`")
- 
-# ADJUST THIS: import your actual models module
+    raise SystemExit("Missing dependency: run `pip install faker`")
+
 from ...models import (  # noqa
-    Customer, Loyalty, Branch, Room, Packages, Event,
-    Booking, Room_Item, Package_Item, Event_Item,
+    Customer, Loyalty, Branch, Room, Packages, Event, Activity,
+    Booking, Room_Item, Package_Item, Event_Item, Activity_Item,
 )
- 
+
 fake = Faker()
- 
-BOOKING_STATUSES = ["pending", "confirmed", "completed", "cancelled"]
-PAYMENT_METHODS = ["credit_card", "debit_card", "bank_transfer", "cash", "e-wallet"]
- 
- 
+
+DEMO_PREFIX = "demo."
+DEMO_PASSWORD = "TestPass123!"
+PAYMENT_METHODS = ["credit_card", "debit_card", "bank_transfer", "e-wallet"]
+
+# Room has no capacity field, so mirror the spec text used on the site.
+ROOM_CAPACITY = {
+    "Standard Room": 2,
+    "Deluxe Room": 2,
+    "Executive Room": 3,
+    "Family Suite": 4,
+}
+
+
 class Command(BaseCommand):
-    help = "Generate synthetic data for the customer dashboard"
- 
+    help = "Generate demo customers and realistic bookings"
+
     def add_arguments(self, parser):
-        parser.add_argument("--customers", type=int, default=50,
-                             help="Number of customers to create (default: 50)")
+        parser.add_argument("--customers", type=int, default=20,
+                            help="Number of demo customers to create (default: 20)")
         parser.add_argument("--bookings-per-customer", type=int, default=3,
-                             help="Max bookings per customer (default: 3)")
+                            help="Max bookings per customer (default: 3)")
         parser.add_argument("--clear", action="store_true",
-                             help="Delete existing customer-dashboard data first")
+                            help="Delete existing DEMO customers (and their bookings) first")
+        parser.add_argument("--clear-all", action="store_true",
+                            help="Delete EVERY customer and their bookings first")
         parser.add_argument("--seed", type=int, default=None,
-                             help="Random seed for reproducible output")
- 
+                            help="Random seed for reproducible output")
+
     def handle(self, *args, **options):
         if options["seed"] is not None:
             random.seed(options["seed"])
             Faker.seed(options["seed"])
- 
-        if options["clear"]:
-            self._clear()
- 
-        loyalties, branches, rooms, packages, events = self._load_reference_data()
- 
+
+        if options["clear_all"]:
+            self._clear(Customer.objects.all(), "ALL customers")
+        elif options["clear"]:
+            self._clear(Customer.objects.filter(username__startswith=DEMO_PREFIX),
+                        "demo customers")
+
+        catalogue = self._load_catalogue()
+
+        made_customers = made_bookings = 0
         with transaction.atomic():
-            customers = self._create_customers(options["customers"], loyalties)
-            self._create_bookings(
-                customers, branches, rooms, packages, events,
-                options["bookings_per_customer"],
-            )
- 
-        self.stdout.write(self.style.SUCCESS(f"Done. {options['customers']} customers created."))
- 
-    # ---------- clearing  ----------
- 
-    def _clear(self):
-        self.stdout.write("Clearing existing customer/booking/cart data (leaving "
-                           "Loyalty, Branch, Room, Packages and Event untouched)...")
-        Room_Item.objects.all().delete()
-        Package_Item.objects.all().delete()
-        Event_Item.objects.all().delete()
-        Booking.objects.all().delete()
-        Customer.objects.all().delete()
- 
-    # ---------- reference data: READ ONLY ----------
- 
-    def _load_reference_data(self):
-        """
-        Pulls in whatever already exists for Loyalty, Branch, Room, Packages
-        and Event. Never creates/edits/deletes any of these -- that's your
-        teammates' data. Anything missing is skipped with a warning so you
-        know what to wait on.
-        """
-        loyalties = list(Loyalty.objects.all())
-        branches = list(Branch.objects.all())
-        rooms = list(Room.objects.all())
-        packages = list(Packages.objects.all())
-        events = list(Event.objects.all())
- 
-        self.stdout.write("Using existing reference data (read-only):")
-        self.stdout.write(f"  Loyalty tiers found: {len(loyalties)}")
-        self.stdout.write(f"  Branches found: {len(branches)}")
-        self.stdout.write(f"  Rooms found: {len(rooms)}")
-        self.stdout.write(f"  Packages found: {len(packages)}")
-        self.stdout.write(f"  Events found: {len(events)}")
- 
-        if not branches:
-            self.stdout.write(self.style.WARNING(
-                "  No branches found -- bookings need a branch, so no bookings "
-                "will be created until your teammate adds Branch data."
-            ))
-        if not (rooms or packages or events):
-            self.stdout.write(self.style.WARNING(
-                "  No rooms, packages, or events found -- cart items can't be "
-                "created until at least one of those exists."
-            ))
-        if not loyalties:
-            self.stdout.write(self.style.WARNING(
-                "  No loyalty tiers found -- customers will be created with "
-                "loyalty left blank."
-            ))
- 
-        return loyalties, branches, rooms, packages, events
- 
+            for _ in range(options["customers"]):
+                customer = self._create_customer(catalogue["loyalties"])
+                made_customers += 1
+                for _ in range(random.randint(0, options["bookings_per_customer"])):
+                    if self._create_booking(customer, catalogue):
+                        made_bookings += 1
+
+        self.stdout.write(self.style.SUCCESS(
+            f"Done. {made_customers} customers, {made_bookings} bookings. "
+            f"Password for all demo customers: {DEMO_PASSWORD}"
+        ))
+
+    # ---------- housekeeping ----------
+
+    def _clear(self, queryset, label):
+        count = queryset.count()
+        queryset.delete()   # cascades to bookings and their items
+        self.stdout.write(f"Removed {count} ({label}).")
+
+    def _load_catalogue(self):
+        cat = {
+            "loyalties": list(Loyalty.objects.all()),
+            "branches": list(Branch.objects.all()),
+            "rooms": list(Room.objects.select_related("branch")),
+            "packages": list(Packages.objects.filter(is_active=True)),
+            "events": list(Event.objects.all()),
+            "activities": list(Activity.objects.all()),
+        }
+        self.stdout.write("Using existing catalogue (read-only): " +
+                          ", ".join(f"{len(v)} {k}" for k, v in cat.items()))
+        for name in ("branches", "rooms", "packages", "events", "activities"):
+            if not cat[name]:
+                self.stdout.write(self.style.WARNING(
+                    f"  No {name} found, so no bookings that need {name} will be made."))
+        return cat
+
     # ---------- customers ----------
- 
-    def _create_customers(self, count, loyalties):
-        customers = []
-        used_usernames = set()
-        for i in range(count):
-            first = fake.first_name()
-            last = fake.last_name()
-            username = f"{first}.{last}.{i}".lower()
-            if username in used_usernames:
-                username = f"{username}{random.randint(100, 999)}"
-            used_usernames.add(username)
- 
-            dob = fake.date_of_birth(minimum_age=18, maximum_age=80)
- 
-            customer = Customer.objects.create_user(
-                username=username,
-                email=fake.unique.email(),
-                password="TestPass123!",
-                first_name=first,
-                last_name=last,
-                dob=dob,
-                phone=fake.phone_number()[:20],
-                address=fake.address().replace("\n", ", ")[:255],
-                nid=fake.unique.bothify(text="??######???"),
-                loyalty=random.choice(loyalties) if loyalties else None,
-            )
-            customers.append(customer)
- 
-        self.stdout.write(f"  Customers: {len(customers)}")
-        return customers
- 
+
+    def _create_customer(self, loyalties):
+        first, last = fake.first_name(), fake.last_name()
+        slug = lambda s: re.sub(r"[^a-z0-9]", "", s.lower()) or "x"   # noqa: E731
+        while True:
+            username = f"{DEMO_PREFIX}{slug(first)}.{slug(last)}.{random.randint(1000, 9999)}"
+            if not Customer.objects.filter(username=username).exists():
+                break
+        return Customer.objects.create_user(
+            username=username,
+            email=fake.unique.email(),
+            password=DEMO_PASSWORD,
+            first_name=first,
+            last_name=last,
+            dob=fake.date_of_birth(minimum_age=18, maximum_age=80),
+            phone=fake.phone_number()[:20],
+            address=fake.address().replace("\n", ", ")[:255],
+            nid=fake.unique.bothify(text="??######???"),
+            loyalty=random.choice(loyalties) if loyalties else None,
+        )
+
     # ---------- bookings ----------
- 
-    def _create_bookings(self, customers, branches, rooms, packages, events, max_per_customer):
-        if not branches:
-            self.stdout.write(self.style.WARNING(
-                "  Skipping bookings: no Branch rows exist yet."
-            ))
-            return
-        if not (rooms or packages or events):
-            self.stdout.write(self.style.WARNING(
-                "  Skipping bookings: no Room, Package, or Event rows exist yet "
-                "to put in the cart."
-            ))
-            return
- 
-        rooms_by_branch = {}
-        for room in rooms:
-            rooms_by_branch.setdefault(room.branch_id, []).append(room)
- 
-        booking_count = 0
-        item_count = 0
- 
-        for customer in customers:
-            n_bookings = random.randint(0, max_per_customer)
-            for _ in range(n_bookings):
-                branch = random.choice(branches)
-                check_in = date.today() + timedelta(days=random.randint(-120, 120))
-                stay_length = random.randint(1, 10)
-                check_out = check_in + timedelta(days=stay_length)
-                status = random.choice(BOOKING_STATUSES)
- 
-                booking = Booking.objects.create(
-                    no_of_guests=random.randint(1, 6),
-                    check_in=check_in,
-                    check_out=check_out,
-                    bk_status=status,
-                    estimated_sum=0,  # filled in after items are created
-                    customer=customer,
-                    branch=branch,
-                )
-                booking_count += 1
- 
-                total = 0
-                n_items = random.randint(1, 3)
-                for _ in range(n_items):
-                    item_type = random.choices(
-                        ["room", "package", "event"], weights=[0.6, 0.25, 0.15]
-                    )[0]
-                    created = False
- 
-                    if item_type == "room" and rooms_by_branch.get(branch.branch_id):
-                        room = random.choice(rooms_by_branch[branch.branch_id])
-                        price = float(room.price) * stay_length
-                        Room_Item.objects.create(
-                            bi_type="room",
-                            price=round(price, 2),
-                            payment_method=random.choice(PAYMENT_METHODS),
-                            description=f"{room.room_type} room, {stay_length} night(s)",
-                            booking=booking,
-                            room=room,
-                            check_in=check_in,
-                            check_out=check_out,
-                        )
-                        total += price
-                        created = True
- 
-                    elif item_type == "package" and packages:
-                        package = random.choice(packages)
-                        guests = random.randint(1, 4)
-                        price = float(package.base_price) * guests
-                        Package_Item.objects.create(
-                            bi_type="package",
-                            price=round(price, 2),
-                            payment_method=random.choice(PAYMENT_METHODS),
-                            description=f"{package.p_name} for {guests} guest(s)",
-                            booking=booking,
-                            package=package,
-                            no_of_guests=guests,
-                        )
-                        total += price
-                        created = True
- 
-                    elif events:
-                        event = random.choice(events)
-                        guests = random.randint(1, 4)
-                        price = float(event.price_per_person) * guests
-                        Event_Item.objects.create(
-                            bi_type="event",
-                            price=round(price, 2),
-                            payment_method=random.choice(PAYMENT_METHODS),
-                            description=f"{event.title} for {guests} guest(s)",
-                            booking=booking,
-                            event=event,
-                            no_of_guests=guests,
-                        )
-                        total += price
-                        created = True
- 
-                    if created:
-                        item_count += 1
- 
-                booking.estimated_sum = round(total, 2)
-                booking.save(update_fields=["estimated_sum"])
- 
-        self.stdout.write(f"  Bookings: {booking_count}")
-        self.stdout.write(f"  Booking items: {item_count}")
+
+    def _create_booking(self, customer, cat):
+        today = date.today()
+
+        kinds, weights = [], []
+        for kind, key, weight in (("room", "rooms", 50), ("package", "packages", 20),
+                                  ("event", "events", 15), ("activity", "activities", 15)):
+            if cat[key]:
+                kinds.append(kind)
+                weights.append(weight)
+        if not kinds or not cat["branches"] and not cat["rooms"]:
+            return None
+        kind = random.choices(kinds, weights)[0]
+
+        start = today + timedelta(days=random.randint(-150, 150))
+        items = []          # dicts: type, price, description, extra (model kwargs)
+        booking_type = "stay"
+
+        if kind == "room":
+            room = random.choice(cat["rooms"])
+            guests = random.randint(1, ROOM_CAPACITY.get(room.room_type, 2))
+            nights = random.randint(1, 7)
+            ci, co = start, start + timedelta(days=nights)
+            branch = room.branch
+            items.append({
+                "type": "room", "price": room.price * nights,
+                "description": f"{room.room_type}, {room.branch.branch_name}",
+                "extra": {"room": room, "check_in": ci, "check_out": co},
+            })
+
+        elif kind == "package":
+            pkg = random.choice(cat["packages"])
+            guests = random.randint(1, 4)
+            ci, co = start, start + timedelta(days=pkg.nights)
+            branch = random.choice(cat["branches"]) if cat["branches"] else None
+            items.append({
+                "type": "package", "price": pkg.base_price * guests,
+                "description": pkg.p_name,
+                "extra": {"package": pkg, "no_of_guests": guests},
+            })
+
+        elif kind == "event":
+            ev = random.choice(cat["events"])
+            guests = random.randint(1, max(1, min(30, ev.max_attendees)))
+            ci = co = ev.eventdate
+            booking_type = "event"
+            branch = random.choice(cat["branches"]) if cat["branches"] else None
+            items.append({
+                "type": "event", "price": ev.price_per_person * guests,
+                "description": ev.title,
+                "extra": {"event": ev, "no_of_guests": guests},
+            })
+
+        else:  # activity only
+            act = random.choice(cat["activities"])
+            guests = random.randint(1, max(1, min(4, act.capacity)))
+            ci = co = start
+            booking_type = "activity"
+            branch = random.choice(cat["branches"]) if cat["branches"] else None
+            items.append(self._activity_item(act, guests, ci))
+
+        if branch is None:
+            return None
+
+        # activities booked on top of a stay, always inside the stay's dates
+        if booking_type == "stay" and cat["activities"] and random.random() < 0.4:
+            for act in random.sample(cat["activities"], k=min(len(cat["activities"]),
+                                                              random.randint(1, 2))):
+                day = ci + timedelta(days=random.randint(0, (co - ci).days))
+                items.append(self._activity_item(act, min(guests, act.capacity), day))
+
+        booking = Booking.objects.create(
+            booking_type=booking_type,
+            no_of_guests=guests,
+            check_in=ci,
+            check_out=co,
+            bk_status=self._status(ci, co, today),
+            estimated_sum=sum(i["price"] for i in items),
+            customer=customer,
+            branch=branch,
+        )
+
+        for item in items:
+            common = dict(
+                bi_type=item["type"], price=item["price"],
+                payment_method=random.choice(PAYMENT_METHODS),
+                description=item["description"], booking=booking,
+            )
+            model = {"room": Room_Item, "package": Package_Item,
+                     "event": Event_Item, "activity": Activity_Item}[item["type"]]
+            model.objects.create(**common, **item["extra"])
+        return booking
+
+    @staticmethod
+    def _activity_item(act, guests, day):
+        return {
+            "type": "activity", "price": act.price_per_person * guests,
+            "description": f"{act.act_name}, {act.location}",
+            "extra": {"activity": act, "activity_date": day, "no_of_guests": guests},
+        }
+
+    @staticmethod
+    def _status(ci, co, today):
+        if co < today:
+            return "cancelled" if random.random() < 0.15 else "completed"
+        if ci <= today:
+            return "confirmed"
+        return random.choices(["confirmed", "pending", "cancelled"], [60, 25, 15])[0]
