@@ -25,6 +25,24 @@
                     <li>Up to {{ event.max_attendees }} guests</li>
                 </ul>
             </div>
+            <div class="event-card-action">
+                <p class="event-card-price">
+                    <span class="price-amount">Rs {{ event.price|floatformat:"0g" }}</span>
+                    <span class="price-period">per guest</span>
+                </p>
+
+                <form method="post" action="{% url 'booking' %}" class="card-book-form">
+                    {% csrf_token %}
+                    <input type="hidden" name="current_tab" value="events">
+                    <input type="hidden" name="add_item" value="event-{{ event.id }}">
+
+                    <label>Guests
+                        <input type="number" name="guests" min="1" max="{{ event.max_attendees }}" value="2" required>
+                    </label>
+
+                    <button type="submit" class="btn-navy">Book Event</button>
+                </form>
+            </div>
         </div>
         {% endfor %}
     </div>

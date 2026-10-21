@@ -131,6 +131,7 @@ def events(request):
             'start_time': e.start_time,
             'end_time': e.end_time,
             'max_attendees': e.max_attendees,
+            'price': e.price_per_person,
         }
         for e in Event.objects.order_by("event_id")
     ]
