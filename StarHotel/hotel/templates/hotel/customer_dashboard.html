@@ -13,6 +13,18 @@
   .section-title.cancelled-title { margin-top:28px; }
   .past-booking-name .booking-status { margin-left:8px; }
   .muted-row { opacity:.75; }
+
+  /* cancel button / locked state */
+  button.btn-action { font-family: inherit; }
+  .booking-actions form { margin:0; }
+  .btn-cancel-locked { border:1px solid #d1d5db; color:#9ca3af; background:#f9fafb; cursor:not-allowed; }
+  .cancel-note { font-size:12px; color:#6b7280; align-self:center; }
+
+  /* flash messages */
+  .dash-message { padding:10px 14px; border-radius:6px; margin-bottom:16px; font-size:14px;
+                  background:#eef2ff; border:1px solid #c7d2fe; color:#1e3a8a; }
+  .dash-message.success { background:#f0fdf4; border-color:#bbf7d0; color:#166534; }
+  .dash-message.error   { background:#fef2f2; border-color:#fecaca; color:#991b1b; }
 </style>
 
     <div class="layout">
@@ -45,6 +57,10 @@
                 <a href="{% url 'home' %}" class="btn-home">HOME</a>
             </div>
 
+            {% for m in messages %}
+            <div class="dash-message {{ m.tags }}">{{ m }}</div>
+            {% endfor %}
+
             <h2 class="section-title">Your Bookings</h2>
 
             {% for c in upcoming %}
@@ -66,10 +82,18 @@
                     {% if c.extras %}
                     <p class="booking-extras">Also included: {{ c.extras|join:", " }}</p>
                     {% endif %}
-                    {% if c.can_modify or c.can_cancel or c.can_checkin %}
+                    {% if c.can_cancel or c.cancel_locked or c.can_checkin %}
                     <div class="booking-actions">
-                        {% if c.can_modify %}<a href="#" class="btn-action btn-modify">Modify</a>{% endif %}
-                        {% if c.can_cancel %}<a href="#" class="btn-action btn-cancel">Cancel</a>{% endif %}
+                        {% if c.can_cancel %}
+                        <form method="post" action="{% url 'cancel_booking' c.booking.bk_id %}"
+                              onsubmit="return confirm('Cancel this booking? This cannot be undone.');">
+                            {% csrf_token %}
+                            <button type="submit" class="btn-action btn-cancel">Cancel</button>
+                        </form>
+                        {% elif c.cancel_locked %}
+                        <button type="button" class="btn-action btn-cancel-locked" disabled>Cancel</button>
+                        <span class="cancel-note">Cancellation closes {{ cancel_window_hours }} hours before check-in.</span>
+                        {% endif %}
                         {% if c.can_checkin %}<a href="#" class="btn-action btn-checkin">Check-In</a>{% endif %}
                     </div>
                     {% endif %}
@@ -103,7 +127,7 @@
                         {% if c.single_day %}{{ c.booking.check_in|date:"d M Y" }}{% else %}{{ c.booking.check_in|date:"d M Y" }} &ndash; {{ c.booking.check_out|date:"d M Y" }}{% endif %}
                     </div>
                 </div>
-                <a href="{% url 'booking' %}" class="btn-book-again">Book again</a>
+                <a href="{% url 'book_again' c.booking.bk_id %}" class="btn-book-again">Book again</a>
             </div>
             {% empty %}
             <p>No past bookings yet.</p>
@@ -119,7 +143,7 @@
                         {% if c.single_day %}{{ c.booking.check_in|date:"d M Y" }}{% else %}{{ c.booking.check_in|date:"d M Y" }} &ndash; {{ c.booking.check_out|date:"d M Y" }}{% endif %}
                     </div>
                 </div>
-                <a href="{% url 'booking' %}" class="btn-book-again">Book again</a>
+                <a href="{% url 'book_again' c.booking.bk_id %}" class="btn-book-again">Book again</a>
             </div>
             {% endfor %}
             {% endif %}
