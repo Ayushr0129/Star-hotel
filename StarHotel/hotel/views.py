@@ -20,6 +20,8 @@ from .models import (
 )
 from datetime import datetime
 
+from django.core.exceptions import ObjectDoesNotExist
+
 CART_SESSION_KEY = "cart"
 
 # While developing, keep this False so you can click through the cart without
@@ -405,33 +407,71 @@ def register(request):
     return render(request, "hotel/register.html")
 
 
+def _booking_card(b, today):
+    """Everything the dashboard needs to draw one booking."""
+    items = list(b.booking_items.all())
+    main = next((i for i in items if i.bi_type != "activity"), items[0] if items else None)
+
+    title, image = f"Booking #{b.bk_id}", ACTIVITY_FALLBACK
+    if main:
+        title = main.description or title
+        try:
+            if main.bi_type == "room":
+                room = main.room_item.room
+                title, image = room.room_type, ROOM_IMAGES.get(room.room_type, "images/deluxe.jpg")
+            elif main.bi_type == "package":
+                pkg = main.package_item.package
+                title, image = pkg.p_name, PACKAGE_IMAGES.get(pkg.p_name, "images/Weekend.jpg")
+            elif main.bi_type == "event":
+                ev = main.event_item.event
+                title, image = ev.title, EVENT_IMAGES.get(ev.title, "images/wedding.webp")
+            elif main.bi_type == "activity":
+                act = main.activity_item.activity
+                title, image = act.act_name, ACTIVITY_IMAGES.get(act.act_name, ACTIVITY_FALLBACK)
+        except ObjectDoesNotExist:
+            pass
+
+    status = b.bk_status
+    bookable_ahead = status in ("pending", "confirmed") and b.check_in > today
+    return {
+        "booking": b,
+        "title": title,
+        "image": image,
+        "extras": [i.description for i in items if i is not main],
+        "status": status,
+        "status_label": status.title(),
+        "single_day": b.check_in == b.check_out,
+        "can_modify": bookable_ahead,
+        "can_cancel": bookable_ahead,
+        "can_checkin": status == "confirmed" and b.check_in <= today <= b.check_out,
+    }
+
+
 def customer_dashboard(request):
-    # login is n0t built yet, so fall back to the first customer in
-    # the DB for testing. Once login works, delete the fallback and rely
-    # only on request.user.customer.
-
     customer = get_current_customer(request)
-
     if customer is None:
         return render(request, "hotel/customer_dashboard.html", {"no_customers": True})
 
     today = date.today()
     bookings = customer.bookings.select_related("branch").prefetch_related(
         "booking_items"
-    ).order_by("-check_in")
+    ).order_by("check_in")
+    cards = [_booking_card(b, today) for b in bookings]
 
-    current_bookings = bookings.filter(check_out__gte=today)
-    past_bookings = bookings.filter(check_out__lt=today)
+    active = [c for c in cards if c["status"] != "cancelled"]
+    upcoming = [c for c in active if c["booking"].check_out >= today]
+    past = [c for c in active if c["booking"].check_out < today][::-1]
+    cancelled = [c for c in cards if c["status"] == "cancelled"]
 
-    total_nights = sum((b.check_out - b.check_in).days for b in bookings)
-    points = total_nights * 100
+    total_nights = sum((c["booking"].check_out - c["booking"].check_in).days for c in active)
 
     context = {
         "customer": customer,
-        "current_bookings": current_bookings,
-        "past_bookings": past_bookings,
-        "stays_count": bookings.count(),
-        "points": points,
+        "upcoming": upcoming,
+        "past": past,
+        "cancelled": cancelled,
+        "stays_count": len(active),
+        "points": total_nights * 100,   # placeholder formula, as before
     }
     return render(request, "hotel/customer_dashboard.html", context)
 
