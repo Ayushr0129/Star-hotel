@@ -2202,3 +2202,25 @@ header:has(~ main .layout) {
     cursor: pointer;
     font-weight: 600;
 }
+
+/* ===== Events Page ===== */
+
+.events-page {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 2rem 1.5rem;
+}
+
+.events-heading h1 {
+    margin: 0 0 0.25rem 0;
+}
+
+.events-heading .section-subtitle {
+    margin: 0 0 2rem 0;
+}
+
+.event-list {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+}
