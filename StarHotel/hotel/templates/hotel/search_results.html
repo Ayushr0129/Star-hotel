@@ -25,7 +25,7 @@
         </div>
         <div class="summary-box">
             <span class="summary-label">Guests</span>
-            <span class="summary-value">{{ guests|default:"Any" }}</span>
+            <span class="summary-value">{% if guests %}{{ guests }} Guest{{ guests|pluralize }}{% else %}Any{% endif %}</span>
         </div>
         <div class="summary-box sort-box">
             <span class="summary-label">Sort by</span>

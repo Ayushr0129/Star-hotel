@@ -90,7 +90,25 @@ PACKAGE_INCLUDES = {
 # Dev switch: False lets you click Pay without card details or the policy tick.
 # Set to True before your demo / submission.
 REQUIRE_PAYMENT_DETAILS = False
- 
+
+def _parse_guests(value):
+    """'2' or '2 Guests' -> 2. Anything unusable -> None."""
+    digits = ''.join(ch for ch in (value or '') if ch.isdigit())
+    if not digits:
+        return None
+    n = int(digits)
+    return n if 1 <= n <= 20 else None
+
+
+def _parse_price_range(value):
+    """'10000-15000' -> (10000, 15000). Anything unusable -> None."""
+    try:
+        low, high = (value or '').split('-')
+        low, high = int(low), int(high)
+    except ValueError:
+        return None
+    return (low, high) if 0 <= low <= high else None
+
 def packages(request):
     cards = [
         {
@@ -322,17 +340,30 @@ def home(request):
  
  
 def search_results(request):
-    branch = request.GET.get('branch', '')
-    check_in_raw = request.GET.get('check_in', '')
-    check_out_raw = request.GET.get('check_out', '')
-    guests = request.GET.get('guests', '')
- 
-    check_in = ''
-    check_out = ''
-    if check_in_raw:
-        check_in = datetime.strptime(check_in_raw, '%Y-%m-%d')
-    if check_out_raw:
-        check_out = datetime.strptime(check_out_raw, '%Y-%m-%d')
+    branch = request.GET.get('branch', '').strip()
+    room_type = request.GET.get('room_type', '').strip()
+    price_range = request.GET.get('price_range', '').strip()
+    amenities = request.GET.getlist('amenities')
+    check_in_raw = request.GET.get('check_in', '').strip()
+    check_out_raw = request.GET.get('check_out', '').strip()
+
+    guests = _parse_guests(request.GET.get('guests', ''))
+    price_bounds = _parse_price_range(price_range)
+    check_in = _parse_date(check_in_raw)
+    check_out = _parse_date(check_out_raw)
+
+    errors = []
+    if check_in_raw and check_in is None:
+        errors.append("That check-in date isn't valid.")
+    if check_out_raw and check_out is None:
+        errors.append("That check-out date isn't valid.")
+    if check_in and check_in < date.today():
+        errors.append("Check-in cannot be in the past.")
+    if check_in and check_out and check_out <= check_in:
+        errors.append("Check-out must be after check-in.")
+    if errors:
+        check_in = check_out = None
+
  
     rooms = [
         {
