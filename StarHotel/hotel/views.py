@@ -375,6 +375,8 @@ def search_results(request):
         'check_in': check_in,
         'check_out': check_out,
         'guests': guests,
+        'check_in_raw': check_in_raw,
+        'check_out_raw': check_out_raw,
     }
     return render(request, "hotel/search_results.html", context)
  

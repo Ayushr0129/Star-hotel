@@ -38,68 +38,80 @@
     </div>
 
     <div class="search-results-body">
+    
         <aside class="filter-sidebar">
-            <h2>Filter Rooms</h2>
+            <form id="filterForm" method="get" action="{% url 'search_results' %}">
+                <h2>Filter Rooms</h2>
 
-            <div class="filter-group">
-                <label for="hotelBranch">Hotel Branch</label>
-                <select id="hotelBranch" name="hotel_branch">
-                    <option>All branches</option>
-                </select>
-            </div>
+                <input type="hidden" name="check_in" value="{{ check_in_raw }}">
+                <input type="hidden" name="check_out" value="{{ check_out_raw }}">
 
-            <div class="filter-group">
-                <label for="roomType">Room Type</label>
-                <select id="roomType" name="room_type">
-                    <option>All room types</option>
-                    <option>Standard Room</option>
-                    <option>Deluxe Room</option>
-                    <option>Executive Room</option>
-                    <option>Family Suite</option>
-                </select>
-            </div>
-
-            <div class="filter-group">
-                <label for="priceRange">Price Range</label>
-                <select id="priceRange" name="price_range">
-                    <option>Rs 5,000 - Rs 10,000</option>
-                    <option>Rs 10,000 - Rs 15,000</option>
-                    <option>Rs 15,000 - Rs 20,000</option>
-                    <option>Rs 20,000 - Rs 25,000</option>
-                    <option>All price range</option>
-                </select>
-            </div>
-
-            <div class="filter-group">
-                <label for="numGuests">Number of Guests</label>
-                <select id="numGuests" name="num_guests">
-                    <option>1 Guest</option>
-                    <option>2 Guests</option>
-                    <option>3 Guests</option>
-                    <option>4 Guests</option>
-                </select>
-            </div>
-
-            <div class="filter-group">
-                <label>Amenities</label>
-                <div class="amenities-checkboxes">
-                    <label class="amenity-item">
-                        <input type="checkbox" name="amenities" value="wifi">
-                        Wi-Fi
-                    </label>
-                    <label class="amenity-item">
-                        <input type="checkbox" name="amenities" value="breakfast">
-                        Breakfast
-                    </label>
-                    <label class="amenity-item">
-                        <input type="checkbox" name="amenities" value="sea_view">
-                        Sea View
-                    </label>
+                <div class="filter-group">
+                    <label for="hotelBranch">Hotel Branch</label>
+                    <select id="hotelBranch" name="branch">
+                        <option value="">All branches</option>
+                        <option value="Mont Choisy">Mont Choisy</option>
+                        <option value="Surinam">Surinam</option>
+                        <option value="Belle Mare">Belle Mare</option>
+                        <option value="Flic en Flac">Flic en Flac</option>
+                    </select>
                 </div>
-            </div>
 
-            <button type="button" class="apply-filters-btn">Apply Filters</button>
+                <div class="filter-group">
+                    <label for="roomType">Room Type</label>
+                    <select id="roomType" name="room_type">
+                        <option value="">All room types</option>
+                        <option value="Standard Room">Standard Room</option>
+                        <option value="Deluxe Room">Deluxe Room</option>
+                        <option value="Executive Room">Executive Room</option>
+                        <option value="Family Suite">Family Suite</option>
+                    </select>
+                </div>
+
+                <div class="filter-group">
+                    <label for="priceRange">Price Range</label>
+                    <select id="priceRange" name="price_range">
+                        <option value="">All price ranges</option>
+                        <option value="5000-10000">Rs 5,000 - Rs 10,000</option>
+                        <option value="10000-15000">Rs 10,000 - Rs 15,000</option>
+                        <option value="15000-20000">Rs 15,000 - Rs 20,000</option>
+                        <option value="20000-25000">Rs 20,000 - Rs 25,000</option>
+                    </select>
+                </div>
+
+                <div class="filter-group">
+                    <label for="numGuests">Number of Guests</label>
+                    <select id="numGuests" name="guests">
+                        <option value="">Any</option>
+                        <option value="1">1 Guest</option>
+                        <option value="2">2 Guests</option>
+                        <option value="3">3 Guests</option>
+                        <option value="4">4 Guests</option>
+                    </select>
+                </div>
+
+                <div class="filter-group">
+                    <label>Amenities</label>
+                    <div class="amenities-checkboxes">
+                        <label class="amenity-item">
+                            <input type="checkbox" name="amenities" value="wifi">
+                            Wi-Fi
+                        </label>
+                        <label class="amenity-item">
+                            <input type="checkbox" name="amenities" value="breakfast">
+                            Breakfast
+                        </label>
+                        <label class="amenity-item">
+                            <input type="checkbox" name="amenities" value="sea_view">
+                            Sea View
+                        </label>
+                    </div>
+                </div>
+
+                <button type="submit" class="apply-filters-btn">Apply Filters</button>
+            </form>
         </aside>
+        
 
         <div class="room-listings">
             {% for room in rooms %}
