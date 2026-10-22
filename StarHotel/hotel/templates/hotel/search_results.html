@@ -50,10 +50,9 @@
                     <label for="hotelBranch">Hotel Branch</label>
                     <select id="hotelBranch" name="branch">
                         <option value="">All branches</option>
-                        <option value="Mont Choisy">Mont Choisy</option>
-                        <option value="Surinam">Surinam</option>
-                        <option value="Belle Mare">Belle Mare</option>
-                        <option value="Flic en Flac">Flic en Flac</option>
+                        {% for b in branches %}
+                        <option value="{{ b.branch_name }}">{{ b.branch_name }}</option>
+                        {% endfor %}
                     </select>
                 </div>
 

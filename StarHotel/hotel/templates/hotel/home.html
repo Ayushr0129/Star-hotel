@@ -12,12 +12,11 @@
     <form class="booking-bar" action="{% url 'search_results' %}" method="GET">
         <div class="booking-field">
             <label>Hotel Branch</label>
-            <select name="branch">
-                <option>Select Branch</option>
-                <option>Mont Choisy</option>
-                <option>Surinam</option>
-                <option>Belle Mare</option>
-                <option>Flic en Flac</option>
+                <select name="branch">
+                <option value="">All branches</option>
+                {% for b in branches %}
+                <option value="{{ b.branch_name }}">{{ b.branch_name }}</option>
+                {% endfor %}
             </select>
         </div>
         <div class="booking-field">

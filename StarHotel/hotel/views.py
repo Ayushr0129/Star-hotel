@@ -318,7 +318,7 @@ def home(request):
             'url_name': 'room_details_family'
         },
     ]
-    return render(request, "hotel/home.html", {"rooms": rooms})
+    return render(request, "hotel/home.html", {"rooms": rooms, "branches": Branch.objects.order_by("branch_name"),})
  
  
 def search_results(request):
@@ -377,6 +377,7 @@ def search_results(request):
         'guests': guests,
         'check_in_raw': check_in_raw,
         'check_out_raw': check_out_raw,
+        'branches': Branch.objects.order_by('branch_name'),
     }
     return render(request, "hotel/search_results.html", context)
  
