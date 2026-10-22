@@ -2280,3 +2280,12 @@ header:has(~ main .layout) {
     font-size: 0.9rem;
     color: #555;
 }
+
+.search-error {
+    background: #fdecea;
+    color: #b3261e;
+    border: 1px solid #f5c2c0;
+    border-radius: 6px;
+    padding: 0.6rem 1rem;
+    margin-bottom: 1rem;
+}

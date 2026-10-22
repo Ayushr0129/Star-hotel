@@ -10,6 +10,10 @@
         <p class="results-count">{{ rooms|length }} rooms found for your selected dates</p>
     </div>
 
+    {% for e in errors %}
+    <div class="search-error">{{ e }}</div>
+    {% endfor %}
+
     <div class="search-summary-bar">
          <div class="summary-box">
             <span class="summary-label">Hotel Branch</span>
