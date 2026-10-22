@@ -80,6 +80,7 @@ class Administrator(Employee):
 
 class Room(models.Model):
     room_id = models.AutoField(primary_key=True)
+    room_number = models.CharField(max_length=10, blank=True, default='')
     room_type = models.CharField(max_length=50)
     room_status = models.CharField(max_length=20, default='available')
     price = models.DecimalField(max_digits=10, decimal_places=2)
@@ -93,6 +94,13 @@ class Room(models.Model):
         return f"{self.room_type} - {self.branch.branch_name}"
 
 class Booking(models.Model):
+    TYPE_CHOICES = [
+        ('stay', 'Stay'),
+        ('event', 'Event'),
+        ('activity', 'Activity'),
+    ]    
+    booking_type = models.CharField(max_length=10, choices=TYPE_CHOICES, default='stay')   # <-- NEW
+             
     bk_id = models.AutoField(primary_key=True)
     no_of_guests = models.PositiveIntegerField()
     check_in = models.DateField()
@@ -146,7 +154,7 @@ class Room_Item(Booking_Item):
 class Activity(models.Model):
     act_id = models.AutoField(primary_key=True)
     act_name = models.CharField(max_length=100)
-    act_date = models.DateField()
+    act_date = models.DateField(null=True, blank=True)
     location = models.CharField(max_length=150)
     capacity = models.PositiveIntegerField()
     duration = models.PositiveIntegerField(help_text="Duration in minutes")
@@ -154,6 +162,18 @@ class Activity(models.Model):
 
     def __str__(self):
         return self.act_name
+
+class Activity_Item(Booking_Item):
+    activity = models.ForeignKey(
+        Activity,
+        on_delete=models.PROTECT,
+        related_name='activity_items'
+    )
+    activity_date = models.DateField()
+    no_of_guests = models.PositiveIntegerField()
+
+    def __str__(self):
+        return f"Activity Item - {self.activity.act_name}"
 
 class Event(models.Model):
     event_id = models.AutoField(primary_key=True)
@@ -177,6 +197,7 @@ class Packages(models.Model):
     is_active = models.BooleanField(default=True)
     valid_from = models.DateField()
     valid_to = models.DateField()
+    nights = models.PositiveSmallIntegerField(default=2)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
@@ -205,3 +226,4 @@ class Event_Item(Booking_Item):
 
     def __str__(self):
         return f"Event Item - {self.event.title}"
+

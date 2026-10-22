@@ -1,0 +1,142 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+    <style>
+    .sidebar { position: sticky; top: 0; height: 100vh; align-self: flex-start; }
+
+    .content.dashboard-page { padding: 40px; min-width: 0; }
+    .content.dashboard-page > * { max-width: 1100px; margin-left: auto; margin-right: auto; }
+
+    .content.dashboard-page > .cards { gap: 32px; margin-bottom: 40px; }
+    .dashboard-page .card { min-height: 190px; display: flex; flex-direction: column; justify-content: space-between; border-radius: 10px; }
+    .dashboard-page .card-top { padding: 20px; font-size: 16px; }
+    .dashboard-page .card-amount { font-size: 30px; margin-top: 10px; }
+    .dashboard-page .card-meta { font-size: 13px; }
+    .dashboard-page .card svg { height: 90px; }
+
+    .dashboard-page .revenue-row { margin-bottom: 24px; }
+    .dashboard-page .revenue-row h2 { font-size: 24px; color: #0b2a5b; }
+    .dashboard-page .week-btn { padding: 10px 24px; font-size: 14px; border-radius: 6px; }
+
+    .content.dashboard-page > .chart { gap: 0; padding: 28px 28px 14px; margin-bottom: 40px; background: #fff; border: 1px solid #dfe3f5; border-radius: 14px; }
+    .dashboard-page .bar-col { padding: 0 12px; font-size: 13px; color: #0b2a5b; }
+    .dashboard-page .bar-area { height: 340px; border-top: 1px solid #e3e6f5; background: repeating-linear-gradient(to top, #e3e6f5 0, #e3e6f5 1px, transparent 1px, transparent 25%); }
+    .dashboard-page .bar { width: 60%; max-width: 72px; border-radius: 8px 8px 0 0; background: #34506f; transition: background .2s; }
+    .dashboard-page .bar:hover { background: #0b2a5b; }
+    .dashboard-page .bar-col span { margin-top: 10px; font-weight: bold; }
+
+    .content.dashboard-page > .bookings { width: min(100%, 1100px); margin: 0 auto 40px; font-size: 14px; background: #fff; }
+    .dashboard-page .bookings th { padding: 14px 12px; font-size: 14px; color: #0b2a5b; }
+    .dashboard-page .bookings td { padding: 14px 12px; border-bottom: 1px solid #d9dcef; }
+    .dashboard-page .bookings tbody tr:hover { background: #f4f5fc; }
+    
+    .content.dashboard-page { background: #f4f5fc; }
+  </style>
+<head>
+  <meta charset="UTF-8">
+  <title>Admin Dashboard</title>
+  <link rel="stylesheet" href="{% static 'css/admin.css' %}">
+</head>
+<body>
+  <div class="layout">
+    <aside class="sidebar">
+      <div class="logo"></div>
+      <nav>
+        <a href="{% url 'admin_dashboard' %}" class="active">Dashboard</a>
+        <a href="{% url 'admin_profile' %}">Profile</a>
+        <a href="{% url 'admin_action' %}">Administrative action</a>
+      </nav>
+      <div class="sidebar-bottom">
+        <a href="#">Logout</a>
+      </div>
+    </aside>
+
+    <main class="content dashboard-page">
+
+
+      <section class="cards">
+        <div class="card">
+          <div class="card-top">
+            <div>
+              <span class="card-label">→] Check-In</span>
+              <p class="card-amount">Rs35000</p>
+            </div>
+            <div class="card-meta">
+              <small>Updated</small><small>2 mins ago</small>
+              <span>+Rs50</span><span>1.24%</span>
+            </div>
+          </div>
+          <svg viewBox="0 0 160 40" preserveAspectRatio="none"><path d="M0 30 C20 15,40 35,60 25 S100 15,120 22 S150 10,160 5 L160 40 L0 40 Z"/></svg>
+        </div>
+
+        <div class="card">
+          <div class="card-top">
+            <div>
+              <span class="card-label">Check-out</span>
+              <p class="card-amount">Rs27500</p>
+            </div>
+            <div class="card-meta">
+              <small>Updated</small><small>2 mins ago</small>
+              <span>+Rs32.50</span><span>0.88%</span>
+            </div>
+          </div>
+          <svg viewBox="0 0 160 40" preserveAspectRatio="none"><path d="M0 30 C20 15,40 35,60 25 S100 15,120 22 S150 10,160 5 L160 40 L0 40 Z"/></svg>
+        </div>
+
+        <div class="card">
+          <div class="card-top">
+            <div>
+              <span class="card-label">New Bookings</span>
+              <p class="card-amount">Rs135000</p>
+            </div>
+            <div class="card-meta">
+              <small>Updated</small><small>2 mins ago</small>
+              <span>+Rs50</span><span>1.24%</span>
+            </div>
+          </div>
+          <svg viewBox="0 0 160 40" preserveAspectRatio="none"><path d="M0 30 C20 15,40 35,60 25 S100 15,120 22 S150 10,160 5 L160 40 L0 40 Z"/></svg>
+        </div>
+      </section>
+
+  
+      <section class="revenue-row">
+        <h2>Total Revenue <span>Rs 5,500,000</span></h2>
+        <button class="week-btn">This week</button>
+      </section>
+
+      <section class="chart">
+        <div class="bar-col"><div class="bar-area"><div class="bar" style="height:36%"></div></div><span>Sat</span></div>
+        <div class="bar-col"><div class="bar-area"><div class="bar" style="height:58%"></div></div><span>Sun</span></div>
+        <div class="bar-col"><div class="bar-area"><div class="bar" style="height:30%"></div></div><span>Mon</span></div>
+        <div class="bar-col"><div class="bar-area"><div class="bar" style="height:56%"></div></div><span>Tues</span></div>
+        <div class="bar-col"><div class="bar-area"><div class="bar" style="height:98%"></div></div><span>Wed</span></div>
+        <div class="bar-col"><div class="bar-area"><div class="bar" style="height:68%"></div></div><span>Thurs</span></div>
+        <div class="bar-col"><div class="bar-area"><div class="bar" style="height:59%"></div></div><span>Fri</span></div>
+      </section>
+
+      
+      <table class="bookings">
+        <thead>
+          <tr>
+            <th>BookingID ↑↓</th>
+            <th>Guest Name ↑↓</th>
+            <th>Duration</th>
+            <th>Room Number ↑↓</th>
+            <th>Room Type ↑↓</th>
+            <th>Check-In &amp; Check-Out ↑↓</th>
+            <th>Status ↑↓</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><td>BID1100741</td><td>Angela Corn</td><td>4 nights</td><td>Room 101</td><td>Standard</td><td>May 10, 2026 - May 13, 2026</td><td>Pending</td></tr>
+          <tr><td>BID1100742</td><td>David Moore</td><td>3 nights</td><td>Room 106</td><td>Standard</td><td>May 10, 2026 - May 13, 2026</td><td>Confirmed</td></tr>
+          <tr><td>BID1100743</td><td>Marcus Carlsen</td><td>8 nights</td><td>Room 120</td><td>Deluxe</td><td>May 10, 2026 - May 13, 2026</td><td>Confirmed</td></tr>
+          <tr><td>BID1100749</td><td>Angelina dave</td><td>2 nights</td><td>Room 124</td><td>Suit</td><td>May 10, 2026 - May 13, 2026</td><td>Confirmed</td></tr>
+          <tr><td>BID1100744</td><td>Jennifer Aniston</td><td>4 nights</td><td>Room 102</td><td>Suit</td><td>May 10, 2026 - May 13, 2026</td><td>Confirmed</td></tr>
+        </tbody>
+      </table>
+
+    </main>
+  </div>
+</body>
+</html>

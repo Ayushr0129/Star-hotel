@@ -36,7 +36,7 @@ Executive Room | Star Hotel
             <div class="room-info-panel">
                 <div class="room-price-block">
                     <span class="price-label">Price</span>
-                    <p class="room-price">Rs 17,000 <span class="price-per">/ night</span></p>
+                    <p class="room-price">Rs 18,000 <span class="price-per">/ night</span></p>
                 </div>
 
                 <div class="room-spec-block">
@@ -68,42 +68,46 @@ Executive Room | Star Hotel
 
             <div class="room-booking-widget">
                 <h3>Book This Room</h3>
+                <form method="post" action="{% url 'booking' %}">
+                    {% csrf_token %}
+                    <input type="hidden" name="current_tab" value="rooms">
+                    <input type="hidden" name="add_item" value="room-{{ room.room_id }}">
 
-                <div class="booking-widget-row">
-                    <div class="booking-widget-field">
-                        <label>Check-in</label>
-                        <input type="date" name="checkin">
+                    <div class="booking-widget-row">
+                        <div class="booking-widget-field">
+                            <label>Check-in</label>
+                            <input type="date" name="checkin">
+                        </div>
+                        <div class="booking-widget-field">
+                            <label>Check-out</label>
+                            <input type="date" name="checkout">
+                        </div>
                     </div>
-                    <div class="booking-widget-field">
-                        <label>Check-out</label>
-                        <input type="date" name="checkout">
-                    </div>
-                </div>
 
-                <div class="booking-widget-row">
-                    <div class="booking-widget-field">
-                        <label>Guests</label>
-                        <select name="guests">
-                            <option>2 Guests</option>
-                            <option>1 Guest</option>
-                        </select>
+                    <div class="booking-widget-row">
+                        <div class="booking-widget-field">
+                            <label>Guests</label>
+                            <select name="guests">
+                                <option>2 Guests</option>
+                                <option>1 Guest</option>
+                            </select>
+                        </div>
+                        <div class="booking-widget-field">
+                            <label>Package</label>
+                            <select name="package">
+                                <option>Standard</option>
+                                <option>Breakfast Package</option>
+                                <option>Half Board</option>
+                            </select>
+                        </div>
                     </div>
-                    <div class="booking-widget-field">
-                        <label>Package</label>
-                        <select name="package">
-                            <option>Standard</option>
-                            <option>Breakfast Package</option>
-                            <option>Half Board</option>
-                        </select>
+
+                    <div class="booking-widget-total">
+                        <span>Estimated Total</span>
+                        <p>Rs 17,000</p>
                     </div>
-                </div>
 
-                <div class="booking-widget-total">
-                    <span>Estimated Total</span>
-                    <p>Rs 17,000</p>
-                </div>
-
-                <button type="button" class="btn-navy btn-book-now">Book Now</button>
+                <button type="submit" class="btn-navy btn-book-now">Book Now</button>
             </div>
         </div>
     </div>

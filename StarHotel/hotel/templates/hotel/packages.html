@@ -1,0 +1,60 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Packages & Promotions - Star Hotel{% endblock %}
+
+{% block content %}
+<div class="packages-page">
+    <div class="packages-heading">
+        <h1>Packages &amp; Promotions</h1>
+        <p class="section-subtitle">Make your stay even more memorable with our exclusive offers.</p>
+    </div>
+    <div class="package-list">
+        {% for package in packages %}
+        <div class="package-card" id="{{ package.slug }}">
+            <div class="package-card-image">
+                <img src="{% static package.image_path %}" alt="{{ package.name }}">
+            </div>
+
+            <div class="package-card-info">
+                <h3 class="package-card-name">{{ package.name }}</h3>
+                <p class="package-card-description">{{ package.description }}</p>
+                <ul class="package-card-includes">
+                    {% for item in package.includes %}
+                    <li>{{ item }}</li>
+                    {% endfor %}
+                </ul>
+                    <p class="package-card-valid">Valid {{ package.valid_from|date:"d M Y" }} - {{ package.valid_to|date:"d M Y" }}</p>
+            </div>
+            <div class="package-card-action">
+                <p class="package-card-price">
+                    <span class="price-amount">Rs {{ package.price|floatformat:"0g" }}</span>
+                    <span class="price-period">per guest &middot; {{ package.nights }} nights</span>
+                </p>
+                    <form method="post" action="{% url 'booking' %}" class="card-book-form">
+                    {% csrf_token %}
+                    <input type="hidden" name="current_tab" value="packages">
+                    <input type="hidden" name="add_item" value="package-{{ package.id }}">
+
+                    <label>Check-in
+                        <input type="date" name="checkin" required>
+                    </label>
+                    <label>Guests
+                        <select name="guests">
+                            <option value="1">1</option>
+                            <option value="2" selected>2</option>
+                            <option value="3">3</option>
+                            <option value="4">4</option>
+                            <option value="5">5</option>
+                            <option value="6">6</option>
+                        </select>
+                    </label>
+
+                    <button type="submit" class="btn-navy">Book Package</button>
+                </form>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}
