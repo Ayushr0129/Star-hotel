@@ -125,6 +125,7 @@
 
                 <div class="room-card-info">
                     <h3 class="room-card-name">{{ room.name }}</h3>
+                    <p class="room-card-branch">{{ room.branch }}</p>
                     <p class="room-card-guests">{{ room.guests }} Guests</p>
 
                     <ul class="room-card-features">
@@ -136,7 +137,7 @@
 
                 <div class="room-card-action">
                     <p class="room-card-price">
-                        <span class="price-amount">Rs {{ room.price }}</span>
+                        <span class="price-amount">Rs {{ room.price|floatformat:"0g" }}</span>
                         <span class="price-period">per night</span>
                     </p>
                     <a href="{% url room.url_name %}" class="view-details-btn">View Details</a>

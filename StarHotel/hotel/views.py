@@ -96,7 +96,34 @@ PACKAGE_INCLUDES = {
     "Romantic Escape": ['2-night stay', 'Breakfast', 'Spa access', 'Special dinner'],
     "Family Fun Package": ['2-night stay', 'Breakfast', "Children's activities", 'Late checkout'],
 }
- 
+
+# Room has no capacity/bed/amenity fields, so this holds them by room type.
+ROOM_INFO = {
+    "Standard Room": {
+        "guests": 2,
+        "features": ["Queen Bed", "Free Wi-Fi", "Air Conditioning"],
+        "amenities": ["wifi"],
+        "url_name": "room_details_standard",
+    },
+    "Deluxe Room": {
+        "guests": 2,
+        "features": ["King Bed", "Free Wi-Fi", "Breakfast Included"],
+        "amenities": ["wifi", "breakfast"],
+        "url_name": "room_details_deluxe",
+    },
+    "Executive Room": {
+        "guests": 3,
+        "features": ["King Bed", "Sea View", "Breakfast Included"],
+        "amenities": ["breakfast", "sea_view"],
+        "url_name": "room_details_executive",
+    },
+    "Family Suite": {
+        "guests": 4,
+        "features": ["2 Double Beds", "Sea View", "Breakfast Included"],
+        "amenities": ["breakfast", "sea_view"],
+        "url_name": "room_details_family",
+    },
+}
 # Dev switch: False lets you click Pay without card details or the policy tick.
 # Set to True before your demo / submission.
 REQUIRE_PAYMENT_DETAILS = False
@@ -376,41 +403,28 @@ def search_results(request):
     if errors:
         check_in = check_out = None
 
- 
-    rooms = [
-        {
-            'name': 'Standard Room',
-            'price': '8,000',
-            'guests': 2,
-            'features': ['Queen Bed', 'Free Wi-Fi', 'Air Conditioning'],
-            'image_path': 'images/standard-thumb-1.jpg',
-            'url_name': 'room_details_standard'
-        },
-        {
-            'name': 'Deluxe Room',
-            'price': '10,000',
-            'guests': 2,
-            'features': ['King Bed', 'Free Wi-Fi', 'Breakfast Included'],
-            'image_path': 'images/deluxe.jpg',
-            'url_name': 'room_details_deluxe'
-        },
-        {
-            'name': 'Executive Room',
-            'price': '18,000',
-            'guests': 3,
-            'features': ['King Bed', 'Sea View', 'Breakfast Included'],
-            'image_path': 'images/executive-thumb-1.jpg',
-            'url_name': 'room_details_executive'
-        },
-        {
-            'name': 'Family Suite',
-            'price': '21,000',
-            'guests': 4,
-            'features': ['2 Double Beds', 'Sea View', 'Breakfast Included'],
-            'image_path': 'images/family-thumb-1.jpg',
-            'url_name': 'room_details_family'
-        },
-    ]
+    rooms = []
+    room_qs = Room.objects.select_related("branch").filter(
+        room_status="available"
+    ).order_by("price", "room_id")
+
+    for r in room_qs:
+        info = ROOM_INFO.get(r.room_type)
+        if info is None:
+            continue    # a room type we have no display info for
+        rooms.append({
+            'room_id': r.room_id,
+            'name': r.room_type,
+            'branch': r.branch.branch_name,
+            'price': r.price,
+            'guests': info['guests'],
+            'features': info['features'],
+            'amenities': info['amenities'],
+            'image_path': ROOM_IMAGES.get(r.room_type, "images/deluxe.jpg"),
+            'url_name': info['url_name'],
+        })
+
+
  
     context = {
         'rooms': rooms,
