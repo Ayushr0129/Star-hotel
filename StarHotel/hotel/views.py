@@ -21,9 +21,12 @@ from .models import (
 from datetime import datetime
 from datetime import time as dtime
  
-from django.core.exceptions import ObjectDoesNotExist
+from django.core.exceptions import ObjectDoesNotExist, ValidationError
 from django.utils import timezone
- 
+
+import re
+from django.core.validators import validate_email
+
 CART_SESSION_KEY = "cart"
  
 # Customers can cancel a booking only if check-in is at least this many hours away.
@@ -602,7 +605,75 @@ def get_current_customer(request):
         except Customer.DoesNotExist:
             pass
     return Customer.objects.select_related("loyalty").first()
- 
+
+def customer_profile_edit(request):
+    customer = get_current_customer(request)
+    if customer is None:
+        return redirect("customer_profile")
+
+    fields = ("first_name", "last_name", "email", "phone", "address", "dob")
+    form = {
+        "first_name": customer.first_name,
+        "last_name": customer.last_name,
+        "email": customer.email,
+        "phone": customer.phone,
+        "address": customer.address,
+        "dob": customer.dob.isoformat() if customer.dob else "",
+    }
+    errors = []
+
+    if request.method == "POST":
+        form = {f: request.POST.get(f, "").strip() for f in fields}
+
+        if not form["first_name"]:
+            errors.append("First name is required.")
+        elif len(form["first_name"]) > 150:
+            errors.append("First name is too long (150 characters maximum).")
+
+        if not form["last_name"]:
+            errors.append("Last name is required.")
+        elif len(form["last_name"]) > 150:
+            errors.append("Last name is too long (150 characters maximum).")
+
+        try:
+            validate_email(form["email"])
+            if len(form["email"]) > 254:
+                raise ValidationError("too long")
+        except ValidationError:
+            errors.append("Enter a valid email address.")
+
+        if form["phone"] and not re.fullmatch(r"[0-9 +().\-xX]{6,20}", form["phone"]):
+            errors.append("Phone must be 6 to 20 characters: digits, spaces, + ( ) . - or x for an extension.")
+
+        if len(form["address"]) > 255:
+            errors.append("Address is too long (255 characters maximum).")
+
+        dob = None
+        if form["dob"]:
+            try:
+                dob = date.fromisoformat(form["dob"])
+            except ValueError:
+                errors.append("Enter a valid date of birth.")
+            else:
+                if dob >= date.today():
+                    errors.append("Date of birth must be in the past.")
+
+        if not errors:
+            customer.first_name = form["first_name"]
+            customer.last_name = form["last_name"]
+            customer.email = form["email"]
+            customer.phone = form["phone"]
+            customer.address = form["address"]
+            customer.dob = dob
+            customer.save(update_fields=[
+                "first_name", "last_name", "email", "phone", "address", "dob",
+            ])
+            messages.success(request, "Your details were updated.")
+            return redirect("customer_profile")
+
+    context = {"customer": customer, "form": form, "errors": errors}
+    return render(request, "hotel/customer_profile_edit.html", context)
+
 def customer_profile(request):
     customer = get_current_customer(request)
  
