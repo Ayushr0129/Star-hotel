@@ -979,6 +979,10 @@ header:has(~ main .layout) {
     border-bottom: 2px solid #e5e7eb;
 }
 
+.progress-fill {
+    width: var(--progress-width, 0%);
+}
+
 .tab-highlight {
     position: absolute;
     top: 0;
@@ -2512,4 +2516,3 @@ main:has(.auth-page) { padding: 0; min-height: 0; }
     margin-bottom: 1rem;
 }
 
-}

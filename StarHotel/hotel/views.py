@@ -11,9 +11,8 @@ from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse
 from .models import (
     Customer, Room, Packages, Event, Activity, Branch,
-    Booking, Room_Item, Package_Item, Event_Item, Activity_Item,
+    Booking, Room_Item, Package_Item, Event_Item, Activity_Item,Loyalty
 )
- 
 from .models import (
     Customer, Room, Packages, Event, Branch,
     Booking, Room_Item, Package_Item, Event_Item,
@@ -35,6 +34,14 @@ CANCEL_WINDOW_HOURS = 48
 # While developing, keep this False so you can click through the cart without
 # filling in guest details. Set it to True before your demo / submission.
 REQUIRE_GUEST_DETAILS = False
+
+POINT_UNIT = Decimal("100")          # Rs spent per base point
+TIERS = [                            # (tier name, lifetime points needed), lowest first
+    ("Bronze", 0),
+    ("Silver", 500),
+    ("Gold", 1500),
+    ("Platinum", 3000),
+]
  
 ROOM_IMAGES = {
     "Standard Room": "images/standard-thumb-1.jpg",
@@ -93,6 +100,8 @@ PACKAGE_INCLUDES = {
 # Dev switch: False lets you click Pay without card details or the policy tick.
 # Set to True before your demo / submission.
 REQUIRE_PAYMENT_DETAILS = False
+
+
 
 def _parse_guests(value):
     """'2' or '2 Guests' -> 2. Anything unusable -> None."""
@@ -466,79 +475,7 @@ def _can_cancel(b):
     return (b.bk_status in ("pending", "confirmed")
             and _hours_until_checkin(b) >= CANCEL_WINDOW_HOURS)
  
- 
-def _booking_card(b, today):
-    """Everything the dashboard needs to draw one booking."""
-    items = list(b.booking_items.all())
-    main = next((i for i in items if i.bi_type != "activity"), items[0] if items else None)
- 
-    title, image = f"Booking #{b.bk_id}", ACTIVITY_FALLBACK
-    if main:
-        title = main.description or title
-        try:
-            if main.bi_type == "room":
-                room = main.room_item.room
-                title, image = room.room_type, ROOM_IMAGES.get(room.room_type, "images/deluxe.jpg")
-            elif main.bi_type == "package":
-                pkg = main.package_item.package
-                title, image = pkg.p_name, PACKAGE_IMAGES.get(pkg.p_name, "images/Weekend.jpg")
-            elif main.bi_type == "event":
-                ev = main.event_item.event
-                title, image = ev.title, EVENT_IMAGES.get(ev.title, "images/wedding.webp")
-            elif main.bi_type == "activity":
-                act = main.activity_item.activity
-                title, image = act.act_name, ACTIVITY_IMAGES.get(act.act_name, ACTIVITY_FALLBACK)
-        except ObjectDoesNotExist:
-            pass
- 
-    status = b.bk_status
-    active = status in ("pending", "confirmed")
-    can_cancel = _can_cancel(b)
-    return {
-        "booking": b,
-        "title": title,
-        "image": image,
-        "extras": [i.description for i in items if i is not main],
-        "status": status,
-        "status_label": status.title(),
-        "single_day": b.check_in == b.check_out,
-        "can_cancel": can_cancel,
-        # hasn't started yet, but is inside the cancellation window
-        "cancel_locked": active and b.check_in >= today and not can_cancel,
-        "can_checkin": status == "confirmed" and b.check_in <= today <= b.check_out,
-    }
- 
- 
-def customer_dashboard(request):
-    customer = get_current_customer(request)
-    if customer is None:
-        return render(request, "hotel/customer_dashboard.html", {"no_customers": True})
- 
-    today = date.today()
-    bookings = customer.bookings.select_related("branch").prefetch_related(
-        "booking_items"
-    ).order_by("check_in")
-    cards = [_booking_card(b, today) for b in bookings]
- 
-    active = [c for c in cards if c["status"] != "cancelled"]
-    upcoming = [c for c in active if c["booking"].check_out >= today]
-    past = [c for c in active if c["booking"].check_out < today][::-1]
-    cancelled = [c for c in cards if c["status"] == "cancelled"]
- 
-    total_nights = sum((c["booking"].check_out - c["booking"].check_in).days for c in active)
- 
-    context = {
-        "customer": customer,
-        "upcoming": upcoming,
-        "past": past,
-        "cancelled": cancelled,
-        # activity-only and event-only bookings are not stays
-        "stays_count": len([c for c in active if c["booking"].booking_type == "stay"]),
-        "points": total_nights * 100,   # placeholder formula, as before
-        "cancel_window_hours": CANCEL_WINDOW_HOURS,
-    }
-    return render(request, "hotel/customer_dashboard.html", context)
- 
+
  
 def cancel_booking(request, booking_id):
     if request.method != "POST":
@@ -683,33 +620,6 @@ def customer_profile(request):
     context = {"customer": customer}
     return render(request, "hotel/customer_profile.html", context)
  
- 
-def customer_rewards(request):
-    customer = get_current_customer(request)
- 
-    if customer is None:
-        return render(request, "hotel/customer_rewards.html", {"no_customers": True})
- 
-    # cancelled bookings don't earn points (keeps this page in step with the dashboard)
-    bookings = customer.bookings.exclude(bk_status="cancelled").select_related("branch").prefetch_related(
-        "booking_items"
-    ).order_by("-check_in")
- 
-    # swap for a real formula one later.
-    history = []
-    total_points = 0
-    for b in bookings:
-        nights = (b.check_out - b.check_in).days
-        pts = nights * 100
-        total_points += pts
-        history.append({"booking": b, "points": pts})
- 
-    context = {
-        "customer": customer,
-        "total_points": total_points,
-        "history": history,
-    }
-    return render(request, "hotel/customer_rewards.html", context)
  
 def customer_support(request):
    return render(request, "hotel/customer_support.html")
@@ -1177,3 +1087,165 @@ def booking_confirmation(request):
  
     return render(request, "hotel/booking_confirmation.html", {"booking": booking_obj})
  
+def loyalty_summary(customer, bookings=None, today=None):
+    """One place that works out points, so every page shows the same numbers."""
+    today = today or date.today()
+    if bookings is None:
+        bookings = customer.bookings.prefetch_related("booking_items").order_by("-check_in")
+ 
+    loyalty = customer.loyalty
+    multiplier = Decimal(str(loyalty.multiplier_rate)) if loyalty else Decimal("1")
+    tier_name = loyalty.tier if loyalty else None
+ 
+    entries, earned, pending = [], 0, 0
+    for b in bookings:
+        if b.bk_status == "cancelled":
+            continue
+        points = int((Decimal(str(b.estimated_sum)) / POINT_UNIT) * multiplier)   # rounds down
+        credited = b.check_out < today
+        if credited:
+            earned += points
+        else:
+            pending += points
+        entries.append({"booking": b, "points": points, "earned": credited})
+    entries.sort(key=lambda e: e["booking"].check_in, reverse=True)
+ 
+    names = [n.lower() for n, _ in TIERS]
+    idx = names.index(tier_name.lower()) if tier_name and tier_name.lower() in names else None
+    next_tier = to_next = None
+    top_tier, progress = False, 0
+    if idx is not None:
+        if idx + 1 < len(TIERS):
+            next_tier, next_at = TIERS[idx + 1]
+            this_at = TIERS[idx][1]
+            to_next = max(0, next_at - earned)
+            progress = max(0, min(100, int((earned - this_at) * 100 / (next_at - this_at))))
+        else:
+            top_tier, progress = True, 100
+ 
+    return {
+        "entries": entries,
+        "earned": earned,
+        "pending": pending,
+        "multiplier": float(multiplier),
+        "next_tier": next_tier,
+        "to_next": to_next,
+        "top_tier": top_tier,
+        "progress": progress,
+    }
+ 
+ 
+def _tier_rows(customer):
+    """The tier ladder for the rewards page, using the multipliers stored in Loyalty."""
+    needed = {n.lower(): pts for n, pts in TIERS}
+    mine = customer.loyalty.tier.lower() if customer.loyalty else None
+    rows = [{
+        "name": t.tier,
+        "multiplier": t.multiplier_rate,
+        "threshold": needed.get(t.tier.lower()),
+        "current": t.tier.lower() == mine,
+    } for t in Loyalty.objects.all()]
+    rows.sort(key=lambda r: (r["threshold"] is None, r["threshold"] or 0, r["multiplier"]))
+    return rows
+ 
+def _booking_card(b, today):
+    """Everything the dashboard needs to draw one booking."""
+    items = list(b.booking_items.all())
+    main = next((i for i in items if i.bi_type != "activity"), items[0] if items else None)
+ 
+    title, image = f"Booking #{b.bk_id}", ACTIVITY_FALLBACK
+    if main:
+        title = main.description or title
+        try:
+            if main.bi_type == "room":
+                room = main.room_item.room
+                title, image = room.room_type, ROOM_IMAGES.get(room.room_type, "images/deluxe.jpg")
+            elif main.bi_type == "package":
+                pkg = main.package_item.package
+                title, image = pkg.p_name, PACKAGE_IMAGES.get(pkg.p_name, "images/Weekend.jpg")
+            elif main.bi_type == "event":
+                ev = main.event_item.event
+                title, image = ev.title, EVENT_IMAGES.get(ev.title, "images/wedding.webp")
+            elif main.bi_type == "activity":
+                act = main.activity_item.activity
+                title, image = act.act_name, ACTIVITY_IMAGES.get(act.act_name, ACTIVITY_FALLBACK)
+        except ObjectDoesNotExist:
+            pass
+ 
+    status = b.bk_status
+    bookable_ahead = status in ("pending", "confirmed") and b.check_in > today
+    return {
+        "booking": b,
+        "title": title,
+        "image": image,
+        "extras": [i.description for i in items if i is not main],
+        "status": status,
+        "status_label": status.title(),
+        "single_day": b.check_in == b.check_out,
+        "can_modify": bookable_ahead,
+        "can_cancel": bookable_ahead,
+        "can_checkin": status == "confirmed" and b.check_in <= today <= b.check_out,
+    }
+ 
+ 
+def customer_dashboard(request):
+    customer = get_current_customer(request)
+    if customer is None:
+        return render(request, "hotel/customer_dashboard.html", {"no_customers": True})
+ 
+    today = date.today()
+    bookings = customer.bookings.select_related("branch").prefetch_related(
+        "booking_items"
+    ).order_by("check_in")
+    cards = [_booking_card(b, today) for b in bookings]
+ 
+    active = [c for c in cards if c["status"] != "cancelled"]
+    upcoming = [c for c in active if c["booking"].check_out >= today]
+    past = [c for c in active if c["booking"].check_out < today][::-1]
+    cancelled = [c for c in cards if c["status"] == "cancelled"]
+ 
+    points = loyalty_summary(customer, bookings, today)
+ 
+    context = {
+        "customer": customer,
+        "upcoming": upcoming,
+        "past": past,
+        "cancelled": cancelled,
+        "stays_count": len(active),
+        "points": points["earned"],
+        "next_tier": points["next_tier"],
+        "to_next": points["to_next"],
+        "top_tier": points["top_tier"],
+    }
+    return render(request, "hotel/customer_dashboard.html", context)
+ 
+ 
+def customer_rewards(request):
+    customer = get_current_customer(request)
+    if customer is None:
+        return render(request, "hotel/customer_rewards.html", {"no_customers": True})
+ 
+    today = date.today()
+    bookings = customer.bookings.select_related("branch").prefetch_related(
+        "booking_items"
+    ).order_by("-check_in")
+    points = loyalty_summary(customer, bookings, today)
+ 
+    history = []
+    for e in points["entries"]:
+        card = _booking_card(e["booking"], today)
+        history.append({**e, "title": card["title"], "single_day": card["single_day"]})
+ 
+    context = {
+        "customer": customer,
+        "history": history,
+        "tier_rows": _tier_rows(customer),
+        "earned": points["earned"],
+        "pending": points["pending"],
+        "multiplier": points["multiplier"],
+        "next_tier": points["next_tier"],
+        "to_next": points["to_next"],
+        "top_tier": points["top_tier"],
+        "progress": points["progress"],
+    }
+    return render(request, "hotel/customer_rewards.html", context)
