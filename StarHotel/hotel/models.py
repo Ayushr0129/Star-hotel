@@ -227,3 +227,43 @@ class Event_Item(Booking_Item):
     def __str__(self):
         return f"Event Item - {self.event.title}"
 
+class Support_Ticket(models.Model):
+    CATEGORY_CHOICES = [
+        ("booking", "A booking"),
+        ("payment", "Payment"),
+        ("rewards", "Rewards & points"),
+        ("account", "My account"),
+        ("other", "Something else"),
+    ]
+    STATUS_CHOICES = [
+        ("open", "Open"),
+        ("in_progress", "In progress"),
+        ("resolved", "Resolved"),
+    ]
+
+    ticket_id = models.AutoField(primary_key=True)
+    customer = models.ForeignKey(
+        Customer,
+        on_delete=models.CASCADE,
+        related_name='support_tickets'
+    )
+    booking = models.ForeignKey(
+        Booking,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name='support_tickets'
+    )
+    category = models.CharField(max_length=20, choices=CATEGORY_CHOICES, default="other")
+    subject = models.CharField(max_length=150)
+    message = models.TextField()
+    status = models.CharField(max_length=20, choices=STATUS_CHOICES, default="open")
+    staff_reply = models.TextField(blank=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        ordering = ["-created_at"]
+
+    def __str__(self):
+        return f"Ticket #{self.ticket_id} - {self.subject}"
