@@ -426,6 +426,9 @@ def search_results(request):
         if guests and info['guests'] < guests:
             continue    # room is too small for this party
 
+        if amenities and not set(amenities).issubset(info['amenities']):
+            continue    # room is missing a ticked amenity
+
         rooms.append({
             'room_id': r.room_id,
             'name': r.room_type,
