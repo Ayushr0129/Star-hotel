@@ -415,6 +415,10 @@ def search_results(request):
         info = ROOM_INFO.get(r.room_type)
         if info is None:
             continue    # a room type we have no display info for
+
+        if guests and info['guests'] < guests:
+            continue    # room is too small for this party
+
         rooms.append({
             'room_id': r.room_id,
             'name': r.room_type,
