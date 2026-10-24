@@ -411,6 +411,13 @@ def search_results(request):
     if branch:
         room_qs = room_qs.filter(branch__branch_name=branch)
 
+    if room_type:
+        room_qs = room_qs.filter(room_type=room_type)
+
+    if price_bounds:
+        low, high = price_bounds
+        room_qs = room_qs.filter(price__gte=low, price__lte=high)
+
     for r in room_qs:
         info = ROOM_INFO.get(r.room_type)
         if info is None:
