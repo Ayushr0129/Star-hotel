@@ -3,6 +3,14 @@
 {% block title %}Booking Confirmed - Star Hotel{% endblock %}
 {% block content %}
 
+<style>
+  /* When printing, show only the confirmation itself */
+  @media print {
+      header, footer, .site-header, .site-footer,
+      .confirm-actions, .upsell-box, .confirm-icon { display: none; }
+  }
+</style>
+
 <div class="checkout-container">
     <div class="confirmation-box">
 
@@ -11,9 +19,7 @@
         <div class="confirm-icon">&#10003;</div>
 
         <h1>Booking confirmed</h1>
-        {% if booking.customer.email %}
-        <p>A confirmation email has been sent to {{ booking.customer.email }}</p>
-        {% endif %}
+        <p>You can view this booking any time from your dashboard.</p>
 
         <div class="confirmation-card">
             <div class="order-row">
@@ -44,8 +50,7 @@
         </div>
 
         <div class="confirm-actions">
-            <a href="#" class="btn-outline-navy">Add to calendar</a>
-            <a href="#" class="btn-outline-navy">Download receipt</a>
+            <button type="button" class="btn-outline-navy" style="font-family:inherit;" onclick="window.print()">Print receipt</button>
             <a href="{% url 'customer_dashboard' %}" class="btn-navy">View Booking</a>
         </div>
 
