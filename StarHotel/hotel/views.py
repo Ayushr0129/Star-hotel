@@ -408,6 +408,9 @@ def search_results(request):
         room_status="available"
     ).order_by("price", "room_id")
 
+    if branch:
+        room_qs = room_qs.filter(branch__branch_name=branch)
+
     for r in room_qs:
         info = ROOM_INFO.get(r.room_type)
         if info is None:
