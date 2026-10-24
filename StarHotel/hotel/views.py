@@ -11,7 +11,7 @@ from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse
 from .models import (
     Customer, Room, Packages, Event, Activity, Branch,
-    Booking, Room_Item, Package_Item, Event_Item, Activity_Item,Loyalty
+    Booking, Room_Item, Package_Item, Event_Item, Activity_Item,Loyalty, Support_Ticket,
 )
 from .models import (
     Customer, Room, Packages, Event, Branch,
@@ -636,7 +636,68 @@ def customer_profile(request):
  
  
 def customer_support(request):
-   return render(request, "hotel/customer_support.html")
+    customer = get_current_customer(request)
+    if customer is None:
+        return redirect("login")
+
+    today = date.today()
+    my_bookings = list(customer.bookings.select_related("branch").prefetch_related(
+        "booking_items"
+    ).order_by("-check_in"))
+    booking_options = [
+        {
+            "id": b.pk,
+            "label": f"BK-{b.bk_id:05d} · {_booking_card(b, today)['title']} · {b.check_in:%d %b %Y}",
+        }
+        for b in my_bookings
+    ]
+
+    valid_topics = {value for value, _ in Support_Ticket.CATEGORY_CHOICES}
+    form = {"category": "other", "booking": "", "subject": "", "message": ""}
+    errors = []
+
+    if request.method == "POST":
+        form = {key: request.POST.get(key, "").strip() for key in form}
+
+        if form["category"] not in valid_topics:
+            errors.append("Choose a topic.")
+        if not form["subject"]:
+            errors.append("Add a short subject.")
+        elif len(form["subject"]) > 150:
+            errors.append("The subject is too long (150 characters maximum).")
+        if len(form["message"]) < 10:
+            errors.append("Tell us a little more: the message needs at least 10 characters.")
+        elif len(form["message"]) > 2000:
+            errors.append("The message is too long (2000 characters maximum).")
+
+        booking = None
+        if form["booking"]:
+            # only ever one of this customer's own bookings
+            booking = next((b for b in my_bookings if str(b.pk) == form["booking"]), None)
+            if booking is None:
+                errors.append("Choose one of your own bookings, or leave it blank.")
+
+        if not errors:
+            Support_Ticket.objects.create(
+                customer=customer,
+                booking=booking,
+                category=form["category"],
+                subject=form["subject"],
+                message=form["message"],
+            )
+            messages.success(request, "Thanks, your message has been sent. Replies will appear below.")
+            return redirect("customer_support")
+
+    context = {
+        "customer": customer,
+        "form": form,
+        "errors": errors,
+        "topics": Support_Ticket.CATEGORY_CHOICES,
+        "booking_options": booking_options,
+        "tickets": customer.support_tickets.select_related("booking")[:10],
+        "branch": Branch.objects.order_by("branch_id").first(),
+    }
+    return render(request, "hotel/customer_support.html", context)
  
  
 def booking(request):
