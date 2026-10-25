@@ -7,7 +7,7 @@
 <div class="search-results-page">
     <div class="search-results-heading">
         <h1>Available Rooms</h1>
-        <p class="results-count">{{ rooms|length }} rooms found for your selected dates</p>
+        <p class="results-count">{{ rooms|length }} room{{ rooms|length|pluralize }} found for your selected dates</p>
     </div>
 
     {% for e in errors %}
@@ -114,8 +114,7 @@
             </form>
         </aside>
     
-
-        <div class="room-listings">
+                <div class="room-listings">
             {% for room in rooms %}
             <div class="room-card">
                 <div class="room-card-image">
@@ -141,6 +140,12 @@
                     </p>
                     <a href="{% url room.url_name %}" class="view-details-btn">View Details</a>
                 </div>
+            </div>
+            {% empty %}
+            <div class="no-results">
+                <h3>No rooms match your search</h3>
+                <p>Try a different branch, dates or room type, or remove some filters.</p>
+                <a href="{% url 'search_results' %}" class="view-details-btn">Clear all filters</a>
             </div>
             {% endfor %}
         </div>
