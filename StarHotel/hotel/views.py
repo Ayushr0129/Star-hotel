@@ -385,6 +385,9 @@ def search_results(request):
     amenities = request.GET.getlist('amenities')
     check_in_raw = request.GET.get('check_in', '').strip()
     check_out_raw = request.GET.get('check_out', '').strip()
+    sort = request.GET.get('sort', 'price_asc')
+    if sort not in ('price_asc', 'price_desc'):
+        sort = 'price_asc'
 
     guests = _parse_guests(request.GET.get('guests', ''))
     price_bounds = _parse_price_range(price_range)
@@ -424,7 +427,7 @@ def search_results(request):
             check_out__gt=check_in,
         ).exclude(booking__bk_status="cancelled").values_list("room", flat=True)
         room_qs = room_qs.exclude(room_id__in=booked_rooms)
-        
+
     for r in room_qs:
         info = ROOM_INFO.get(r.room_type)
         if info is None:
@@ -459,6 +462,7 @@ def search_results(request):
         'check_in_raw': check_in_raw,
         'check_out_raw': check_out_raw,
         'branches': Branch.objects.order_by('branch_name'),
+        'sort': sort,
     }
     return render(request, "hotel/search_results.html", context)
  
