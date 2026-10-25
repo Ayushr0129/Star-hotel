@@ -428,6 +428,11 @@ def search_results(request):
         ).exclude(booking__bk_status="cancelled").values_list("room", flat=True)
         room_qs = room_qs.exclude(room_id__in=booked_rooms)
 
+    if sort == 'price_desc':
+        room_qs = room_qs.order_by("-price", "room_id")
+    else:
+        room_qs = room_qs.order_by("price", "room_id")
+        
     for r in room_qs:
         info = ROOM_INFO.get(r.room_type)
         if info is None:

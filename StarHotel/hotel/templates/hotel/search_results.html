@@ -33,7 +33,7 @@
         </div>
         <div class="summary-box sort-box">
             <span class="summary-label">Sort by</span>
-             <select class="sort-select" name="sort" form="filterForm" onchange="this.form.submit()">
+            <select class="sort-select" name="sort" form="filterForm" onchange="this.form.submit()">
                 <option value="price_asc" {% if sort == 'price_asc' %}selected{% endif %}>Price: Low to High</option>
                 <option value="price_desc" {% if sort == 'price_desc' %}selected{% endif %}>Price: High to Low</option>
             </select>
