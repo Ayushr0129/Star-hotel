@@ -418,6 +418,13 @@ def search_results(request):
         low, high = price_bounds
         room_qs = room_qs.filter(price__gte=low, price__lte=high)
 
+    if check_in and check_out:
+        booked_rooms = Room_Item.objects.filter(
+            check_in__lt=check_out,
+            check_out__gt=check_in,
+        ).exclude(booking__bk_status="cancelled").values_list("room", flat=True)
+        room_qs = room_qs.exclude(room_id__in=booked_rooms)
+        
     for r in room_qs:
         info = ROOM_INFO.get(r.room_type)
         if info is None:
