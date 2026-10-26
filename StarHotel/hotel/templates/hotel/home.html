@@ -200,4 +200,28 @@
         <a href="{% url 'activities' %}" class="btn-navy">View All Activities &gt;</a>
     </div>
 </section>
+
+<!-- Events -->
+<section class="container">
+    <h2>Events</h2>
+    <p class="section-subtitle">Host weddings, celebrations and corporate gatherings with us.</p>
+
+    <div class="card-grid">
+        {% for event in events %}
+        <div class="card">
+            <img src="{% static event.image_path %}" alt="{{ event.title }}" class="card-img">
+            <div class="card-body">
+                <h3 class="card-title">{{ event.title }}</h3>
+                <p class="card-meta">{{ event.date|date:"d M Y" }}</p>
+                <div class="card-footer">
+                    <strong>Rs {{ event.price|floatformat:"0g" }} <span style="font-weight:400; font-size:0.75rem;">/ guest</span></strong>
+                    <a href="{% url 'events' %}#event-{{ event.id }}" class="btn-sm">Book Now</a>
+                </div>
+            </div>
+        </div>
+        {% empty %}
+        <p>No upcoming events right now.</p>
+        {% endfor %}
+    </div>
+</section>
 {% endblock %}
