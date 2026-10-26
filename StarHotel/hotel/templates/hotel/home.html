@@ -13,7 +13,7 @@
         <div class="booking-field">
             <label>Hotel Branch</label>
                 <select name="branch">
-                <option value="">All branches</option>
+                <option value="">Select branch</option>
                 {% for b in branches %}
                 <option value="{{ b.branch_name }}">{{ b.branch_name }}</option>
                 {% endfor %}
