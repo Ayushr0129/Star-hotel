@@ -887,3 +887,9 @@ def booking_confirmation(request):
         ).prefetch_related("booking_items").first()
 
     return render(request, "hotel/booking_confirmation.html", {"booking": booking_obj})
+
+def admin_profile(request):
+    return render(request, 'hotel/admin_profile.html')
+
+def admin_action(request):
+    return render(request, 'hotel/admin_action.html')

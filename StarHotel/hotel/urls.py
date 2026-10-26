@@ -18,6 +18,8 @@ urlpatterns = [
     path("support/", views.customer_support, name="customer_support"),
     path("staff-dashboard/", views.staff_dashboard, name="staff_dashboard"),
     path("admin-dashboard/", views.admin_dashboard, name="admin_dashboard"),
+    path("admin-profile/", views.admin_profile, name="admin_profile"),
+    path("admin-action/", views.admin_action, name="admin_action"),
     path("manage-rooms/", RedirectView.as_view(pattern_name="admin:hotel_manage_rooms"), name="manage_rooms"),
     path("reports/", RedirectView.as_view(pattern_name="admin:hotel_reports"), name="reports"),
     path("cart/review/", views.cart_review, name="cart_review"),
