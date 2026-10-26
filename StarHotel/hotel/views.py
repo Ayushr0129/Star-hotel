@@ -375,7 +375,20 @@ def home(request):
             'url_name': 'room_details_family'
         },
     ]
-    return render(request, "hotel/home.html", {"rooms": rooms, "branches": Branch.objects.order_by("branch_name"),})
+
+    events = [
+        {
+            'id': e.event_id,
+            'title': e.title,
+            'description': EVENT_DESCRIPTIONS.get(e.title, ""),
+            'image_path': EVENT_IMAGES.get(e.title, "images/wedding.webp"),
+            'date': e.eventdate,
+            'price': e.price_per_person,
+        }
+        for e in Event.objects.filter(eventdate__gte=date.today()).order_by("eventdate")
+    ]
+    return render(request, "hotel/home.html", {"rooms": rooms, "branches": Branch.objects.order_by("branch_name"), "events": events})
+    
  
  
 def search_results(request):
