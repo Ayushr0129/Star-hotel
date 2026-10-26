@@ -5,7 +5,7 @@ from django.conf import settings
 from django.contrib import messages
 from django.db import transaction
 
-from django.db.models import CharField, IntegerField, Q, Value
+from django.db.models import CharField, IntegerField, Max, Q, Sum, Value
 from django.db.models.functions import Cast, Coalesce, NullIf
 from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse
@@ -579,8 +579,60 @@ def staff_dashboard(request):
     return render(request, "hotel/staff_dashboard.html")
 
 
+def _total(qs):
+    return qs.aggregate(t=Sum("estimated_sum"))["t"] or Decimal("0")
+
+
+def _card(today_qs, yesterday_qs):
+    now = _total(today_qs)
+    before = _total(yesterday_qs)
+    change = now - before
+    pct = (change / before * 100) if before else Decimal("0")
+    return {
+        "total": now,
+        "sign": "+" if change >= 0 else "-",
+        "delta": abs(change),
+        "pct": abs(pct),
+        "updated": today_qs.aggregate(m=Max("updated_at"))["m"],
+    }
+
+
 def admin_dashboard(request):
-    return render(request, "hotel/admin_dashboard.html")
+    today = date.today()
+    yesterday = today - timedelta(days=1)
+    live = Booking.objects.exclude(bk_status__iexact="cancelled")
+
+    cards = [
+        {"label": "→] Check-In", **_card(live.filter(check_in=today), live.filter(check_in=yesterday))},
+        {"label": "Check-out", **_card(live.filter(check_out=today), live.filter(check_out=yesterday))},
+        {"label": "New Bookings", **_card(live.filter(bk_date=today), live.filter(bk_date=yesterday))},
+    ]
+
+    # Weekly chart: Saturday to Friday, like the Figma
+    week_start = today - timedelta(days=(today.weekday() - 5) % 7)
+    week_days = [week_start + timedelta(days=i) for i in range(7)]
+    per_day = {
+        row["bk_date"]: row["t"]
+        for row in live.filter(bk_date__in=week_days).values("bk_date").annotate(t=Sum("estimated_sum"))
+    }
+    chart = [{"label": d.strftime("%a"), "value": per_day.get(d, Decimal("0"))} for d in week_days]
+    biggest = max(c["value"] for c in chart) or 1
+    for c in chart:
+        c["height"] = int(c["value"] / biggest * 100)
+
+    # Latest bookings table
+    bookings = list(Booking.objects.select_related("customer").order_by("-created_at")[:10])
+    for b in bookings:
+        b.nights = (b.check_out - b.check_in).days
+        b.first_room = Room_Item.objects.filter(booking=b).select_related("room").first()
+
+    context = {
+        "cards": cards,
+        "revenue": _total(live),
+        "chart": chart,
+        "bookings": bookings,
+    }
+    return render(request, "hotel/admin_dashboard.html", context)
 
 
 def render_admin_page(request, template_name, context=None):
