@@ -5,7 +5,8 @@ from django.conf import settings
 from django.contrib import messages
 from django.db import transaction
 
-from django.db.models import CharField, IntegerField, Max, Q, Sum, Value
+from django.views.decorators.http import require_POST
+from django.db.models import CharField, F, IntegerField, Max, Q, Sum, Value
 from django.db.models.functions import Cast, Coalesce, NullIf
 from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse
@@ -18,6 +19,7 @@ from .models import (
     Customer, Room, Packages, Event, Branch,
     Booking, Room_Item, Package_Item, Event_Item,
 )
+from .models import Employee, User
 from datetime import datetime
 
 CART_SESSION_KEY = "cart"
@@ -944,4 +946,52 @@ def admin_profile(request):
     return render(request, 'hotel/admin_profile.html')
 
 def admin_action(request):
-    return render(request, 'hotel/admin_action.html')
+    staff = list(
+        User.objects.filter(
+            Q(employee__isnull=False) | Q(is_staff=True) | Q(is_superuser=True)
+        )
+        .distinct()
+        .order_by(F("last_login").desc(nulls_last=True), "first_name")
+    )
+
+    # make sure whoever is logged in right now is in the list
+    me = request.user if request.user.is_authenticated else None
+    if me and not any(s.pk == me.pk for s in staff):
+        staff.insert(0, me)
+
+    return render(request, "hotel/admin_action.html", {"staff": staff})
+
+def _can_manage(request):
+    return request.user.is_authenticated and request.user.is_staff
+
+
+@require_POST
+def staff_edit(request, user_id):
+    if not _can_manage(request):
+        messages.error(request, "Log in as an administrator to edit staff.")
+        return redirect("admin_action")
+    person = get_object_or_404(User, pk=user_id)
+    person.first_name = request.POST.get("first_name", "").strip()
+    person.last_name = request.POST.get("last_name", "").strip()
+    person.email = request.POST.get("email", "").strip()
+    person.phone = request.POST.get("phone", "").strip()
+    person.save(update_fields=["first_name", "last_name", "email", "phone"])
+    messages.success(request, f"{person.get_full_name() or person.username} was updated.")
+    return redirect("admin_action")
+
+
+@require_POST
+def staff_delete(request, user_id):
+    if not _can_manage(request):
+        messages.error(request, "Log in as an administrator to delete staff.")
+        return redirect("admin_action")
+    person = get_object_or_404(User, pk=user_id)
+    if person.pk == request.user.pk:
+        messages.error(request, "You can't delete your own account.")
+    elif person.is_superuser:
+        messages.error(request, "Superuser accounts can't be deleted here.")
+    else:
+        name = person.get_full_name() or person.username
+        person.delete()
+        messages.success(request, f"{name} was deleted.")
+    return redirect("admin_action")
