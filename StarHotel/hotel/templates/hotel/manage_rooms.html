@@ -7,7 +7,42 @@ Manage Rooms - STAR HOTEL
 {% block content_title %}{% endblock %}
 
 {% block content %}
-<div class="max-w-6xl mx-auto px-6 py-8">
+<style>
+  html[data-theme="dark"] .manage-rooms-dashboard .text-black { color: #f8fafc; }
+  html[data-theme="dark"] .manage-rooms-dashboard .text-gray-800,
+  html[data-theme="dark"] .manage-rooms-dashboard .text-gray-700,
+  html[data-theme="dark"] .manage-rooms-dashboard .text-gray-500 { color: #cbd5e1; }
+  html[data-theme="dark"] .manage-room-card,
+  html[data-theme="dark"] .manage-room-modal { background-color: #1f2937; border-color: #475569; color: #f8fafc; }
+  html[data-theme="dark"] .manage-room-modal .text-black { color: #f8fafc; }
+  html[data-theme="dark"] .manage-room-modal .text-gray-700 { color: #cbd5e1; }
+  html[data-theme="dark"] .manage-rooms-dashboard .border-gray-300,
+  html[data-theme="dark"] .manage-room-modal .border-gray-300 { border-color: #475569; }
+  html[data-theme="dark"] .manage-rooms-dashboard .hover\:bg-gray-50:hover { background-color: #334155; }
+  html[data-theme="dark"] .manage-room-modal input,
+  html[data-theme="dark"] .manage-room-modal select { background-color: #111827; border-color: #64748b; color: #f8fafc; }
+  html[data-theme="dark"] .manage-room-modal input::placeholder { color: #94a3b8; }
+  html[data-theme="dark"] .manage-room-modal .text-gray-400 { color: #cbd5e1; }
+
+  @media (prefers-color-scheme: dark) {
+    html:not([data-theme="light"]) .manage-rooms-dashboard .text-black { color: #f8fafc; }
+    html:not([data-theme="light"]) .manage-rooms-dashboard .text-gray-800,
+    html:not([data-theme="light"]) .manage-rooms-dashboard .text-gray-700,
+    html:not([data-theme="light"]) .manage-rooms-dashboard .text-gray-500 { color: #cbd5e1; }
+    html:not([data-theme="light"]) .manage-room-card,
+    html:not([data-theme="light"]) .manage-room-modal { background-color: #1f2937; border-color: #475569; color: #f8fafc; }
+    html:not([data-theme="light"]) .manage-room-modal .text-black { color: #f8fafc; }
+    html:not([data-theme="light"]) .manage-room-modal .text-gray-700 { color: #cbd5e1; }
+    html:not([data-theme="light"]) .manage-rooms-dashboard .border-gray-300,
+    html:not([data-theme="light"]) .manage-room-modal .border-gray-300 { border-color: #475569; }
+    html:not([data-theme="light"]) .manage-rooms-dashboard .hover\:bg-gray-50:hover { background-color: #334155; }
+    html:not([data-theme="light"]) .manage-room-modal input,
+    html:not([data-theme="light"]) .manage-room-modal select { background-color: #111827; border-color: #64748b; color: #f8fafc; }
+    html:not([data-theme="light"]) .manage-room-modal input::placeholder { color: #94a3b8; }
+    html:not([data-theme="light"]) .manage-room-modal .text-gray-400 { color: #cbd5e1; }
+  }
+</style>
+<div class="manage-rooms-dashboard max-w-6xl mx-auto px-6 py-8">
 
   <!-- Page Title & Subtitle -->
   <div class="mb-8">
@@ -19,7 +54,7 @@ Manage Rooms - STAR HOTEL
   <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-10">
     
         <!-- Available Card -->
-    <div class="border border-gray-300 rounded-xl p-5 flex items-center justify-between shadow-sm">
+    <div class="manage-room-card border border-gray-300 rounded-xl p-5 flex items-center justify-between shadow-sm">
       <div class="w-12 h-12 rounded-full bg-[#34d399]"></div>
       <div class="text-center pr-6">
         <p class="text-sm font-semibold text-gray-500 mb-1">Available</p>
@@ -28,7 +63,7 @@ Manage Rooms - STAR HOTEL
       <div></div>
     </div>
     <!-- Occupied Card -->
-    <div class="border border-gray-300 rounded-xl p-5 flex items-center justify-between shadow-sm">
+    <div class="manage-room-card border border-gray-300 rounded-xl p-5 flex items-center justify-between shadow-sm">
       <div class="w-12 h-12 rounded-full bg-[#ef4444]"></div>
       <div class="text-center pr-6">
         <p class="text-sm font-semibold text-gray-500 mb-1">Occupied</p>
@@ -38,7 +73,7 @@ Manage Rooms - STAR HOTEL
     </div>
 
     <!-- Maintenance Card -->
-    <div class="border border-gray-300 rounded-xl p-5 flex items-center justify-between shadow-sm">
+    <div class="manage-room-card border border-gray-300 rounded-xl p-5 flex items-center justify-between shadow-sm">
       <div class="w-12 h-12 rounded-full bg-[#eab308]"></div>
       <div class="text-center pr-6">
         <p class="text-sm font-semibold text-gray-500 mb-1">Maintenance</p>
@@ -128,7 +163,7 @@ Manage Rooms - STAR HOTEL
 
 <!-- ADD ROOM MODAL -->
 <div id="add-modal" class="fixed inset-0 bg-black/50 hidden items-center justify-center z-50">
-  <div class="bg-white rounded-lg p-6 w-full max-w-md shadow-xl border border-gray-200">
+  <div class="manage-room-modal bg-white rounded-lg p-6 w-full max-w-md shadow-xl border border-gray-200">
     <div class="flex justify-between items-center mb-4">
       <h3 class="text-xl font-bold text-black">Add New Room</h3>
       <button type="button" onclick="toggleModal('add-modal', false)" class="text-gray-400 hover:text-black font-bold text-lg">&times;</button>
@@ -168,7 +203,7 @@ Manage Rooms - STAR HOTEL
 
 <!-- EDIT ROOM MODAL -->
 <div id="edit-modal" class="fixed inset-0 bg-black/50 hidden items-center justify-center z-50">
-  <div class="bg-white rounded-lg p-6 w-full max-w-md shadow-xl border border-gray-200">
+  <div class="manage-room-modal bg-white rounded-lg p-6 w-full max-w-md shadow-xl border border-gray-200">
     <div class="flex justify-between items-center mb-4">
       <h3 class="text-xl font-bold text-black">Edit Room</h3>
       <button type="button" onclick="toggleModal('edit-modal', false)" class="text-gray-400 hover:text-black font-bold text-lg">&times;</button>

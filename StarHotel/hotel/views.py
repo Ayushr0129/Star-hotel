@@ -5,7 +5,7 @@ from django.conf import settings
 from django.contrib import messages
 from django.db import transaction
  
-from django.db.models import CharField, IntegerField, Q, Value
+from django.db.models import Avg, CharField, Count, IntegerField, Q, Sum, Value
 from django.db.models.functions import Cast, Coalesce, NullIf
 from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse
@@ -946,7 +946,99 @@ def manage_rooms(request):
     return render_admin_page(request, "hotel/manage_rooms.html", context)
  
 def reports(request):
-    return render_admin_page(request, "hotel/reports.html", {"title": "Reports & Analytics"})
+    today = timezone.localdate()
+    period = request.GET.get("period", "month")
+    if period == "30days":
+        start_date = today - timedelta(days=29)
+        period_label = "Last 30 Days"
+    elif period == "quarter":
+        quarter_start_month = ((today.month - 1) // 3) * 3 + 1
+        start_date = date(today.year, quarter_start_month, 1)
+        period_label = "This Quarter"
+    elif period == "year":
+        start_date = date(today.year, 1, 1)
+        period_label = "This Year"
+    else:
+        period = "month"
+        start_date = today.replace(day=1)
+        period_label = "This Month"
+
+    bookings = Booking.objects.filter(
+        bk_date__gte=start_date, bk_date__lte=today
+    ).exclude(bk_status="cancelled")
+    total_revenue = bookings.aggregate(total=Sum("estimated_sum"))["total"] or Decimal("0")
+    booking_count = bookings.count()
+
+    room_items = Room_Item.objects.filter(
+        booking__bk_date__gte=start_date,
+        booking__bk_date__lte=today,
+    ).exclude(booking__bk_status="cancelled")
+    room_totals = room_items.values("room__room_type").annotate(
+        bookings=Count("booking", distinct=True),
+        revenue=Sum("price"),
+        average_rate=Avg("price"),
+    ).order_by("room__room_type")
+
+    period_days = (today - start_date).days + 1
+    occupied_rooms_by_category = {}
+    occupancy_items = Room_Item.objects.filter(
+        check_in__lt=today + timedelta(days=1), check_out__gt=start_date
+    ).exclude(booking__bk_status="cancelled")
+    for room_type, room_id, check_in, check_out in occupancy_items.values_list(
+        "room__room_type", "room_id", "check_in", "check_out"
+    ):
+        overlap_start = max(check_in, start_date)
+        overlap_end = min(check_out, today + timedelta(days=1))
+        for night_offset in range(max((overlap_end - overlap_start).days, 0)):
+            night = overlap_start + timedelta(days=night_offset)
+            occupied_rooms_by_category.setdefault(room_type, {}).setdefault(night, set()).add(room_id)
+
+    room_counts = dict(
+        Room.objects.values_list("room_type").annotate(total=Count("room_id"))
+    )
+    occupancy_rows = []
+    total_inventory_nights = sum(room_counts.values()) * period_days
+    category_room_nights = {
+        room_type: sum(len(room_ids) for room_ids in nights.values())
+        for room_type, nights in occupied_rooms_by_category.items()
+    }
+    total_room_nights = sum(category_room_nights.values())
+    for room_type, room_count in sorted(room_counts.items()):
+        occupied_nights = category_room_nights.get(room_type, 0)
+        rate = (occupied_nights / (room_count * period_days) * 100) if room_count and period_days else 0
+        occupancy_rows.append({"name": room_type, "rate": rate})
+
+    room_revenue = sum((row["revenue"] or Decimal("0") for row in room_totals), Decimal("0"))
+    booked_room_nights = sum(
+        max((check_out - check_in).days, 0)
+        for check_in, check_out in room_items.values_list("check_in", "check_out")
+    )
+    adr = room_revenue / booked_room_nights if booked_room_nights else Decimal("0")
+
+    def money(value):
+        return f"Rs {value:,.2f}"
+
+    revenue_rows = [{
+        "category": row["room__room_type"],
+        "bookings": row["bookings"],
+        "average_rate": money(row["average_rate"] or Decimal("0")),
+        "revenue": money(row["revenue"] or Decimal("0")),
+    } for row in room_totals]
+
+    context = {
+        "title": "Reports & Analytics",
+        "period": period,
+        "period_label": period_label,
+        "start_date": start_date,
+        "today": today,
+        "total_revenue": money(total_revenue),
+        "booking_count": booking_count,
+        "occupancy_rate": (total_room_nights / total_inventory_nights * 100) if total_inventory_nights else 0,
+        "adr": money(adr),
+        "revenue_rows": revenue_rows,
+        "occupancy_rows": occupancy_rows,
+    }
+    return render_admin_page(request, "hotel/reports.html", context)
  
 def room_create(request):
     if request.method != "POST":
