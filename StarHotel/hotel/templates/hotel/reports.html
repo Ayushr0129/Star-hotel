@@ -1,141 +1,127 @@
 {% extends "admin/base_site.html" %}
 
 {% block title %}Reports & Analytics - STAR HOTEL{% endblock %}
-
 {% block content_title %}{% endblock %}
 
 {% block content %}
-<div class="max-w-7xl mx-auto px-6 py-8">
+<style>
+  .reports-period { box-sizing: border-box; display: block; width: 100% !important; min-width: 0 !important; max-width: 230px !important; height: 44px !important; min-height: 44px !important; padding: 0 36px 0 12px !important; line-height: normal !important; font-size: 14px !important; white-space: nowrap; }
+  .reports-period-form { display: block; flex: 0 1 230px; width: 230px; max-width: 100%; }
+  html[data-theme="dark"] .reports-dashboard .report-card { background-color: #1f2937; border-color: #374151; color: #f9fafb; }
+  html[data-theme="dark"] .reports-dashboard .text-gray-900,
+  html[data-theme="dark"] .reports-dashboard .text-gray-800 { color: #f9fafb; }
+  html[data-theme="dark"] .reports-dashboard .text-gray-600,
+  html[data-theme="dark"] .reports-dashboard .text-gray-500 { color: #cbd5e1; }
+  html[data-theme="dark"] .reports-dashboard .text-gray-400 { color: #94a3b8; }
+  html[data-theme="dark"] .reports-dashboard .bg-gray-50 { background-color: #111827; }
+  html[data-theme="dark"] .reports-dashboard .bg-gray-200 { background-color: #475569; }
+  html[data-theme="dark"] .reports-dashboard .border-gray-200,
+  html[data-theme="dark"] .reports-dashboard .border-gray-100,
+  html[data-theme="dark"] .reports-dashboard .divide-gray-200 > :not([hidden]) ~ :not([hidden]) { border-color: #475569; }
+  html[data-theme="dark"] .reports-period { background-color: #1f2937; border-color: #64748b; color: #f9fafb; }
 
-  <!-- Header Section -->
-  <div class="flex flex-col md:flex-row md:items-center justify-between mb-8 gap-4">
-    <div>
+  @media (prefers-color-scheme: dark) {
+    html:not([data-theme="light"]) .reports-dashboard .report-card { background-color: #1f2937; border-color: #374151; color: #f9fafb; }
+    html:not([data-theme="light"]) .reports-dashboard .text-gray-900,
+    html:not([data-theme="light"]) .reports-dashboard .text-gray-800 { color: #f9fafb; }
+    html:not([data-theme="light"]) .reports-dashboard .text-gray-600,
+    html:not([data-theme="light"]) .reports-dashboard .text-gray-500 { color: #cbd5e1; }
+    html:not([data-theme="light"]) .reports-dashboard .text-gray-400 { color: #94a3b8; }
+    html:not([data-theme="light"]) .reports-dashboard .bg-gray-50 { background-color: #111827; }
+    html:not([data-theme="light"]) .reports-dashboard .bg-gray-200 { background-color: #475569; }
+    html:not([data-theme="light"]) .reports-dashboard .border-gray-200,
+    html:not([data-theme="light"]) .reports-dashboard .border-gray-100,
+    html:not([data-theme="light"]) .reports-dashboard .divide-gray-200 > :not([hidden]) ~ :not([hidden]) { border-color: #475569; }
+    html:not([data-theme="light"]) .reports-period { background-color: #1f2937; border-color: #64748b; color: #f9fafb; }
+  }
+</style>
+<div class="reports-dashboard max-w-7xl mx-auto px-6 py-8">
+  <div class="flex flex-col xl:flex-row xl:items-center justify-between mb-8 gap-4">
+    <div class="min-w-0">
       <h1 class="text-3xl font-extrabold text-gray-900">Hotel Analytics & Reports</h1>
-      <p class="text-gray-500 font-medium">Review revenue trends, occupancy performance, and reservation metrics</p>
+      <p class="text-gray-500 font-medium">Revenue, occupancy, and reservation metrics from the hotel database</p>
     </div>
-    <div class="flex items-center gap-3">
-      <select class="bg-white border border-gray-300 px-3 py-2 rounded-lg text-sm font-medium focus:outline-none">
-        <option>This Month</option>
-        <option>Last 30 Days</option>
-        <option>This Quarter</option>
-        <option>This Year</option>
+    <form method="get" class="reports-period-form">
+      <label class="sr-only" for="report-period">Report period</label>
+      <select id="report-period" name="period" onchange="this.form.submit()" class="reports-period bg-white border border-gray-300 px-3 py-2 rounded-lg text-sm font-medium focus:outline-none">
+        <option value="month" {% if period == "month" %}selected{% endif %}>This Month</option>
+        <option value="30days" {% if period == "30days" %}selected{% endif %}>Last 30 Days</option>
+        <option value="quarter" {% if period == "quarter" %}selected{% endif %}>This Quarter</option>
+        <option value="year" {% if period == "year" %}selected{% endif %}>This Year</option>
       </select>
-      <button class="bg-[#0b2bba] hover:bg-blue-800 text-white font-semibold px-4 py-2 rounded-lg text-sm shadow transition flex items-center">
-        <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
-        </svg>
-        Export PDF
-      </button>
-    </div>
+    </form>
   </div>
 
-  <!-- Key Performance Indicators (KPIs) -->
   <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-    <div class="bg-white border border-gray-200 rounded-xl p-5 shadow-sm">
+    <div class="report-card bg-white border border-gray-200 rounded-xl p-5 shadow-sm">
       <p class="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-1">Total Revenue</p>
-      <p class="text-3xl font-extrabold text-gray-900">$48,250</p>
-      <p class="text-xs font-semibold text-emerald-600 mt-2">↑ +12.4% vs last month</p>
+      <p class="text-3xl font-extrabold text-gray-900">{{ total_revenue }}</p>
+      <p class="text-xs text-gray-500 mt-2">Non-cancelled bookings · {{ period_label }}</p>
     </div>
-
-    <div class="bg-white border border-gray-200 rounded-xl p-5 shadow-sm">
-      <p class="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-1">Avg Occupancy Rate</p>
-      <p class="text-3xl font-extrabold text-gray-900">82.4%</p>
-      <p class="text-xs font-semibold text-emerald-600 mt-2">↑ +4.1% vs last month</p>
+    <div class="report-card bg-white border border-gray-200 rounded-xl p-5 shadow-sm">
+      <p class="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-1">Occupancy Rate</p>
+      <p class="text-3xl font-extrabold text-gray-900">{{ occupancy_rate|floatformat:1 }}%</p>
+      <p class="text-xs text-gray-500 mt-2">Booked room nights · {{ period_label }}</p>
     </div>
-
-    <div class="bg-white border border-gray-200 rounded-xl p-5 shadow-sm">
+    <div class="report-card bg-white border border-gray-200 rounded-xl p-5 shadow-sm">
       <p class="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-1">Total Bookings</p>
-      <p class="text-3xl font-extrabold text-gray-900">312</p>
-      <p class="text-xs font-semibold text-gray-500 mt-2">Across all room categories</p>
+      <p class="text-3xl font-extrabold text-gray-900">{{ booking_count }}</p>
+      <p class="text-xs font-semibold text-gray-500 mt-2">Non-cancelled · {{ period_label }}</p>
     </div>
-
-    <div class="bg-white border border-gray-200 rounded-xl p-5 shadow-sm">
-      <p class="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-1">Avg Daily Rate (ADR)</p>
-      <p class="text-3xl font-extrabold text-gray-900">$154.60</p>
-      <p class="text-xs font-semibold text-emerald-600 mt-2">↑ +$8.20 vs target</p>
+    <div class="report-card bg-white border border-gray-200 rounded-xl p-5 shadow-sm">
+      <p class="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-1">Average Daily Rate</p>
+      <p class="text-3xl font-extrabold text-gray-900">{{ adr }}</p>
+      <p class="text-xs text-gray-500 mt-2">Room revenue per booked night</p>
     </div>
   </div>
 
-  <!-- Breakdown Tables & Summaries -->
   <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
-    
-    <!-- Revenue Breakdown Table (2 Columns) -->
-    <div class="lg:col-span-2 bg-white border border-gray-200 rounded-xl shadow-sm overflow-hidden">
+    <div class="report-card lg:col-span-2 bg-white border border-gray-200 rounded-xl shadow-sm overflow-hidden">
       <div class="px-6 py-4 border-b border-gray-200 font-bold text-gray-900 flex justify-between items-center">
         <span>Revenue by Room Category</span>
-        <span class="text-xs text-gray-500 font-normal">Updated today</span>
+        <span class="text-xs text-gray-500 font-normal">{{ start_date|date:"M j, Y" }} – {{ today|date:"M j, Y" }}</span>
       </div>
       <table class="w-full text-left border-collapse">
-        <thead>
-          <tr class="bg-gray-50 text-gray-500 text-xs uppercase font-semibold border-b border-gray-200">
-            <th class="px-6 py-3">Category</th>
-            <th class="px-6 py-3">Bookings</th>
-            <th class="px-6 py-3">Avg Rate</th>
-            <th class="px-6 py-3 text-right">Total Revenue</th>
-          </tr>
-        </thead>
+        <thead><tr class="bg-gray-50 text-gray-500 text-xs uppercase font-semibold border-b border-gray-200">
+          <th class="px-6 py-3">Category</th><th class="px-6 py-3">Bookings</th>
+          <th class="px-6 py-3">Avg Item Price</th><th class="px-6 py-3 text-right">Total Revenue</th>
+        </tr></thead>
         <tbody class="divide-y divide-gray-200 text-sm text-gray-800">
+          {% for row in revenue_rows %}
           <tr>
-            <td class="px-6 py-4 font-semibold">Executive Ocean Suite</td>
-            <td class="px-6 py-4">84</td>
-            <td class="px-6 py-4">$260</td>
-            <td class="px-6 py-4 text-right font-bold text-gray-900">$21,840</td>
+            <td class="px-6 py-4 font-semibold">{{ row.category }}</td>
+            <td class="px-6 py-4">{{ row.bookings }}</td>
+            <td class="px-6 py-4">{{ row.average_rate }}</td>
+            <td class="px-6 py-4 text-right font-bold text-gray-900">{{ row.revenue }}</td>
           </tr>
-          <tr>
-            <td class="px-6 py-4 font-semibold">Deluxe Double Room</td>
-            <td class="px-6 py-4">142</td>
-            <td class="px-6 py-4">$140</td>
-            <td class="px-6 py-4 text-right font-bold text-gray-900">$19,880</td>
-          </tr>
-          <tr>
-            <td class="px-6 py-4 font-semibold">Standard Single Room</td>
-            <td class="px-6 py-4">86</td>
-            <td class="px-6 py-4">$76</td>
-            <td class="px-6 py-4 text-right font-bold text-gray-900">$6,536</td>
-          </tr>
+          {% empty %}
+          <tr><td colspan="4" class="px-6 py-8 text-center text-gray-500">No room bookings found for {{ period_label|lower }}.</td></tr>
+          {% endfor %}
         </tbody>
       </table>
     </div>
 
-    <!-- Quick Insights Card (1 Column) -->
-    <div class="bg-white border border-gray-200 rounded-xl p-6 shadow-sm flex flex-col justify-between">
+    <div class="report-card bg-white border border-gray-200 rounded-xl p-6 shadow-sm flex flex-col justify-between">
       <div>
-        <h3 class="font-bold text-gray-900 mb-4">Occupancy Summary</h3>
+        <h3 class="font-bold text-gray-900 mb-4">Occupancy by Room Category</h3>
         <div class="space-y-4 text-sm">
+          {% for row in occupancy_rows %}
           <div>
             <div class="flex justify-between text-xs font-semibold mb-1">
-              <span>Executive Suites</span>
-              <span class="text-gray-600">92%</span>
+              <span>{{ row.name }}</span><span class="text-gray-600">{{ row.rate|floatformat:1 }}%</span>
             </div>
             <div class="w-full bg-gray-200 rounded-full h-2">
-              <div class="bg-[#0b2bba] h-2 rounded-full" style="width: 92%"></div>
+              <div class="bg-[#0b2bba] h-2 rounded-full" style="width: {{ row.rate|floatformat:1 }}%"></div>
             </div>
           </div>
-          <div>
-            <div class="flex justify-between text-xs font-semibold mb-1">
-              <span>Deluxe Double</span>
-              <span class="text-gray-600">78%</span>
-            </div>
-            <div class="w-full bg-gray-200 rounded-full h-2">
-              <div class="bg-[#0b2bba] h-2 rounded-full" style="width: 78%"></div>
-            </div>
-          </div>
-          <div>
-            <div class="flex justify-between text-xs font-semibold mb-1">
-              <span>Standard Single</span>
-              <span class="text-gray-600">65%</span>
-            </div>
-            <div class="w-full bg-gray-200 rounded-full h-2">
-              <div class="bg-[#0b2bba] h-2 rounded-full" style="width: 65%"></div>
-            </div>
-          </div>
+          {% empty %}<p class="text-gray-500">No rooms are registered.</p>
+          {% endfor %}
         </div>
       </div>
       <div class="mt-6 pt-4 border-t border-gray-100 text-xs text-gray-500">
-        High demand detected for Executive Suites on weekend bookings.
+        Occupancy is based on non-cancelled room bookings and registered rooms during {{ period_label|lower }}.
       </div>
     </div>
-
   </div>
 </div>
 {% endblock %}
