@@ -995,3 +995,10 @@ def staff_delete(request, user_id):
         person.delete()
         messages.success(request, f"{name} was deleted.")
     return redirect("admin_action")
+
+
+def room_details_standard(request):
+    return render(request, 'hotel/room_details_standard.html')
+
+#staff dashboard
+

@@ -10,7 +10,7 @@ urlpatterns = [
     path("room-details/deluxe/", views.room_details_deluxe, name="room_details_deluxe"),
     path("room-details/executive/", views.room_details_executive, name="room_details_executive"),
     path("room-details/family-suite/", views.room_details_family, name="room_details_family"),
-    path("packages/", views.packages, name="packages"),
+    path("packages/", views.Packages, name="packages"),
     path("activities/", views.activities, name="activities"),
     path("events/", views.events, name="events"),
     path("login/", views.login, name="login"),
@@ -36,3 +36,11 @@ urlpatterns = [
     path("booking/<int:booking_id>/book-again/", views.book_again, name="book_again"),
     path("profile/edit/", views.customer_profile_edit, name="customer_profile_edit"),
 ]
+
+
+#staff dashboard
+
+path('staff/dashboard/', views.staff_dashboard, name='staff_dashboard'),
+path('staff/profile/', views.staff_profile, name='staff_profile'),
+path('staff/status/', views.staff_status, name='staff_status'),
+

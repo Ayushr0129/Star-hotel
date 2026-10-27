@@ -1,0 +1,25 @@
+{% load static %}
+<link rel="stylesheet" href="{% static 'css/staff.css' %}">
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dashboard</title>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <aside class="sidebar">
+    <div class="avatar"></div>
+    <a href="{% url 'staff_dashboard' %}" class="active">Dashboard</a>
+    <a href="{% url 'staff_profile' %}">Profile</a>
+    <a href="{% url 'staff_status' %}">Status</a>
+    <a href="#" class="logout">➜] Logout</a>
+  </aside>
+
+  <main class="content">
+    <h1>Dashboard</h1>
+  </main>
+</body>
+</html>
