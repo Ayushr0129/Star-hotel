@@ -3,6 +3,34 @@
 {% block title %}Customer Dashboard - Star Hotel{% endblock %}
 {% block content %}
 
+<style>
+  .booking-status.st-pending   { color:#b45309; }
+  .booking-status.st-confirmed { color:#15803d; }
+  .booking-status.st-completed { color:#475569; }
+  .booking-status.st-cancelled { color:#b91c1c; }
+  .booking-details p.booking-extras { font-size:13px; color:#6b7280; margin:6px 0 12px; }
+  .past-booking-row { margin-bottom:12px; }
+  .section-title.cancelled-title { margin-top:28px; }
+  .past-booking-name .booking-status { margin-left:8px; }
+  .muted-row { opacity:.75; }
+
+  /* cancel button / locked state */
+  button.btn-action { font-family: inherit; }
+  .booking-actions form { margin:0; }
+  .btn-cancel-locked { border:1px solid #d1d5db; color:#9ca3af; background:#f9fafb; cursor:not-allowed; }
+  .cancel-note { font-size:12px; color:#6b7280; align-self:center; }
+
+  /* flash messages */
+  .dash-message { padding:10px 14px; border-radius:6px; margin-bottom:16px; font-size:14px;
+                  background:#eef2ff; border:1px solid #c7d2fe; color:#1e3a8a; }
+  .dash-message.success { background:#f0fdf4; border-color:#bbf7d0; color:#166534; }
+  .dash-message.error   { background:#fef2f2; border-color:#fecaca; color:#991b1b; }
+
+  /* Progress Bar Styles */
+  .progress-container { margin: 20px 0; }
+  .progress-track { width: 100%; height: 10px; background-color: #e2e8f0; border-radius: 5px; overflow: hidden; }
+  .progress-fill { height: 100%; background-color: #15803d; width: var(--progress-width, 0%); transition: width 0.3s ease; }
+</style>
 
     <div class="layout">
 
@@ -14,7 +42,7 @@
                     <div class="member">{{ customer.loyalty.tier|default:"No tier" }} member</div>
                 </div>
             </div>
-        
+
             <nav id="nav">
                 <div class="nav-highlight" id="navHighlight"></div>
                 <a href="{% url 'customer_dashboard' %}" class="nav-item {% if request.resolver_match.url_name == 'customer_dashboard' %}active{% endif %}">Dashboard</a>
@@ -23,7 +51,7 @@
                 <a href="{% url 'customer_support' %}" class="nav-item {% if request.resolver_match.url_name == 'customer_support' %}active{% endif %}">Support</a>
             </nav>
 
-            <hr class = "divider">
+            <hr class="divider">
 
             <a href="#" class="logout">Logout</a>
         </aside>
@@ -33,35 +61,51 @@
                 <h1>Welcome Back, {{ customer.first_name|default:customer.username }}</h1>
                 <a href="{% url 'home' %}" class="btn-home">HOME</a>
             </div>
-      
-        <h2 class="section-title">Your Bookings</h2>
 
-        {% for booking in current_bookings %}
-        <div class="booking-card">
-            {% with first_item=booking.booking_items.first %}
-            <img src="{% static 'images/deluxe.jpg' %}" alt="{{ first_item.description|default:'Booking' }}" class="booking-image">
-        <div class="booking-details">
+            {% for m in messages %}
+            <div class="dash-message {{ m.tags }}">{{ m }}</div>
+            {% endfor %}
+
+            <h2 class="section-title">Your Bookings</h2>
+
+            {% for c in upcoming %}
+            <div class="booking-card">
+                <img src="{% static c.image %}" alt="{{ c.title }}" class="booking-image">
+                <div class="booking-details">
                     <div class="booking-title-row">
-                        <h3>{{ first_item.description|default:"Booking" }}</h3>
-                        <span class="booking-status">{{ booking.bk_status|title }}</span>
+                        <h3>{{ c.title }}</h3>
+                        <span class="booking-status st-{{ c.status }}">{{ c.status_label }}</span>
                     </div>
-                    <p>{{ booking.check_in }} &ndash; {{ booking.check_out }} &middot; {{ booking.branch.branch_name }}</p>
+                    <p>
+                        {% if c.single_day %}{{ c.booking.check_in|date:"d M Y" }}{% else %}{{ c.booking.check_in|date:"d M Y" }} &ndash; {{ c.booking.check_out|date:"d M Y" }}{% endif %}
+                        &middot; {{ c.booking.branch.branch_name }}
+                    </p>
                     <div class="booking-meta">
-                        <span>{{ booking.no_of_guests }} Guests</span>
-                        <span>Rs {{ booking.estimated_sum }}</span>
-                
+                        <span>{{ c.booking.no_of_guests }} Guest{{ c.booking.no_of_guests|pluralize }}</span>
+                        <span>Rs {{ c.booking.estimated_sum|floatformat:"2g" }}</span>
                     </div>
+                    {% if c.extras %}
+                    <p class="booking-extras">Also included: {{ c.extras|join:", " }}</p>
+                    {% endif %}
+                    {% if c.can_cancel or c.cancel_locked or c.can_checkin %}
                     <div class="booking-actions">
-                        <a href="#" class="btn-action btn-modify">Modify</a>
-                        <a href="#" class="btn-action btn-cancel">Cancel</a>
-                        <a href="#" class="btn-action btn-checkin">Check-In</a>
+                        {% if c.can_cancel %}
+                        <form method="post" action="{% url 'cancel_booking' c.booking.bk_id %}"
+                              onsubmit="return confirm('Cancel this booking? This cannot be undone.');">
+                            {% csrf_token %}
+                            <button type="submit" class="btn-action btn-cancel">Cancel</button>
+                        </form>
+                        {% elif c.cancel_locked %}
+                        <button type="button" class="btn-action btn-cancel-locked" disabled>Cancel</button>
+                        <span class="cancel-note">Cancellation closes {{ cancel_window_hours }} hours before check-in.</span>
+                        {% endif %}
+                        {% if c.can_checkin %}<a href="#" class="btn-action btn-checkin">Check-In</a>{% endif %}
                     </div>
+                    {% endif %}
                 </div>
-                {% endwith %}
-
             </div>
             {% empty %}
-            <p>You have no upcoming bookings.</p>
+            <p>You have no upcoming bookings. <a href="{% url 'booking' %}">Make a booking</a></p>
             {% endfor %}
 
             <div class="stats-row">
@@ -71,7 +115,7 @@
                 </div>
                 <div class="stat-box">
                     <div class="stat-label">Points</div>
-                    <div class="stat-value">{{ points }}</div>
+                    <div class="stat-value">{{ points|floatformat:"0g" }}</div>
                 </div>
                 <div class="stat-box">
                     <div class="stat-label">Next Tier</div>
@@ -79,26 +123,46 @@
                 </div>
             </div>
 
+            <!-- Integrated Progress Track Changes -->
+            <div class="progress-container">
+                <div class="progress-track">
+                    <div class="progress-fill" style="--progress-width: {{ progress|default:0 }}%;"></div>
+                </div>
+            </div>
+
             <h2 class="section-title">Past Bookings</h2>
-            
-            {% for booking in past_bookings %}
+            {% for c in past %}
             <div class="past-booking-row">
                 <div>
-                    <div class="past-booking-name">{{ booking.booking_items.first.description|default:"Booking" }}</div>
-                    <div class="past-booking-dates">{{ booking.check_in }} &ndash; {{ booking.check_out }}</div>
+                    <div class="past-booking-name">{{ c.title }}</div>
+                    <div class="past-booking-dates">
+                        {% if c.single_day %}{{ c.booking.check_in|date:"d M Y" }}{% else %}{{ c.booking.check_in|date:"d M Y" }} &ndash; {{ c.booking.check_out|date:"d M Y" }}{% endif %}
+                    </div>
                 </div>
-                <a href="#" class="btn-book-again">Book again</a>
+                <a href="{% url 'book_again' c.booking.bk_id %}" class="btn-book-again">Book again</a>
             </div>
             {% empty %}
             <p>No past bookings yet.</p>
             {% endfor %}
+
+            {% if cancelled %}
+            <h2 class="section-title cancelled-title">Cancelled</h2>
+            {% for c in cancelled %}
+            <div class="past-booking-row muted-row">
+                <div>
+                    <div class="past-booking-name">{{ c.title }} <span class="booking-status st-cancelled">Cancelled</span></div>
+                    <div class="past-booking-dates">
+                        {% if c.single_day %}{{ c.booking.check_in|date:"d M Y" }}{% else %}{{ c.booking.check_in|date:"d M Y" }} &ndash; {{ c.booking.check_out|date:"d M Y" }}{% endif %}
+                    </div>
+                </div>
+                <a href="{% url 'book_again' c.booking.bk_id %}" class="btn-book-again">Book again</a>
+            </div>
+            {% endfor %}
+            {% endif %}
         </div>
-        
+
     </div>
-
-
 
     <script src="{% static 'js/script.js' %}"></script>
 
-
-    {% endblock %}
+{% endblock %}

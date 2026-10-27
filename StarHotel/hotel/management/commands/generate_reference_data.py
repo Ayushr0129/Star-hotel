@@ -47,11 +47,13 @@ LOYALTY_TIERS = [
 ]
 
 BRANCH_CITIES = [
-    ("Port Louis Grand", "Port Louis"),
-    ("Grand Baie Resort", "Grand Baie"),
-    ("Flic-en-Flac Shores", "Flic-en-Flac"),
-    ("Belle Mare Bay", "Belle Mare"),
+    ("Mont Choisy", "Mont Choisy"),
+    ("Surinam", "Surinam"),
+    ("Belle Mare", "Belle Mare"),
+    ("Flic-en-Flac", "Flic-en-Flac"),
 ]
+
+
 
 # Matches the hardcoded cards on home.html exactly (name, price).
 # Every branch gets one of each room type at this fixed price, so whatever
@@ -59,7 +61,7 @@ BRANCH_CITIES = [
 # flow too.
 ROOM_TYPES = [
     ("Deluxe Room", 15000),
-    ("Standard Room", 9500),
+    ("Standard Room", 8000),
     ("Studio Room", 12500),
     ("Executive Room", 18000),
 ]

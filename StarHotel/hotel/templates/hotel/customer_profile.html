@@ -2,9 +2,13 @@
 {% load static %}
 {% block title %}My Profile - Star Hotel{% endblock %}
 {% block content %}
- 
+
+<style>
+  .profile-message { background:#ecfdf3; border:1px solid #abefc6; color:#067647; padding:10px 14px; border-radius:6px; margin-bottom:16px; }
+</style>
+
     <div class="layout">
- 
+
         <aside class="sidebar">
             <div class="profile">
                 <div class="avatar"></div>
@@ -13,7 +17,7 @@
                     <div class="member">{{ customer.loyalty.tier|default:"No tier" }} member</div>
                 </div>
             </div>
- 
+
             <nav id="nav">
                 <div class="nav-highlight" id="navHighlight"></div>
                 <a href="{% url 'customer_dashboard' %}" class="nav-item {% if request.resolver_match.url_name == 'customer_dashboard' %}active{% endif %}">Dashboard</a>
@@ -21,18 +25,22 @@
                 <a href="{% url 'customer_rewards' %}" class="nav-item {% if request.resolver_match.url_name == 'customer_rewards' %}active{% endif %}">Rewards</a>
                 <a href="{% url 'customer_support' %}" class="nav-item {% if request.resolver_match.url_name == 'customer_support' %}active{% endif %}">Support</a>
             </nav>
- 
+
             <hr class="divider">
- 
+
             <a href="#" class="logout">Logout</a>
         </aside>
- 
+
         <div class="dashboard-content">
             <div class="content-header">
                 <h1>My Profile</h1>
                 <a href="{% url 'home' %}" class="btn-home">HOME</a>
             </div>
- 
+
+            {% for m in messages %}
+            <div class="profile-message">{{ m }}</div>
+            {% endfor %}
+
             <h2 class="section-title">Personal Information</h2>
             <div class="stats-row">
                 <div class="stat-box">
@@ -41,7 +49,7 @@
                 </div>
                 <div class="stat-box">
                     <div class="stat-label">Email</div>
-                    <div class="stat-value" style="font-size:18px;">{{ customer.email }}</div>
+                    <div class="stat-value" style="font-size:18px;">{{ customer.email|default:"Not set" }}</div>
                 </div>
                 <div class="stat-box">
                     <div class="stat-label">Phone</div>
@@ -52,7 +60,7 @@
             <div class="stats-row">
                 <div class="stat-box">
                     <div class="stat-label">Date of Birth</div>
-                    <div class="stat-value" style="font-size:18px;">{{ customer.dob|default:"Not set" }}</div>
+                    <div class="stat-value" style="font-size:18px;">{{ customer.dob|date:"d M Y"|default:"Not set" }}</div>
                 </div>
                 <div class="stat-box">
                     <div class="stat-label">Address</div>
@@ -63,19 +71,19 @@
                     <div class="stat-value" style="font-size:18px;">{{ customer.nid }}</div>
                 </div>
             </div>
- 
+
             <h2 class="section-title">Account</h2>
             <div class="past-booking-row">
                 <div>
                     <div class="past-booking-name">Keep your details up to date</div>
-                    <div class="past-booking-dates">Update your contact info and password</div>
+                    <div class="past-booking-dates">Update your contact info</div>
                 </div>
-                <a href="#" class="btn-book-again">Edit Profile</a>
+                <a href="{% url 'customer_profile_edit' %}" class="btn-book-again">Edit Profile</a>
             </div>
         </div>
- 
+
     </div>
- 
+
     <script src="{% static 'js/script.js' %}"></script>
- 
+
 {% endblock %}

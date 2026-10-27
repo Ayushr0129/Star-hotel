@@ -6,9 +6,13 @@ urlpatterns = [
 
     path("",views.home, name="home"),
     path("search-results/", views.search_results, name="search_results"),
+    path("room-details/standard/", views.room_details_standard, name="room_details_standard"),
     path("room-details/deluxe/", views.room_details_deluxe, name="room_details_deluxe"),
     path("room-details/executive/", views.room_details_executive, name="room_details_executive"),
     path("room-details/family-suite/", views.room_details_family, name="room_details_family"),
+    path("packages/", views.packages, name="packages"),
+    path("activities/", views.activities, name="activities"),
+    path("events/", views.events, name="events"),
     path("login/", views.login, name="login"),
     path("register/", views.register, name="register"),
     path("customer-dashboard/", views.customer_dashboard, name="customer_dashboard"),
@@ -28,4 +32,7 @@ urlpatterns = [
     path("cart/guest-details/", views.cart_guest_details, name="cart_guest_details"),
     path("cart/payment/", views.cart_payment, name="cart_payment"),
     path("booking-confirmation/", views.booking_confirmation, name="booking_confirmation"),
+    path("booking/<int:booking_id>/cancel/", views.cancel_booking, name="cancel_booking"),
+    path("booking/<int:booking_id>/book-again/", views.book_again, name="book_again"),
+    path("profile/edit/", views.customer_profile_edit, name="customer_profile_edit"),
 ]

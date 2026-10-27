@@ -1,0 +1,102 @@
+{% extends "base.html" %}
+{% load static %}
+{% block title %}Edit Profile - Star Hotel{% endblock %}
+{% block content %}
+
+    <div class="layout">
+
+        <aside class="sidebar">
+            <div class="profile">
+                <div class="avatar"></div>
+                <div class="profile-info">
+                    <div class="name">{{ customer.first_name|default:customer.username }}</div>
+                    <div class="member">{{ customer.loyalty.tier|default:"No tier" }} member</div>
+                </div>
+            </div>
+
+            <nav id="nav">
+                <div class="nav-highlight" id="navHighlight"></div>
+                <a href="{% url 'customer_dashboard' %}" class="nav-item {% if request.resolver_match.url_name == 'customer_dashboard' %}active{% endif %}">Dashboard</a>
+                <a href="{% url 'customer_profile' %}" class="nav-item {% if request.resolver_match.url_name == 'customer_profile' or request.resolver_match.url_name == 'customer_profile_edit' %}active{% endif %}">Profile</a>
+                <a href="{% url 'customer_rewards' %}" class="nav-item {% if request.resolver_match.url_name == 'customer_rewards' %}active{% endif %}">Rewards</a>
+                <a href="{% url 'customer_support' %}" class="nav-item {% if request.resolver_match.url_name == 'customer_support' %}active{% endif %}">Support</a>
+            </nav>
+
+            <hr class="divider">
+
+            <a href="#" class="logout">Logout</a>
+        </aside>
+
+        <div class="dashboard-content">
+            <div class="content-header">
+                <h1>Edit Profile</h1>
+                <a href="{% url 'customer_profile' %}" class="btn-home">BACK TO PROFILE</a>
+            </div>
+
+            {% if errors %}
+            <div class="booking-message">
+                {% for e in errors %}<div>{{ e }}</div>{% endfor %}
+            </div>
+            {% endif %}
+
+            <form method="post" novalidate>
+                {% csrf_token %}
+
+                <div class="form-section">
+                    <h2>Personal Information</h2>
+
+                    <div class="form-row">
+                        <div class="form-field">
+                            <label for="first_name">First name</label>
+                            <input type="text" id="first_name" name="first_name" value="{{ form.first_name }}" maxlength="150">
+                        </div>
+                        <div class="form-field">
+                            <label for="last_name">Last name</label>
+                            <input type="text" id="last_name" name="last_name" value="{{ form.last_name }}" maxlength="150">
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-field">
+                            <label for="email">Email</label>
+                            <input type="email" id="email" name="email" value="{{ form.email }}" maxlength="254">
+                        </div>
+                        <div class="form-field">
+                            <label for="phone">Phone</label>
+                            <input type="tel" id="phone" name="phone" value="{{ form.phone }}" maxlength="20">
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-field">
+                            <label for="dob">Date of birth</label>
+                            <input type="date" id="dob" name="dob" value="{{ form.dob }}">
+                        </div>
+                        <div class="form-field">
+                            <label for="address">Address</label>
+                            <input type="text" id="address" name="address" value="{{ form.address }}" maxlength="255">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-section">
+                    <h2>Account</h2>
+                    <div class="order-row"><span>Username</span><span>{{ customer.username }}</span></div>
+                    <div class="order-row"><span>National ID</span><span>{{ customer.nid }}</span></div>
+                    <p style="font-size:13px; color:#6b7280; margin-top:8px;">
+                        Your username and National ID can't be changed here. Contact support if they need correcting.
+                    </p>
+                </div>
+
+                <div class="checkout-actions" style="justify-content:flex-start; gap:12px;">
+                    <button type="submit" class="btn-checkout" style="width:auto; padding:12px 32px;">Save changes</button>
+                    <a href="{% url 'customer_profile' %}" class="btn-outline-navy" style="text-decoration:none; display:inline-block; padding:12px 24px;">Cancel</a>
+                </div>
+            </form>
+        </div>
+
+    </div>
+
+    <script src="{% static 'js/script.js' %}"></script>
+
+{% endblock %}

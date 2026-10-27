@@ -1,0 +1,58 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Activities - Star Hotel{% endblock %}
+
+{% block content %}
+<div class="activities-page">
+    <div class="activities-heading">
+        <h1>Activities</h1>
+        <p class="section-subtitle">Discover exciting experiences during your stay.</p>
+    </div>
+    <div class="activity-list">
+        {% for activity in activities %}
+        <div class="activity-card" id="activity-{{ activity.id }}">
+            <div class="activity-card-image">
+                <img src="{% static activity.image_path %}" alt="{{ activity.name }}">
+            </div>
+
+            <div class="activity-card-info">
+                <h3 class="activity-card-name">{{ activity.name }}</h3>
+                <p class="activity-card-description">{{ activity.description }}</p>
+                <ul class="activity-card-details">
+                    <li>
+                        {% if activity.duration %}{{ activity.duration }} minutes{% else %}Flexible duration{% endif %}
+                    </li>
+                    <li>{{ activity.location }}</li>
+                    <li>Up to {{ activity.capacity }} guests</li>
+                </ul>
+            </div>
+            <div class="activity-card-action">
+                <p class="activity-card-price">
+                    {% if activity.price == 0 %}
+                    <span class="price-amount">Complimentary</span>
+                    {% else %}
+                    <span class="price-amount">Rs {{ activity.price|floatformat:"0g" }}</span>
+                    <span class="price-period">per person</span>
+                    {% endif %}
+                </p>
+                    <form method="post" action="{% url 'booking' %}" class="card-book-form">
+                    {% csrf_token %}
+                    <input type="hidden" name="current_tab" value="activities">
+                    <input type="hidden" name="add_item" value="activity-{{ activity.id }}">
+
+                    <label>Date
+                        <input type="date" name="checkin" required>
+                    </label>
+                    <label>Guests
+                        <input type="number" name="guests" min="1" max="{{ activity.capacity }}" value="2" required>
+                    </label>
+
+                    <button type="submit" class="btn-navy">Book Activity</button>
+                </form>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}

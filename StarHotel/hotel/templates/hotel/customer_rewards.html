@@ -2,9 +2,21 @@
 {% load static %}
 {% block title %}Rewards - Star Hotel{% endblock %}
 {% block content %}
- 
+
+<style>
+  .past-booking-row { margin-bottom:12px; }
+  .pts-note { font-size:12px; color:#6b7280; margin-top:6px; }
+  .pts-pending { color:#b45309; font-size:12px; font-weight:700; margin-right:10px; }
+  .progress-wrap { margin:-8px 0 28px; }
+  .progress-track { background:#e5e7eb; border-radius:999px; height:10px; overflow:hidden; }
+  .progress-fill { background:var(--navy); height:10px; border-radius:999px; }
+  .progress-caption { font-size:13px; color:#4b5563; margin-top:8px; }
+  .how-list { margin:0; padding-left:20px; font-size:14px; color:#374151; line-height:1.8; }
+  .tier-current { background:#f4f7ff; border-width:2px; }
+</style>
+
     <div class="layout">
- 
+
         <aside class="sidebar">
             <div class="profile">
                 <div class="avatar"></div>
@@ -13,7 +25,7 @@
                     <div class="member">{{ customer.loyalty.tier|default:"No tier" }} member</div>
                 </div>
             </div>
- 
+
             <nav id="nav">
                 <div class="nav-highlight" id="navHighlight"></div>
                 <a href="{% url 'customer_dashboard' %}" class="nav-item {% if request.resolver_match.url_name == 'customer_dashboard' %}active{% endif %}">Dashboard</a>
@@ -21,52 +33,93 @@
                 <a href="{% url 'customer_rewards' %}" class="nav-item {% if request.resolver_match.url_name == 'customer_rewards' %}active{% endif %}">Rewards</a>
                 <a href="{% url 'customer_support' %}" class="nav-item {% if request.resolver_match.url_name == 'customer_support' %}active{% endif %}">Support</a>
             </nav>
- 
+
             <hr class="divider">
- 
+
             <a href="#" class="logout">Logout</a>
         </aside>
- 
+
         <div class="dashboard-content">
             <div class="content-header">
                 <h1>Your Rewards</h1>
                 <a href="{% url 'home' %}" class="btn-home">HOME</a>
             </div>
- 
+
             <h2 class="section-title">Rewards Summary</h2>
             <div class="stats-row">
                 <div class="stat-box">
                     <div class="stat-label">Points</div>
-                    <div class="stat-value">{{ total_points }}</div>
+                    <div class="stat-value">{{ earned|floatformat:"0g" }}</div>
+                    {% if pending %}<div class="pts-note">+{{ pending|floatformat:"0g" }} pending after your stay</div>{% endif %}
                 </div>
                 <div class="stat-box">
                     <div class="stat-label">Tier</div>
                     <div class="stat-value" style="font-size:20px;">{{ customer.loyalty.tier|default:"None" }}</div>
+                    {% if customer.loyalty %}<div class="pts-note">&times;{{ multiplier|floatformat:"-2" }} points on every booking</div>{% endif %}
                 </div>
                 <div class="stat-box">
-                    <div class="stat-label">Points to Next Tier</div>
-                    <div class="stat-value">&mdash;</div>
+                    <div class="stat-label">{% if next_tier %}Points to {{ next_tier }}{% else %}Next tier{% endif %}</div>
+                    <div class="stat-value">{% if next_tier %}{{ to_next|floatformat:"0g" }}{% elif top_tier %}<span style="font-size:20px;">Top tier</span>{% else %}&mdash;{% endif %}</div>
                 </div>
             </div>
- 
+
+            {% if next_tier or top_tier %}
+            <div class="progress-wrap">
+                <div class="progress-track">
+                    <div class="progress-fill" style="--progress-width: {{ progress }}%;"></div>
+                </div>
+                <div class="progress-caption">
+                    {% if top_tier %}You've reached our highest tier.
+                    {% elif to_next == 0 %}You have enough points for {{ next_tier }}.
+                    {% else %}{{ to_next|floatformat:"0g" }} more points to reach {{ next_tier }}.{% endif %}
+                </div>
+            </div>
+            {% endif %}
+
+            <h2 class="section-title">How it works</h2>
+            <div class="form-section">
+                <ul class="how-list">
+                    <li>Earn <strong>1 point for every Rs 100</strong> you spend on stays, packages, events and activities.</li>
+                    <li>Your tier multiplies the points you earn, as shown below.</li>
+                    <li>Points are added after check-out. Upcoming bookings show as pending.</li>
+                    <li>Cancelled bookings don't earn points.</li>
+                </ul>
+            </div>
+
+            <h2 class="section-title">Membership tiers</h2>
+            <div class="stats-row">
+                {% for t in tier_rows %}
+                <div class="stat-box{% if t.current %} tier-current{% endif %}">
+                    <div class="stat-label">{{ t.name }}{% if t.current %} &middot; you are here{% endif %}</div>
+                    <div class="stat-value" style="font-size:20px;">&times;{{ t.multiplier|floatformat:"-2" }}</div>
+                    <div class="pts-note">{% if t.threshold == 0 %}Starting tier{% elif t.threshold %}From {{ t.threshold|floatformat:"0g" }} points{% endif %}</div>
+                </div>
+                {% endfor %}
+            </div>
+
             <h2 class="section-title">Points History</h2>
-            
+
             {% for entry in history %}
             <div class="past-booking-row">
                 <div>
-                    <div class="past-booking-name">{{ entry.booking.booking_items.first.description|default:"Booking" }}</div>
-                    <div class="past-booking-dates">{{ entry.booking.check_in }} &ndash; {{ entry.booking.check_out }}</div>
+                    <div class="past-booking-name">{{ entry.title }}</div>
+                    <div class="past-booking-dates">
+                        {% if entry.single_day %}{{ entry.booking.check_in|date:"d M Y" }}{% else %}{{ entry.booking.check_in|date:"d M Y" }} &ndash; {{ entry.booking.check_out|date:"d M Y" }}{% endif %}
+                    </div>
                 </div>
-                <span class="btn-book-again" style="cursor:default;">+{{ entry.points }} pts</span>
+                <div>
+                    {% if not entry.earned %}<span class="pts-pending">Pending</span>{% endif %}
+                    <span class="btn-book-again" style="cursor:default;">+{{ entry.points|floatformat:"0g" }} pts</span>
+                </div>
             </div>
             {% empty %}
             <p>No points history yet.</p>
             {% endfor %}
- 
+
         </div>
- 
+
     </div>
- 
+
     <script src="{% static 'js/script.js' %}"></script>
- 
+
 {% endblock %}
