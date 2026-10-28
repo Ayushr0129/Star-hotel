@@ -1,6 +1,6 @@
 from decimal import Decimal, InvalidOperation
 from datetime import date, timedelta
- 
+import calendar
 from django.conf import settings
 from django.contrib import messages
 from django.db import transaction
@@ -895,7 +895,20 @@ def booking(request):
         return render(request, "hotel/booking.html", context)
  
 def staff_dashboard(request):
-    return render(request, "hotel/staff_dashboard.html")
+    today = date.today()
+    yesterday = today - timedelta(days=1)
+    live = Booking.objects.exclude(bk_status__iexact="cancelled")
+
+    checkin = _card(live.filter(check_in=today), live.filter(check_in=yesterday))
+    checkout = _card(live.filter(check_out=today), live.filter(check_out=yesterday))
+
+    bookings = list(Booking.objects.select_related("customer").order_by("-created_at")[:10])
+    for b in bookings:
+        b.nights = (b.check_out - b.check_in).days
+        b.first_room = Room_Item.objects.filter(booking=b).select_related("room").first()
+
+    context = {"checkin": checkin, "checkout": checkout, "bookings": bookings}
+    return render(request, "hotel/staff_dashboard.html", context)
  
  
 def admin_dashboard(request):
@@ -1555,9 +1568,35 @@ def admin_action(request):
 def staff_profile(request):
     return render(request, "hotel/staff_profile.html")
 
-
 def staff_status(request):
-    return render(request, "hotel/staff_status.html")
+    today = date.today()
+    try:
+        year = int(request.GET.get("year", today.year))
+        month = int(request.GET.get("month", today.month))
+        if not (1 <= month <= 12 and today.year - 10 <= year <= today.year + 10):
+            raise ValueError
+    except ValueError:
+        year, month = today.year, today.month
+
+    staff = list(
+        User.objects.filter(
+            Q(employee__isnull=False) | Q(is_staff=True) | Q(is_superuser=True)
+        )
+        .distinct()
+        .order_by(F("last_login").desc(nulls_last=True), "first_name")
+    )
+
+    context = {
+        "weeks": calendar.Calendar(firstweekday=6).monthdayscalendar(year, month),
+        "month": month,
+        "year": year,
+        "months": [(i, calendar.month_name[i]) for i in range(1, 13)],
+        "years": range(today.year - 10, today.year + 11),
+        "today": today,
+        "is_this_month": year == today.year and month == today.month,
+        "staff": staff,
+    }
+    return render(request, "hotel/staff_status.html", context)
 
 
 def _can_manage(request):
