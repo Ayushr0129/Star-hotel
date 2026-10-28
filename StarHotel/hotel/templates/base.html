@@ -32,8 +32,15 @@
             <a href="{% url 'packages' %}" class="site-nav-item">Packages</a>
             <a href="{% url 'activities' %}" class="site-nav-item">Activities</a>
             <a href="{% url 'events' %}" class="site-nav-item">Events</a>
-            <a href="{% url 'login' %}" class="site-nav-item">Login</a>
-            <a href="{% url 'register' %}" class="site-nav-item" id="registerLink">Register</a>
+            {% if user.is_authenticated %}
+                <form method="post" action="{% url 'logout' %}" class="nav-logout-form">
+                    {% csrf_token %}
+                    <button type="submit" class="site-nav-item nav-logout-btn">Logout</button>
+                </form>
+            {% else %}
+                <a href="{% url 'login' %}" class="site-nav-item">Login</a>
+                <a href="{% url 'register' %}" class="site-nav-item" id="registerLink">Register</a>
+            {% endif %}
         </nav>
     </header>
     {% endblock %} 
