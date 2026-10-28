@@ -1,3 +1,5 @@
+from django.contrib.auth import logout as auth_logout
+from django.views.decorators.http import require_POST
 from decimal import Decimal, InvalidOperation
 from datetime import date, timedelta
  
@@ -517,7 +519,11 @@ def login(request):
  
 def register(request):
     return render(request, "hotel/register.html")
- 
+
+@require_POST
+def logout_view(request):
+    auth_logout(request)
+    return redirect("home")
  
 def _hours_until_checkin(b):
     """Hours from now until the start of the booking's check-in date.
