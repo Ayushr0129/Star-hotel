@@ -266,13 +266,22 @@ main:has(.layout) {
 }
 
 .avatar {
-    width: 52px;
-    height: 52px;
+    width: 56px;
+    height: 56px;
+    min-width: 56px;               /* stops the circle being squeezed */
     border-radius: 50%;
-    background: var(--accent-red);
+    background: #3b82f6;           /* lighter blue so it stands out on the navy sidebar */
+    color: #fff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 24px;
+    font-weight: 700;
+    line-height: 1;
+    text-transform: uppercase;
     flex-shrink: 0;
+    border: 2px solid rgba(255, 255, 255, 0.35);   /* subtle ring */
 }
-
 .profile-info .name{
     color: var(--text-light);
     font-size: 17px;
