@@ -19,7 +19,7 @@
 
         <aside class="sidebar">
             <div class="profile">
-                <div class="avatar"></div>
+                <div class="avatar">{{ customer.first_name|default:customer.username|default:"?"|first|upper }}</div>
                 <div class="profile-info">
                     <div class="name">{{ customer.first_name|default:customer.username }}</div>
                     <div class="member">{{ customer.loyalty.tier|default:"No tier" }} member</div>

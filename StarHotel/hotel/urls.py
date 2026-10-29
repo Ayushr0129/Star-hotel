@@ -14,6 +14,7 @@ urlpatterns = [
     path("events/", views.events, name="events"),
     path("login/", views.login, name="login"),
     path("register/", views.register, name="register"),
+    path("logout/", views.logout_view, name="logout"),
     path("customer-dashboard/", views.customer_dashboard, name="customer_dashboard"),
     path("booking/", views.booking, name="booking"),
     path("profile/", views.customer_profile, name="customer_profile"),

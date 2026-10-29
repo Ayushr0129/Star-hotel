@@ -36,7 +36,7 @@
 
         <aside class="sidebar">
             <div class="profile">
-                <div class="avatar"></div>
+                <div class="avatar">{{ customer.first_name|default:customer.username|default:"?"|first|upper }}</div>
                 <div class="profile-info">
                     <div class="name">{{ customer.first_name|default:customer.username }}</div>
                     <div class="member">{{ customer.loyalty.tier|default:"No tier" }} member</div>
@@ -87,7 +87,7 @@
                     {% if c.extras %}
                     <p class="booking-extras">Also included: {{ c.extras|join:", " }}</p>
                     {% endif %}
-                    {% if c.can_cancel or c.cancel_locked or c.can_checkin %}
+                    {% if c.can_cancel or c.cancel_locked %}
                     <div class="booking-actions">
                         {% if c.can_cancel %}
                         <form method="post" action="{% url 'cancel_booking' c.booking.bk_id %}"
@@ -99,7 +99,7 @@
                         <button type="button" class="btn-action btn-cancel-locked" disabled>Cancel</button>
                         <span class="cancel-note">Cancellation closes {{ cancel_window_hours }} hours before check-in.</span>
                         {% endif %}
-                        {% if c.can_checkin %}<a href="#" class="btn-action btn-checkin">Check-In</a>{% endif %}
+                        
                     </div>
                     {% endif %}
                 </div>
