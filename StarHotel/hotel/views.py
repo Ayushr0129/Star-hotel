@@ -2,6 +2,7 @@ from django.contrib.auth import logout as auth_logout
 from django.views.decorators.http import require_POST
 from decimal import Decimal, InvalidOperation
 from datetime import date, timedelta
+from django.utils import timezone
  
 from django.conf import settings
 from django.contrib import messages
@@ -389,7 +390,7 @@ def home(request):
         }
         for e in Event.objects.filter(eventdate__gte=date.today()).order_by("eventdate")
     ]
-    return render(request, "hotel/home.html", {"rooms": rooms, "branches": Branch.objects.order_by("branch_name"), "events": events})
+    return render(request, "hotel/home.html", {"rooms": rooms, "branches": Branch.objects.order_by("branch_name"), "events": events,"today": timezone.localdate().isoformat()})
     
  
  
