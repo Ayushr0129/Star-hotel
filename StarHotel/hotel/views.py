@@ -1,8 +1,8 @@
 from django.contrib.auth import logout as auth_logout
 from django.views.decorators.http import require_POST
 from decimal import Decimal, InvalidOperation
-from datetime import date, timedelta
- import calendar
+from datetime import date, timedelta 
+import calendar
 from django.conf import settings
 from django.contrib import messages
 from django.db import transaction
