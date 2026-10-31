@@ -1,0 +1,122 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Staff Status</title>
+  <link rel="stylesheet" href="{% static 'css/staff.css' %}">
+</head>
+<body>
+  <aside class="sidebar">
+    <div class="avatar"></div>
+    <nav>
+      <a href="{% url 'staff_dashboard' %}">Dashboard</a>
+      <a href="{% url 'staff_profile' %}">Profile</a>
+      <a href="{% url 'staff_status' %}" class="active">Status</a>
+    </nav>
+    <a href="#" class="logout">&#10145;] Logout</a>
+  </aside>
+
+  <main class="content">
+    <div class="status-top">
+
+      <!-- calendar -->
+<div class="calendar">
+  <form method="get" class="cal-head">
+    <select name="month" onchange="this.form.submit()">
+      {% for num, name in months %}
+      <option value="{{ num }}" {% if num == month %}selected{% endif %}>{{ name }}</option>
+      {% endfor %}
+    </select>
+    <select name="year" onchange="this.form.submit()">
+      {% for y in years %}
+      <option value="{{ y }}" {% if y == year %}selected{% endif %}>{{ y }}</option>
+      {% endfor %}
+    </select>
+  </form>
+  <table>
+    <tr><th>Sun</th><th>Mon</th><th>Tue</th><th>Wed</th><th>Thu</th><th>Fri</th><th>Sat</th></tr>
+    {% for week in weeks %}
+    <tr>
+      {% for day in week %}
+      <td>{% if day %}{% if is_this_month and day == today.day %}<span class="today">{{ day }}</span>{% else %}{{ day }}{% endif %}{% endif %}</td>
+      {% endfor %}
+    </tr>
+    {% endfor %}
+  </table>
+</div>
+
+      <!-- break timing -->
+      <div class="break-box">
+        <h3 class="break-title"><span class="blue">&#9201;</span> Break Timing</h3>
+
+        <div class="break-grid">
+          <div class="break-left">
+            <p class="big">15.35 hours</p>
+            <p class="green">1.81 (0.43%)</p>
+            <p class="grey">14.10 hours in Previous Months</p>
+
+            <div class="chart">
+              <div class="y-axis"><span>16</span><span>12</span><span>8</span><span>4</span><span>0</span></div>
+              <div class="bars">
+                <div class="bar-col"><div class="bar" style="height:44%"></div><span>10:30</span></div>
+                <div class="bar-col"><div class="bar" style="height:69%"></div><span>11:00</span></div>
+                <div class="bar-col"><div class="bar" style="height:100%"></div><span>11:30</span></div>
+                <div class="bar-col"><div class="bar" style="height:94%"></div><span>12:00</span></div>
+                <div class="bar-col"><div class="bar" style="height:6%"></div><span>12:30</span></div>
+                <div class="bar-col"><div class="bar" style="height:0%"></div><span>01:00</span></div>
+                <div class="bar-col"><div class="bar" style="height:75%"></div><span>01:30</span></div>
+              </div>
+            </div>
+          </div>
+
+          <div class="break-right">
+            <p class="big">1hr 10min</p>
+            <p class="grey">Today's Break</p>
+
+            <div class="break-item">
+              <span class="blue icon">&#127869;</span>
+              <div>
+                <p class="strong">45 minutes</p>
+                <p>Lunch Break</p>
+                <p class="grey">12:00 PM - 12:45 PM</p>
+              </div>
+            </div>
+            <div class="break-item">
+              <span class="blue icon">&#9749;</span>
+              <div>
+                <p class="strong">25 minutes</p>
+                <p>Tea Break</p>
+                <p class="grey">4:10 PM - 4:35 PM</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- employees table -->
+<div class="staff-box">
+  <table class="staff-table">
+    <thead>
+      <tr><th>Name</th><th>Email</th><th>Last Login</th><th>Hours Worked</th><th>Shift</th></tr>
+    </thead>
+    <tbody>
+      {% for s in staff %}
+      <tr>
+        <td>{{ s.get_full_name|default:s.username }}</td>
+        <td>{{ s.email }}</td>
+        <td>{% if s.last_login %}{{ s.last_login|date:"Y-m-d H:i" }}{% else %}Never{% endif %}</td>
+        <td>-</td>
+        <td>-</td>
+      </tr>
+      {% empty %}
+      <tr><td colspan="5">No staff found.</td></tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+  </main>
+</body>
+</html>

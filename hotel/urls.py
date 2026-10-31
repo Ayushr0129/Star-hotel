@@ -1,5 +1,6 @@
 from django.urls import path
 from . import views
+from . import authpages
 
 urlpatterns = [
     path("",views.home, name="home"),
@@ -8,9 +9,10 @@ urlpatterns = [
 
     path("room-details/", views.room_details, name="room_details"),
 
-    path("login/", views.login, name="login"),
+    path("login/", authpages.login_view, name="login"),
+    path("logout/", authpages.logout_view, name="logout"),
 
-    path("register/", views.register, name="register"),
+    path("register/", authpages.register_view, name="register"),
 
     path("customer-dashboard/", views.customer_dashboard, name="customer_dashboard"),
 

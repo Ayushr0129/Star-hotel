@@ -21,11 +21,13 @@
         </div>
         <div class="booking-field">
             <label>Check-in</label>
-            <input type="date" name="check_in" value="2026-09-20">
+            <input type="date" name="check_in"
+                min="{{ today }}" value="{{ today }}" required>
         </div>
         <div class="booking-field">
             <label>Check-out</label>
-            <input type="date" name="check_out" value="2026-09-28">
+            <input type="date" name="check_out"
+                min="{{ today }}" required>
         </div>
         <div class="booking-field">
             <label>Guests</label>

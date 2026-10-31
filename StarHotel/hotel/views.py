@@ -1,8 +1,8 @@
 from django.contrib.auth import logout as auth_logout
 from django.views.decorators.http import require_POST
 from decimal import Decimal, InvalidOperation
-from datetime import date, timedelta
- 
+from datetime import date, timedelta 
+import calendar
 from django.conf import settings
 from django.contrib import messages
 from django.db import transaction
@@ -389,7 +389,7 @@ def home(request):
         }
         for e in Event.objects.filter(eventdate__gte=date.today()).order_by("eventdate")
     ]
-    return render(request, "hotel/home.html", {"rooms": rooms, "branches": Branch.objects.order_by("branch_name"), "events": events})
+    return render(request, "hotel/home.html", {"rooms": rooms, "branches": Branch.objects.order_by("branch_name"), "events": events,"today": timezone.localdate().isoformat()})
     
  
  
@@ -901,7 +901,20 @@ def booking(request):
         return render(request, "hotel/booking.html", context)
  
 def staff_dashboard(request):
-    return render(request, "hotel/staff_dashboard.html")
+    today = date.today()
+    yesterday = today - timedelta(days=1)
+    live = Booking.objects.exclude(bk_status__iexact="cancelled")
+
+    checkin = _card(live.filter(check_in=today), live.filter(check_in=yesterday))
+    checkout = _card(live.filter(check_out=today), live.filter(check_out=yesterday))
+
+    bookings = list(Booking.objects.select_related("customer").order_by("-created_at")[:10])
+    for b in bookings:
+        b.nights = (b.check_out - b.check_in).days
+        b.first_room = Room_Item.objects.filter(booking=b).select_related("room").first()
+
+    context = {"checkin": checkin, "checkout": checkout, "bookings": bookings}
+    return render(request, "hotel/staff_dashboard.html", context)
  
  
 def admin_dashboard(request):
@@ -1468,3 +1481,161 @@ def customer_rewards(request):
         "progress": points["progress"],
     }
     return render(request, "hotel/customer_rewards.html", context)
+
+
+
+# ---------------- Admin and staff pages ----------------
+from datetime import date, timedelta
+from decimal import Decimal
+from django.contrib import messages
+from django.db.models import F, Max, Q, Sum
+from django.shortcuts import get_object_or_404, redirect, render
+from django.views.decorators.http import require_POST
+from .models import Booking, Room_Item, User
+
+
+def _total(qs):
+    return qs.aggregate(t=Sum("estimated_sum"))["t"] or Decimal("0")
+
+
+def _card(today_qs, yesterday_qs):
+    now = _total(today_qs)
+    before = _total(yesterday_qs)
+    change = now - before
+    pct = (change / before * 100) if before else Decimal("0")
+    return {
+        "total": now,
+        "sign": "+" if change >= 0 else "-",
+        "delta": abs(change),
+        "pct": abs(pct),
+        "updated": today_qs.aggregate(m=Max("updated_at"))["m"],
+    }
+
+
+def admin_dashboard(request):
+    today = date.today()
+    yesterday = today - timedelta(days=1)
+    live = Booking.objects.exclude(bk_status__iexact="cancelled")
+
+    cards = [
+        {"label": "\u2192] Check-In", **_card(live.filter(check_in=today), live.filter(check_in=yesterday))},
+        {"label": "Check-out", **_card(live.filter(check_out=today), live.filter(check_out=yesterday))},
+        {"label": "New Bookings", **_card(live.filter(bk_date=today), live.filter(bk_date=yesterday))},
+    ]
+
+    # Weekly chart: Saturday to Friday, like the Figma
+    week_start = today - timedelta(days=(today.weekday() - 5) % 7)
+    week_days = [week_start + timedelta(days=i) for i in range(7)]
+    per_day = {
+        row["bk_date"]: row["t"]
+        for row in live.filter(bk_date__in=week_days).values("bk_date").annotate(t=Sum("estimated_sum"))
+    }
+    chart = [{"label": d.strftime("%a"), "value": per_day.get(d, Decimal("0"))} for d in week_days]
+    biggest = max(c["value"] for c in chart) or 1
+    for c in chart:
+        c["height"] = int(c["value"] / biggest * 100)
+
+    # Latest bookings table
+    bookings = list(Booking.objects.select_related("customer").order_by("-created_at")[:10])
+    for b in bookings:
+        b.nights = (b.check_out - b.check_in).days
+        b.first_room = Room_Item.objects.filter(booking=b).select_related("room").first()
+
+    context = {
+        "cards": cards,
+        "revenue": _total(live),
+        "chart": chart,
+        "bookings": bookings,
+    }
+    return render(request, "hotel/admin_dashboard.html", context)
+
+
+def admin_profile(request):
+    return render(request, "hotel/admin_profile.html")
+
+
+def admin_action(request):
+    staff = list(
+        User.objects.filter(
+            Q(employee__isnull=False) | Q(is_staff=True) | Q(is_superuser=True)
+        )
+        .distinct()
+        .order_by(F("last_login").desc(nulls_last=True), "first_name")
+    )
+
+    # make sure whoever is logged in right now is in the list
+    me = request.user if request.user.is_authenticated else None
+    if me and not any(s.pk == me.pk for s in staff):
+        staff.insert(0, me)
+
+    return render(request, "hotel/admin_action.html", {"staff": staff})
+
+
+def staff_profile(request):
+    return render(request, "hotel/staff_profile.html")
+
+def staff_status(request):
+    today = date.today()
+    try:
+        year = int(request.GET.get("year", today.year))
+        month = int(request.GET.get("month", today.month))
+        if not (1 <= month <= 12 and today.year - 10 <= year <= today.year + 10):
+            raise ValueError
+    except ValueError:
+        year, month = today.year, today.month
+
+    staff = list(
+        User.objects.filter(
+            Q(employee__isnull=False) | Q(is_staff=True) | Q(is_superuser=True)
+        )
+        .distinct()
+        .order_by(F("last_login").desc(nulls_last=True), "first_name")
+    )
+
+    context = {
+        "weeks": calendar.Calendar(firstweekday=6).monthdayscalendar(year, month),
+        "month": month,
+        "year": year,
+        "months": [(i, calendar.month_name[i]) for i in range(1, 13)],
+        "years": range(today.year - 10, today.year + 11),
+        "today": today,
+        "is_this_month": year == today.year and month == today.month,
+        "staff": staff,
+    }
+    return render(request, "hotel/staff_status.html", context)
+
+
+def _can_manage(request):
+    return request.user.is_authenticated and request.user.is_staff
+
+
+@require_POST
+def staff_edit(request, user_id):
+    if not _can_manage(request):
+        messages.error(request, "Log in as an administrator to edit staff.")
+        return redirect("admin_action")
+    person = get_object_or_404(User, pk=user_id)
+    person.first_name = request.POST.get("first_name", "").strip()
+    person.last_name = request.POST.get("last_name", "").strip()
+    person.email = request.POST.get("email", "").strip()
+    person.phone = request.POST.get("phone", "").strip()
+    person.save(update_fields=["first_name", "last_name", "email", "phone"])
+    messages.success(request, f"{person.get_full_name() or person.username} was updated.")
+    return redirect("admin_action")
+
+
+@require_POST
+def staff_delete(request, user_id):
+    if not _can_manage(request):
+        messages.error(request, "Log in as an administrator to delete staff.")
+        return redirect("admin_action")
+    person = get_object_or_404(User, pk=user_id)
+    if person.pk == request.user.pk:
+        messages.error(request, "You can't delete your own account.")
+    elif person.is_superuser:
+        messages.error(request, "Superuser accounts can't be deleted here.")
+    else:
+        name = person.get_full_name() or person.username
+        person.delete()
+        messages.success(request, f"{name} was deleted.")
+    return redirect("admin_action")
