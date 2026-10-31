@@ -1,0 +1,92 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Staff Dashboard</title>
+  <link rel="stylesheet" href="{% static 'css/staff.css' %}">
+</head>
+<body>
+  <aside class="sidebar">
+    <div class="avatar"></div>
+    <nav>
+      <a href="{% url 'staff_dashboard' %}" class="active">Dashboard</a>
+      <a href="{% url 'staff_profile' %}">Profile</a>
+      <a href="{% url 'staff_status' %}">Status</a>
+    </nav>
+    <a href="#" class="logout">&#10145;] Logout</a>
+  </aside>
+
+  <main class="content">
+    <div class="cards">
+      <div class="card">
+        <div class="card-top">
+          <div class="card-left">
+            <h3>&#10145;] Check-In</h3>
+            <p class="amount">Rs{{ checkin.total|floatformat:"-2" }}</p>
+          </div>
+          <div class="card-right">
+            <h3>Updated</h3>
+            <p>{% if checkin.updated %}{{ checkin.updated|timesince }} ago{% else %}No updates yet{% endif %}</p>
+            <p>{{ checkin.sign }}Rs{{ checkin.delta|floatformat:"-2" }}</p>
+            <p>{{ checkin.pct|floatformat:2 }}%</p>
+          </div>
+        </div>
+        <svg class="wave" viewBox="0 0 360 80" preserveAspectRatio="none">
+          <path d="M0 50 C40 20 80 20 120 40 S200 60 240 30 S320 10 360 0 L360 80 L0 80 Z" fill="#fff"/>
+          <path d="M0 65 C40 45 80 45 120 58 S200 70 240 55 S320 40 360 30 L360 80 L0 80 Z" fill="#03264d"/>
+        </svg>
+      </div>
+
+      <div class="card">
+        <div class="card-top">
+          <div class="card-left">
+            <h3>&#10145;] Check-Out</h3>
+            <p class="amount">Rs{{ checkout.total|floatformat:"-2" }}</p>
+          </div>
+          <div class="card-right">
+            <h3>Updated</h3>
+            <p>{% if checkout.updated %}{{ checkout.updated|timesince }} ago{% else %}No updates yet{% endif %}</p>
+            <p>{{ checkout.sign }}Rs{{ checkout.delta|floatformat:"-2" }}</p>
+            <p>{{ checkout.pct|floatformat:2 }}%</p>
+          </div>
+        </div>
+        <svg class="wave" viewBox="0 0 360 80" preserveAspectRatio="none">
+          <path d="M0 50 C40 20 80 20 120 40 S200 60 240 30 S320 10 360 0 L360 80 L0 80 Z" fill="#fff"/>
+          <path d="M0 65 C40 45 80 45 120 58 S200 70 240 55 S320 40 360 30 L360 80 L0 80 Z" fill="#03264d"/>
+        </svg>
+      </div>
+    </div>
+
+    <table class="table">
+      <thead>
+        <tr>
+          <th>BookingID &#8593;&#8595;</th>
+          <th>Guest Name &#8593;&#8595;</th>
+          <th>Duration &#8593;&#8595;</th>
+          <th>Room Number &#8593;&#8595;</th>
+          <th>Room Type &#8593;&#8595;</th>
+          <th>Check-In &amp; Check-Out &#8593;&#8595;</th>
+          <th>Status &#8593;&#8595;</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for b in bookings %}
+        <tr>
+          <td>BID{{ b.bk_id }}</td>
+          <td>{{ b.customer.first_name }} {{ b.customer.last_name }}</td>
+          <td>{{ b.nights }} night{{ b.nights|pluralize }}</td>
+          <td>{% if b.first_room %}Room {{ b.first_room.room.room_number|default:b.first_room.room.room_id }}{% else %}-{% endif %}</td>
+          <td>{% if b.first_room %}{{ b.first_room.room.room_type }}{% else %}-{% endif %}</td>
+          <td>{{ b.check_in|date:"M d, Y" }} - {{ b.check_out|date:"M d, Y" }}</td>
+          <td>{{ b.bk_status|title }}</td>
+        </tr>
+        {% empty %}
+        <tr><td colspan="7">No bookings yet.</td></tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </main>
+</body>
+</html>

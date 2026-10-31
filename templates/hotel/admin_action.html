@@ -35,9 +35,38 @@
     .cal-head select { border: none; background: none; font: inherit; font-weight: bold; font-size: 11px; cursor: pointer; outline: none; }
     .content.action-page { background: #f4f5fc; }
     .project-box { background: #fff; }
+
+    .actions { white-space: nowrap; }
+    .inline-form { display: inline; }
+    .act-btn { border: none; border-radius: 6px; padding: 5px 10px; font-size: 11px; font-weight: bold; background: #eee; color: #222; cursor: pointer; }
+    .act-btn.danger { background: #fde2e2; color: #b42318; }
+    .flash { padding: 10px 14px; border-radius: 8px; margin-bottom: 14px; font-size: 13px; background: #e8ebf8; color: #0b2a5b; }
+    .flash.error { background: #fde2e2; color: #b42318; }
+    .modal { display: none; position: fixed; inset: 0; background: rgba(0,0,0,.35); align-items: center; justify-content: center; z-index: 30; }
+    .modal.open { display: flex; }
+    .modal-card { background: #fff; border-radius: 12px; padding: 18px; width: 320px; display: flex; flex-direction: column; gap: 10px; font-size: 12px; }
+    .modal-card label { display: flex; flex-direction: column; gap: 4px; color: #555; }
+    .modal-card input { border: 1px solid #ccc; border-radius: 6px; padding: 7px; font-size: 13px; }
   </style>
     
 </head>
+<script>
+(function () {
+  const modal = document.getElementById('staffModal');
+  const form = document.getElementById('staffForm');
+  document.querySelectorAll('.edit-staff').forEach(function (b) {
+    b.onclick = function () {
+      form.action = form.dataset.url.replace('/0/', '/' + b.dataset.id + '/');
+      document.getElementById('sf_first').value = b.dataset.first;
+      document.getElementById('sf_last').value = b.dataset.last;
+      document.getElementById('sf_email').value = b.dataset.email;
+      document.getElementById('sf_phone').value = b.dataset.phone;
+      modal.classList.add('open');
+    };
+  });
+  document.getElementById('staffClose').onclick = function () { modal.classList.remove('open'); };
+})();
+</script>
 <body>
   <div class="layout">
     <aside class="sidebar">
@@ -55,6 +84,7 @@
     <main class="content action-page">
 
       <!-- Calendar + staff table -->
+      {% for m in messages %}<div class="flash {{ m.tags }}">{{ m }}</div>{% endfor %}
       <section class="action-top">
         <div class="calendar">
           <div class="cal-head">
@@ -71,17 +101,21 @@
 
         <table class="staff-table">
           <thead>
-            <tr><th>Name</th><th>Email</th><th>Last Login</th><th>Hours Worked</th><th>Shift</th><th>Action</th></tr>
+            <tr><th>Name</th><th>Email</th><th>Last Login</th><th>Hours Worked</th><th>Shift</th></tr>
           </thead>
           <tbody>
-            <tr><td>David Brown</td><td>david.h@email.com</td><td>2025-09-20</td><td>350.25 hrs</td><td>Night</td><td>≡</td></tr>
-            <tr><td>Olivia Davis</td><td>olivia.d@email.com</td><td>2025-09-19</td><td>350.25 hrs</td><td>Day</td><td>≡</td></tr>
-            <tr><td>Daniel Wilson</td><td>david.w@email.com</td><td>2025-09-18</td><td>1,300.00 hrs</td><td>Night</td><td>≡</td></tr>
-            <tr><td>Robert Chen</td><td>robert.c@email.com</td><td>2025-09-17</td><td>1,100.00 hrs</td><td>Afternoon</td><td>≡</td></tr>
-            <tr><td>Sophia Rossi</td><td>sophia.r@email.com</td><td>2025-09-16</td><td>675.80 hrs</td><td>Night</td><td>≡</td></tr>
-            <tr><td>Alex Wong</td><td>Alex.W@gmail.com</td><td>2025-09-16</td><td>1,920.80 hrs</td><td>Day</td><td>≡</td></tr>
-            <tr><td>Orlendo Michael</td><td>Orlendo.Mic@gmail.com</td><td>2025-09-15</td><td>1,150.00 hrs</td><td>Day</td><td>≡</td></tr>
-          </tbody>
+                      {% for s in staff %}
+          <tr>
+            <td>{{ s.get_full_name|default:s.username }}</td>
+            <td>{{ s.email|default:"-" }}</td>
+            <td>{% if s.last_login %}{{ s.last_login|date:"Y-m-d H:i" }}{% else %}Never{% endif %}</td>
+            <td>-</td>
+            <td>-</td>
+                        
+          </tr>
+          {% empty %}
+          <tr><td colspan="6">No staff found</td></tr>
+          {% endfor %}
         </table>
       </section>
 
@@ -212,7 +246,17 @@
 
     </main>
   </div>
-
+    <div class="modal" id="staffModal">
+    <form method="post" id="staffForm" class="modal-card" data-url="{% url 'staff_edit' 0 %}">
+      {% csrf_token %}
+      <div class="sp-head"><strong>Edit staff</strong><button type="button" class="pp-close" id="staffClose">✕</button></div>
+      <label>First name<input type="text" name="first_name" id="sf_first"></label>
+      <label>Last name<input type="text" name="last_name" id="sf_last"></label>
+      <label>Email<input type="email" name="email" id="sf_email"></label>
+      <label>Phone<input type="text" name="phone" id="sf_phone"></label>
+      <div class="sp-foot"><button type="submit" class="act-btn">Save</button></div>
+    </form>
+  </div>
   <div class="toast" id="toast"></div>
 
   <script>
